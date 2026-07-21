@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Quick Math Questions – Jacob Monzel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js">
+  </script>
+
+  <style>
+    body {
+      font-family: "Times New Roman", Times, serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      color: #000;
+      background-color: #fff;
+      line-height: 1.5;
+    }
+
+    nav {
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      text-align: center; 
+      background-color: #f0f0f0;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+    }
+
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #0000EE;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+      font-weight: bold;
+    }
+
+    .problem-section {
+      border: 1px solid #808080;
+      margin-bottom: 2rem;
+    }
+
+    .section-header {
+      background-color: #fff;
+      border-bottom: 1px solid #808080;
+      padding: 8px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .problem-list {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .problem-item {
+      padding: 15px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .problem-item:last-child {
+      border-bottom: none;
+    }
+
+    .question-text {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .show-btn {
+      font-family: "Times New Roman", Times, serif;
+      background-color: #f0f0f0;
+      color: #000;
+      border: 1px solid #999;
+      padding: 3px 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .show-btn:hover {
+      background-color: #e0e0e0;
+      text-decoration: underline;
+    }
+
+    .answer {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 15px;
+      background: #f9f9f9;
+      border-left: 3px solid #666;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html">Home</a>
+  </nav>
+
+  <main>
+    <h1>Quick Math Questions</h1>
+
+    <div class="problem-section">
+      <div class="section-header">Problems</div>
+      <div class="problem-list">
+        
+        <div class="problem-item">
+          <div class="question-text">
+            Is every \( \mathbb{R} \)-linear map automatically \( \mathbb{C} \)-linear?
+          </div>
+          <button class="show-btn" onclick="toggleAnswer('answer1')">Show Answer</button>
+          <div id="answer1" class="answer">
+            No, consider the complex conjugation map, which is \( \mathbb{R} \)-linear but not \( \mathbb{C} \)-linear.
+          </div>
+        </div>
+
+        <div class="problem-item">
+          <div class="question-text">
+            Is every injective group homomorphism also surjective?
+          </div>
+          <button class="show-btn" onclick="toggleAnswer('answer2')">Show Answer</button>
+          <div id="answer2" class="answer">
+            No, injectivity and surjectivity are independent. For example, the inclusion \( \mathbb{Z} \hookrightarrow \mathbb{Q} \)
+            is injective but not surjective (prove this).
+          </div>
+        </div>
+
+        <div class="problem-item">
+          <div class="question-text">
+            Is every subgroup of a cyclic group also cyclic?
+          </div>
+          <button class="show-btn" onclick="toggleAnswer('answer3')">Show Answer</button>
+          <div id="answer3" class="answer">
+            Yes, every subgroup of a cyclic group is cyclic. In fact, for \( \mathbb{Z}_n \), the subgroups correspond to the divisors of \( n \).
+          </div>
+        </div>
+
+        <div class="problem-item">
+          <div class="question-text">
+            Is every integral domain a field?
+          </div>
+          <button class="show-btn" onclick="toggleAnswer('answer4')">Show Answer</button>
+          <div id="answer4" class="answer">
+            No, for example \( \mathbb{Z} \) is an integral domain but not a field, since not every nonzero element has a multiplicative inverse.
+          </div>
+        </div>
+
+        <div class="problem-item">
+          <div class="question-text">
+            If \( G \) is a group of prime order, is it necessarily cyclic?
+          </div>
+          <button class="show-btn" onclick="toggleAnswer('answer5')">Show Answer</button>
+          <div id="answer5" class="answer">
+            Yes, every group of prime order is cyclic and isomorphic to \( \mathbb{Z}_p \) for some prime \( p \).
+          </div>
+        </div>
+
+        <div class="problem-item">
+          <div class="question-text">
+            Can a ring be a field if it has zero divisors?
+          </div>
+          <button class="show-btn" onclick="toggleAnswer('answer6')">Show Answer</button>
+          <div id="answer6" class="answer">
+            No, fields have no zero divisors by definition. If \( ab = 0 \) in a field, then either \( a = 0 \) or \( b = 0 \).
+          </div>
+        </div>
+
+        <div class="problem-item">
+          <div class="question-text">
+            Can you color the natural numbers red and blue such that n and 2n are never the same color?
+          </div>
+          <button class="show-btn" onclick="toggleAnswer('answer7')">Show Answer</button>
+          <div id="answer7" class="answer">
+            Yes, look at the number of 2's in prime factorization and color it red if it has an odd number and blue otherwise.
+          </div>
+        </div>
+
+        <div class="problem-item">
+          <div class="question-text">
+            Can the function which gives you the number of isomorphism classes of groups of size n be a polynomial?
+          </div>
+          <button class="show-btn" onclick="toggleAnswer('answer8')">Show Answer</button>
+          <div id="answer8" class="answer">
+            No, since that function minus 1 has infinitely many roots at every prime.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function toggleAnswer(id) {
+      var answer = document.getElementById(id);
+      if (answer.style.display === "none" || answer.style.display === "") {
+        answer.style.display = "block";
+      } else {
+        answer.style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>

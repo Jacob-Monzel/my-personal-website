@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Art Display</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    header {
+      margin-bottom: 1rem;
+    }
+    header a {
+      color: #3498db;
+      text-decoration: none;
+      margin-right: 0.75rem;
+    }
+    header a:hover {
+      text-decoration: underline;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    #art-container {
+      margin: 20px auto;
+      max-width: 800px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    #art-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      display: none;
+    }
+    #art-info {
+      margin-top: 20px;
+      font-size: 18px;
+      display: none;
+    }
+    #art-title {
+      font-weight: bold;
+      color: #e74c3c;
+    }
+    #art-artist {
+      font-style: italic;
+      color: #3498db;
+    }
+    #art-date {
+      color: #27ae60;
+    }
+    #loading {
+      font-size: 20px;
+      color: #7f8c8d;
+    }
+    /* Add a small button to force refresh for testing */
+    #reset-btn {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #999;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="../../index.html">Home</a>
+    <a href="../../MiscStuff.html">Back to Misc</a>
+  </header>
+
+  <h1>Daily Art Display</h1>
+
+  <div id="art-container">
+    <div id="loading">Loading today's artwork...</div>
+    <img id="art-image" alt="Artwork">
+    <div id="art-info">
+      <p><span id="art-title"></span> by <span id="art-artist"></span></p>
+      <p>Date: <span id="art-date"></span></p>
+    </div>
+  </div>
+
+  <button id="reset-btn" onclick="resetDailyArt()">Get a new artwork (Debug/Test)</button>
+
+  <script>
+    const artImage = document.getElementById("art-image");
+    const artTitle = document.getElementById("art-title");
+    const artArtist = document.getElementById("art-artist");
+    const artDate = document.getElementById("art-date");
+    const loading = document.getElementById("loading");
+    const artInfo = document.getElementById("art-info");
+
+    // Helper to get today's date as a string (YYYY-MM-DD)
+    function getTodayString() {
+      return new Date().toISOString().split('T')[0];
+    }
+
+    function displayArt(artwork) {
+       const imageId = artwork.image_id;
+       // If for some reason image_id is missing in saved data
+       if (!imageId) return false; 
+       
+       const imageUrl = `https://www.artic.edu/iiif/2/${imageId}/full/843,/0/default.jpg`;
+
+       artImage.src = imageUrl;
+       artTitle.textContent = artwork.title || "Untitled";
+       artArtist.textContent = artwork.artist_display || "Unknown Artist";
+       artDate.textContent = artwork.date_display || "Unknown Date";
+
+       // Reveal elements
+       artImage.style.display = "block";
+       artInfo.style.display = "block";
+       loading.style.display = "none";
+       return true;
+    }
+
+    const apiUrl = "https://api.artic.edu/api/v1/artworks/search?query[term][is_public_domain]=true&limit=100&fields=id,title,artist_display,date_display,image_id";
+
+    async function initDailyArt() {
+      const today = getTodayString();
+      const storedDate = localStorage.getItem("dailyArtDate");
+      const storedData = localStorage.getItem("dailyArtData");
+
+      // 1. Check if we have data for TODAY already
+      if (storedDate === today && storedData) {
+        try {
+          const parsedData = JSON.parse(storedData);
+          const success = displayArt(parsedData);
+          if (success) return; // If successful, stop here.
+        } catch (e) {
+          console.error("Error parsing stored data", e);
+        }
+      }
+
+      // 2. If no data (or old data), fetch from API
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        const artworks = data.data;
+
+        if (!artworks || artworks.length === 0) {
+          throw new Error("No artworks found.");
+        }
+
+        // Pick a random one
+        const randomArtwork = artworks[Math.floor(Math.random() * artworks.length)];
+
+        // Save to LocalStorage for next time
+        localStorage.setItem("dailyArtDate", today);
+        localStorage.setItem("dailyArtData", JSON.stringify(randomArtwork));
+
+        // Display it
+        displayArt(randomArtwork);
+
+      } catch (error) {
+        console.error("Error fetching artwork:", error);
+        loading.textContent = "Failed to load artwork. Please try again later.";
+      }
+    }
+
+    // Manual reset function if you hate today's art
+    function resetDailyArt() {
+      localStorage.removeItem("dailyArtDate");
+      localStorage.removeItem("dailyArtData");
+      location.reload();
+    }
+
+    initDailyArt();
+  </script>
+
+</body>
+</html>

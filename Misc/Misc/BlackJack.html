@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blackjack Strategy Trainer – Jacob Monzel</title>
+  <style>
+    /* --- Academic Style --- */
+    body {
+      font-family: "Times New Roman", Times, serif;
+      background-color: #fff;
+      color: #000;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+
+    nav {
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      text-align: center; 
+      background-color: #f0f0f0;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+    }
+
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #0000EE;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 2.2rem;
+      border-bottom: 2px solid #000;
+      display: inline-block;
+      padding-bottom: 5px;
+      margin-bottom: 1rem;
+    }
+
+    #game {
+      background-color: #fafafa;
+      padding: 20px;
+      border: 1px solid #808080;
+      display: inline-block;
+      margin: 0 auto;
+      min-width: 600px;
+    }
+
+    .hand-area {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 10px;
+    }
+
+    .hand-title {
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      text-align: left;
+      padding-left: 10px;
+    }
+
+    .cards-container {
+      display: flex;
+      justify-content: center;
+      min-height: 100px;
+      gap: 10px;
+    }
+
+    .card {
+      width: 60px;
+      height: 90px;
+      background-color: #fff;
+      border: 1px solid #000;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      position: relative;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .card.red { color: #d00; }
+    .card.black { color: #000; }
+
+    .card-back {
+      background: repeating-linear-gradient(
+        45deg,
+        #ddd,
+        #ddd 5px,
+        #fff 5px,
+        #fff 10px
+      );
+      color: transparent;
+    }
+
+    .score-display {
+      margin-top: 5px;
+      font-style: italic;
+      color: #555;
+    }
+
+    #controls {
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 1px solid #000;
+    }
+
+    button {
+      font-family: "Times New Roman", Times, serif;
+      background-color: #f0f0f0;
+      color: #000;
+      border: 1px solid #808080;
+      padding: 8px 16px;
+      margin: 5px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      min-width: 100px;
+    }
+
+    button:hover {
+      background-color: #e0e0e0;
+      text-decoration: underline;
+    }
+
+    button:disabled {
+      color: #aaa;
+      border-color: #ddd;
+      cursor: not-allowed;
+      background-color: #fff;
+      text-decoration: none;
+    }
+
+    /* Strategy Advice Box */
+    #strategy-box {
+      margin-top: 15px;
+      padding: 15px;
+      border: 1px solid transparent;
+      font-weight: bold;
+      display: none; /* Hidden by default */
+      text-align: center;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      min-height: 1.5em;
+    }
+
+    .win { color: green; }
+    .lose { color: #d00; }
+    .push { color: #555; }
+
+    #deal-next-hand {
+      margin-top: 20px;
+      display: none;
+      width: 100%;
+      font-weight: bold;
+    }
+
+    @media (max-width: 600px) {
+      #game { min-width: 90%; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="../../index.html">Home</a>
+    <a href="../../MiscStuff.html">Back to Misc</a>
+  </nav>
+
+  <h1>Blackjack Trainer</h1>
+  <p style="margin-bottom: 20px; font-style: italic;">
+    Play your hand. The trainer will grade your decision instantly.
+  </p>
+
+  <div id="game">
+    
+    <div class="hand-area">
+      <div class="hand-title">Dealer</div>
+      <div id="dealer-cards" class="cards-container"></div>
+      <div id="dealer-score" class="score-display"></div>
+    </div>
+
+    <div class="hand-area" style="border-bottom: none;">
+      <div class="hand-title">Player</div>
+      <div id="cards" class="cards-container"></div>
+      <div id="player-score" class="score-display"></div>
+    </div>
+
+    <div id="strategy-box"></div>
+
+    <div id="controls">
+      <button id="hit">Hit</button>
+      <button id="stand">Stand</button>
+      <button id="double-down">Double</button>
+    </div>
+
+    <div id="message"></div>
+    <button id="deal-next-hand">Deal Next Hand</button>
+  </div>
+
+  <script>
+    const dealerCardsElement = document.getElementById("dealer-cards");
+    const playerCardsElement = document.getElementById("cards");
+    const dealerScoreElement = document.getElementById("dealer-score");
+    const playerScoreElement = document.getElementById("player-score");
+    const hitButton = document.getElementById("hit");
+    const standButton = document.getElementById("stand");
+    const doubleDownButton = document.getElementById("double-down");
+    const messageElement = document.getElementById("message");
+    const strategyBox = document.getElementById("strategy-box");
+    const dealNextHandButton = document.getElementById("deal-next-hand");
+
+    let deck = [];
+    let dealerCards = [];
+    let playerCards = [];
+    let gameStarted = false;
+    let dealerRevealed = false;
+    let turnOver = false;
+
+    // --- Card Utilities ---
+    function createDeck() {
+      const suits = ["♠", "♣", "♥", "♦"];
+      const values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
+      let d = [];
+      for (let suit of suits) {
+        for (let value of values) {
+          d.push({ suit, value });
+        }
+      }
+      return shuffle(d);
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function getCardHTML(card, hidden = false) {
+      if (hidden) return `<div class="card card-back"></div>`;
+      
+      const isRed = card.suit === "♥" || card.suit === "♦";
+      return `<div class="card ${isRed ? 'red' : 'black'}">
+                <div>${card.value}</div>
+                <div>${card.suit}</div>
+              </div>`;
+    }
+
+    function calculateScore(hand) {
+      let score = 0;
+      let aces = 0;
+      for (let card of hand) {
+        if (card.value === "A") {
+          aces++;
+          score += 11;
+        } else if (["J", "Q", "K"].includes(card.value)) {
+          score += 10;
+        } else {
+          score += parseInt(card.value);
+        }
+      }
+      while (score > 21 && aces > 0) {
+        score -= 10;
+        aces--;
+      }
+      return score;
+    }
+
+    function isSoft(hand) {
+      let score = 0;
+      let aces = 0;
+      for (let card of hand) {
+        if (card.value === "A") {
+          aces++;
+          score += 11;
+        } else if (["J", "Q", "K"].includes(card.value)) {
+          score += 10;
+        } else {
+          score += parseInt(card.value);
+        }
+      }
+      while (score > 21 && aces > 0) {
+        score -= 10;
+        aces--;
+      }
+      return aces > 0; 
+    }
+
+    // --- Game Logic ---
+
+    function initializeGame() {
+      deck = createDeck();
+      dealerCards = [];
+      playerCards = [];
+      gameStarted = false;
+      dealerRevealed = false;
+      turnOver = false;
+      messageElement.textContent = "";
+      strategyBox.style.display = "none";
+      
+      // Enable buttons
+      hitButton.disabled = false;
+      standButton.disabled = false;
+      doubleDownButton.disabled = false;
+
+      dealNextHandButton.style.display = "none";
+      updateUI();
+    }
+
+    function startHand() {
+      gameStarted = true;
+      // Deal initial cards
+      playerCards.push(deck.pop());
+      dealerCards.push(deck.pop());
+      playerCards.push(deck.pop());
+      dealerCards.push(deck.pop());
+      
+      updateUI();
+      checkBlackjack();
+    }
+
+    function updateUI() {
+      // Dealer
+      dealerCardsElement.innerHTML = "";
+      if (dealerCards.length > 0) {
+        if (dealerRevealed) {
+          dealerCards.forEach(c => dealerCardsElement.innerHTML += getCardHTML(c));
+          dealerScoreElement.textContent = calculateScore(dealerCards);
+        } else {
+          // Show first, hide second
+          dealerCardsElement.innerHTML += getCardHTML(dealerCards[0]);
+          dealerCardsElement.innerHTML += getCardHTML(null, true);
+          dealerScoreElement.textContent = "?";
+        }
+      }
+
+      // Player
+      playerCardsElement.innerHTML = "";
+      playerCards.forEach(c => playerCardsElement.innerHTML += getCardHTML(c));
+      
+      const pScore = calculateScore(playerCards);
+      playerScoreElement.textContent = pScore;
+
+      // Controls State
+      if (turnOver) {
+        hitButton.disabled = true;
+        standButton.disabled = true;
+        doubleDownButton.disabled = true;
+      }
+    }
+
+    function checkBlackjack() {
+      const pScore = calculateScore(playerCards);
+      const dScore = calculateScore(dealerCards);
+
+      if (pScore === 21) {
+        turnOver = true;
+        dealerRevealed = true;
+        updateUI();
+        
+        if (dScore === 21) {
+          endGame("Push (Both Blackjack)", "push");
+        } else {
+          endGame("Blackjack! You win.", "win");
+        }
+      }
+    }
+
+    // --- Strategy Engine (Basic Strategy) ---
+    function getAdvice() {
+      const pScore = calculateScore(playerCards);
+      const dCardVal = dealerCards[0].value;
+      const dScore = (["J","Q","K"].includes(dCardVal)) ? 10 : (dCardVal === "A" ? 11 : parseInt(dCardVal));
+      const soft = isSoft(playerCards);
+      const pair = playerCards.length === 2 && playerCards[0].value === playerCards[1].value;
+
+      // Pairs
+      if (pair) {
+        const val = playerCards[0].value;
+        if (val === "A" || val === "8") return "Split";
+        if (val === "9") {
+           if ([2,3,4,5,6,8,9].includes(dScore)) return "Split";
+        } else if (val === "7") {
+           if ([2,3,4,5,6,7].includes(dScore)) return "Split";
+        } else if (val === "6") {
+           if ([2,3,4,5,6].includes(dScore)) return "Split";
+        } else if (val === "4") {
+           if ([5,6].includes(dScore)) return "Split";
+        } else if (val === "2" || val === "3") {
+           if ([2,3,4,5,6,7].includes(dScore)) return "Split";
+        }
+      }
+
+      // Soft Totals
+      if (soft) {
+        if (pScore >= 20) return "Stand";
+        if (pScore === 19) {
+           if (dScore === 6) return "Double (if allowed), else Stand";
+           return "Stand";
+        }
+        if (pScore === 18) {
+           if ([2,3,4,5,6].includes(dScore)) return "Double (if allowed), else Stand";
+           if ([9,10,11].includes(dScore)) return "Hit";
+           return "Stand"; // vs 7,8
+        }
+        if (pScore === 17) {
+           if ([3,4,5,6].includes(dScore)) return "Double (if allowed), else Hit";
+           return "Hit";
+        }
+        if (pScore === 16 || pScore === 15) {
+           if ([4,5,6].includes(dScore)) return "Double (if allowed), else Hit";
+           return "Hit";
+        }
+        if (pScore === 14 || pScore === 13) {
+           if ([5,6].includes(dScore)) return "Double (if allowed), else Hit";
+           return "Hit";
+        }
+      }
+
+      // Hard Totals
+      if (pScore >= 17) return "Stand";
+      if (pScore <= 8) return "Hit";
+      
+      if (pScore === 16) {
+        if ([2,3,4,5,6].includes(dScore)) return "Stand";
+        return "Hit";
+      }
+      if (pScore === 15) {
+        if ([2,3,4,5,6].includes(dScore)) return "Stand";
+        return "Hit";
+      }
+      if (pScore === 14 || pScore === 13) {
+        if ([2,3,4,5,6].includes(dScore)) return "Stand";
+        return "Hit";
+      }
+      if (pScore === 12) {
+        if ([4,5,6].includes(dScore)) return "Stand";
+        return "Hit";
+      }
+      if (pScore === 11) return "Double (if allowed), else Hit";
+      if (pScore === 10) {
+        if (dScore < 10) return "Double (if allowed), else Hit";
+        return "Hit";
+      }
+      if (pScore === 9) {
+        if ([3,4,5,6].includes(dScore)) return "Double (if allowed), else Hit";
+        return "Hit";
+      }
+
+      return "Hit"; // Fallback
+    }
+
+    function evaluateMove(playerAction) {
+      const advice = getAdvice();
+      const canDbl = (playerCards.length === 2);
+      
+      let isCorrect = false;
+
+      // Logic to determine if user move matched advice
+      if (playerAction === "Hit") {
+         if (advice === "Hit") isCorrect = true;
+         else if (advice.includes("else Hit") && !canDbl) isCorrect = true;
+      } 
+      else if (playerAction === "Stand") {
+         if (advice === "Stand") isCorrect = true;
+         else if (advice.includes("else Stand") && !canDbl) isCorrect = true;
+      }
+      else if (playerAction === "Double") {
+         if (advice.includes("Double")) isCorrect = true;
+      }
+
+      // Note: If advice is "Split", any basic move is technically 'wrong' but we will just mark it wrong to teach them.
+      
+      strategyBox.style.display = "block";
+      if (isCorrect) {
+        strategyBox.style.backgroundColor = "#dff0d8"; // Light Green
+        strategyBox.style.color = "#3c763d";
+        strategyBox.style.borderColor = "#d6e9c6";
+        strategyBox.innerHTML = `✅ Correct! Optimal strategy was: <em>${advice}</em>`;
+      } else {
+        strategyBox.style.backgroundColor = "#f2dede"; // Light Red
+        strategyBox.style.color = "#a94442";
+        strategyBox.style.borderColor = "#ebccd1";
+        strategyBox.innerHTML = `❌ Mistake. You chose <strong>${playerAction}</strong>, but strategy said: <em>${advice}</em>`;
+      }
+    }
+
+    // --- Button Actions ---
+
+    hitButton.addEventListener("click", () => {
+      evaluateMove("Hit"); // Grade the move BEFORE changing state
+      
+      playerCards.push(deck.pop());
+      updateUI();
+      doubleDownButton.disabled = true; // Can't double after hitting
+
+      if (calculateScore(playerCards) > 21) {
+        turnOver = true;
+        endGame("Bust! You lose.", "lose");
+      }
+    });
+
+    standButton.addEventListener("click", () => {
+      evaluateMove("Stand");
+      turnOver = true;
+      dealerTurn();
+    });
+
+    doubleDownButton.addEventListener("click", () => {
+      evaluateMove("Double");
+      playerCards.push(deck.pop());
+      turnOver = true;
+      
+      if (calculateScore(playerCards) > 21) {
+        updateUI();
+        endGame("Bust! You lose.", "lose");
+      } else {
+        dealerTurn();
+      }
+    });
+
+    function dealerTurn() {
+      dealerRevealed = true;
+      updateUI();
+
+      let dScore = calculateScore(dealerCards);
+      // Dealer hits on Soft 17
+      while (dScore < 17 || (dScore === 17 && isSoft(dealerCards))) {
+        dealerCards.push(deck.pop());
+        dScore = calculateScore(dealerCards);
+      }
+      
+      updateUI();
+      determineWinner();
+    }
+
+    function determineWinner() {
+      const pScore = calculateScore(playerCards);
+      const dScore = calculateScore(dealerCards);
+
+      if (dScore > 21) {
+        endGame("Dealer Busts! You Win.", "win");
+      } else if (pScore > dScore) {
+        endGame("You Win!", "win");
+      } else if (dScore > pScore) {
+        endGame("Dealer Wins.", "lose");
+      } else {
+        endGame("Push (Tie).", "push");
+      }
+    }
+
+    function endGame(text, cssClass) {
+      turnOver = true;
+      updateUI();
+      messageElement.textContent = text;
+      messageElement.className = cssClass;
+      dealNextHandButton.style.display = "inline-block";
+    }
+
+    dealNextHandButton.addEventListener("click", () => {
+      initializeGame();
+      startHand();
+    });
+
+    // Start
+    initializeGame();
+    startHand();
+
+  </script>
+</body>
+</html>

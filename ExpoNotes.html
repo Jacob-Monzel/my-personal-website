@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Expository Notes – Jacob Monzel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: "Times New Roman", Times, serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      color: #000;
+      background-color: #fff;
+    }
+
+    nav {
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+    }
+
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #0000EE;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      font-weight: bold;
+    }
+
+    p {
+      text-align: justify;
+      line-height: 1.5;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+
+    .paper-section {
+      width: 100%;
+      border: 1px solid #808080;
+      margin-bottom: 1.5rem;
+      border-collapse: collapse;
+    }
+
+    .section-header {
+      text-align: center;
+      font-weight: bold;
+      padding: 8px;
+      border-bottom: 1px solid #808080;
+      background-color: #fff;
+      font-size: 1.1rem;
+    }
+
+    .paper-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); 
+      width: 100%;
+    }
+
+    .paper-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 12px;
+      border-right: 1px solid #808080;
+      border-bottom: 1px solid #808080;
+      min-height: 40px;
+    }
+
+    .paper-item:nth-child(4n) {
+      border-right: none;
+    }
+
+    .paper-item a {
+      color: #0000EE;
+      text-decoration: none;
+      font-weight: normal;
+    }
+
+    .paper-item a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .paper-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .paper-item:nth-child(2n) { border-right: none; }
+      .paper-item:nth-child(4n) { border-right: 1px solid #808080; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html">Home</a>
+  </nav>
+
+  <main>
+    <h1>Expository papers</h1>
+    
+    <p>
+      This is a collection of expository notes I have written over time. I follow the Serge Lang school of writing about a subject
+      to learn it, so don't expect this stuff to be extremely useful (or even make sense). If you find errors or have comments, 
+      please let me know.
+    </p>
+
+    <div class="paper-section">
+      <div class="section-header">Homological Algebra</div>
+      <div class="paper-grid">
+        <div class="paper-item">
+          <a href="/PDFs/Diagram_chasing_and_the_snake_lemma.pdf">Diagram Chasing and the Snake Lemma</a>
+        </div>
+        
+        <div class="paper-item"></div>
+        <div class="paper-item"></div>
+        <div class="paper-item" style="border-right: none;"></div>
+      </div>
+    </div>
+
+  </main>
+</body>
+</html>

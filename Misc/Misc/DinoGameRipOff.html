@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEON JUMP // RETRO</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #0f0; 
+      font-family: "Courier New", Courier, monospace;
+      text-align: center;
+      margin: 0;
+      overflow: hidden; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      /* PREVENT DEFAULT TOUCH ACTIONS (Zooming/Scrolling) */
+      touch-action: none; 
+    }
+
+    h1 {
+      margin: 0 0 10px 0;
+      text-transform: uppercase;
+      letter-spacing: 5px;
+      text-shadow: 0 0 10px #0f0;
+      /* Responsive font size */
+      font-size: clamp(1.5rem, 5vw, 2rem); 
+    }
+
+    p {
+      margin: 0 0 20px 0;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    #game-container {
+      position: relative;
+      border: 4px solid #0f0;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+      background: #000;
+      /* CRITICAL FIX: Ensure container never exceeds screen width */
+      max-width: 95vw; 
+    }
+
+    canvas {
+      display: block;
+      background-color: #000;
+      background-image: 
+        linear-gradient(rgba(0, 50, 0, 0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 50, 0, 0.5) 1px, transparent 1px);
+      background-size: 20px 20px;
+      
+      /* CRITICAL FIX: Scale canvas visually, keep internal resolution */
+      width: 100%; 
+      height: auto; 
+    }
+
+    #ui-layer {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none; 
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-shadow: 1px 1px 0 #000;
+    }
+
+    .retro-btn {
+      display: none;
+      margin-top: 20px;
+      background: #000;
+      color: #0f0;
+      border: 2px solid #0f0;
+      padding: 10px 20px;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 0 10px #0f0;
+      transition: all 0.2s;
+      /* Make button easier to tap on mobile */
+      min-width: 200px;
+    }
+
+    .retro-btn:hover {
+      background: #0f0;
+      color: #000;
+      box-shadow: 0 0 20px #0f0;
+    }
+
+    a {
+      color: #0f0;
+      text-decoration: none;
+      margin-top: 20px;
+      font-size: 0.8rem;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Neon Jump</h1>
+  <p>[SPACE] or [TAP] to Jump</p>
+
+  <div id="game-container">
+    <div id="ui-layer">
+      <span id="scoreDisplay">SCORE: 0</span>
+      <span id="highScoreDisplay">HI: 0</span>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+  </div>
+
+  <button id="restartBtn" class="retro-btn">Insert Coin</button>
+  
+  <a href="../../MiscStuff.html">&lt;&lt; BACK TO MISC</a>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const highScoreDisplay = document.getElementById("highScoreDisplay");
+    const restartBtn = document.getElementById("restartBtn");
+
+    // Internal Resolution (High Quality)
+    const GAME_WIDTH = 800;
+    const GAME_HEIGHT = 400;
+    canvas.width = GAME_WIDTH;
+    canvas.height = GAME_HEIGHT;
+
+    // --- Config ---
+    const GROUND_Y = 350;
+    const GRAVITY = 0.6;
+    const JUMP_FORCE = -12;
+    
+    // --- State ---
+    let frames = 0;
+    let score = 0;
+    let highScore = localStorage.getItem("retroJumpHighScore") || 0;
+    let gameSpeed = 5;
+    let isGameOver = false;
+    let animationId;
+
+    let player = {
+      x: 50,
+      y: GROUND_Y,
+      size: 30,
+      dy: 0,
+      grounded: false,
+      color: "#0ff" 
+    };
+
+    let obstacles = [];
+
+    highScoreDisplay.textContent = "HI: " + highScore;
+
+    function spawnObstacle() {
+      const minGap = 250 + (gameSpeed * 10);
+      
+      if (obstacles.length > 0) {
+        const last = obstacles[obstacles.length - 1];
+        if (GAME_WIDTH - last.x < minGap) return; 
+      }
+
+      if (Math.random() < 0.02 + (score * 0.00005)) {
+        const typeRoll = Math.random();
+        
+        if (typeRoll < 0.6) {
+          obstacles.push({ type: 'ground', x: GAME_WIDTH, y: GROUND_Y - 40, w: 30, h: 40, color: "#f0f" });
+        } else if (typeRoll < 0.8) {
+          obstacles.push({ type: 'float_static', x: GAME_WIDTH, y: GROUND_Y - 50, w: 40, h: 20, color: "#ff0" });
+        } else {
+          const isMoving = Math.random() > 0.5;
+          obstacles.push({
+            type: isMoving ? 'oscillator' : 'high',
+            x: GAME_WIDTH,
+            y: isMoving ? GROUND_Y - 90 : GROUND_Y - 110, 
+            baseY: GROUND_Y - 90,
+            w: 40, h: 40, color: "#f00", offset: Math.random() * 100
+          });
+        }
+      }
+    }
+
+    function update() {
+      if (isGameOver) return;
+
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+      ctx.strokeStyle = "#0f0";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(0, GROUND_Y);
+      ctx.lineTo(GAME_WIDTH, GROUND_Y);
+      ctx.stroke();
+
+      player.dy += GRAVITY;
+      player.y += player.dy;
+
+      if (player.y + player.size > GROUND_Y) {
+        player.y = GROUND_Y - player.size;
+        player.dy = 0;
+        player.grounded = true;
+      } else {
+        player.grounded = false;
+      }
+
+      ctx.fillStyle = player.color;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = player.color;
+      ctx.fillRect(player.x, player.y, player.size, player.size);
+      ctx.shadowBlur = 0; 
+
+      spawnObstacle();
+
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        let ob = obstacles[i];
+        ob.x -= gameSpeed;
+
+        if (ob.type === 'oscillator') {
+          ob.y = ob.baseY + Math.sin((frames + ob.offset) * 0.05) * 60;
+        }
+
+        ctx.fillStyle = ob.color;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = ob.color;
+        ctx.fillRect(ob.x, ob.y, ob.w, ob.h);
+        ctx.shadowBlur = 0;
+
+        if (
+          player.x < ob.x + ob.w - 5 &&
+          player.x + player.size > ob.x + 5 &&
+          player.y < ob.y + ob.h - 5 &&
+          player.y + player.size > ob.y + 5
+        ) {
+          gameOver();
+        }
+
+        if (ob.x + ob.w < 0) {
+          obstacles.splice(i, 1);
+          score += 10; 
+        }
+      }
+
+      score++;
+      frames++;
+      if (score % 500 === 0) gameSpeed += 0.5;
+
+      scoreDisplay.textContent = "SCORE: " + Math.floor(score/5);
+      animationId = requestAnimationFrame(update);
+    }
+
+    function jump() {
+      if (player.grounded && !isGameOver) {
+        player.dy = JUMP_FORCE;
+        player.grounded = false;
+      }
+    }
+
+    function gameOver() {
+      isGameOver = true;
+      cancelAnimationFrame(animationId);
+
+      const finalScore = Math.floor(score/5);
+      if (finalScore > highScore) {
+        highScore = finalScore;
+        localStorage.setItem("retroJumpHighScore", highScore);
+        highScoreDisplay.textContent = "HI: " + highScore;
+      }
+
+      ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+      ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+      ctx.font = "bold 40px 'Courier New'";
+      ctx.fillStyle = "#f00";
+      ctx.textAlign = "center";
+      ctx.fillText("GAME OVER", GAME_WIDTH/2, GAME_HEIGHT/2 - 20);
+      
+      ctx.fillStyle = "#fff";
+      ctx.font = "20px 'Courier New'";
+      ctx.fillText("Final Score: " + finalScore, GAME_WIDTH/2, GAME_HEIGHT/2 + 20);
+
+      restartBtn.style.display = "block";
+    }
+
+    function resetGame() {
+      isGameOver = false;
+      score = 0;
+      frames = 0;
+      gameSpeed = 5;
+      obstacles = [];
+      player.y = GROUND_Y - player.size;
+      player.dy = 0;
+      restartBtn.style.display = "none";
+      update();
+    }
+
+    // --- Inputs ---
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        jump();
+      }
+      if (e.code === "Enter" && isGameOver) {
+        resetGame();
+      }
+    });
+
+    // IMPROVED TOUCH CONTROLS
+    // Listen on window (entire screen) instead of just canvas
+    window.addEventListener("touchstart", (e) => {
+      // Don't jump if they are tapping the "Restart" button
+      if (e.target === restartBtn) return;
+      
+      e.preventDefault(); // Prevent scrolling
+      if (isGameOver) resetGame();
+      else jump();
+    }, {passive: false});
+
+    restartBtn.addEventListener("click", resetGame);
+
+    update();
+  </script>
+</body>
+</html>

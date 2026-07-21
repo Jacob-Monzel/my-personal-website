@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sliding Puzzle – Jacob Monzel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* --- Academic Style --- */
+    body {
+      font-family: "Times New Roman", Times, serif;
+      background-color: #fff;
+      color: #000;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+
+    nav {
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      text-align: center; 
+      background-color: #f0f0f0;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+    }
+
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #0000EE;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 2.2rem;
+      border-bottom: 2px solid #000;
+      display: inline-block;
+      padding-bottom: 5px;
+      margin-bottom: 1rem;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: #444;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+
+    #game-container {
+      border: 1px solid #808080;
+      padding: 20px;
+      display: inline-block;
+      background-color: #fafafa;
+    }
+
+    #stats {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+    }
+    
+    .stat-box {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 5px 10px;
+    }
+
+    #board {
+      display: grid;
+      gap: 4px;
+      margin: 1.5rem auto;
+      border: 2px solid #000;
+      background-color: #000;
+      width: fit-content;
+    }
+
+    .tile {
+      width: 60px;
+      height: 60px;
+      background-color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.5rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tile:hover {
+      background-color: #e0e0e0;
+    }
+
+    .tile.blank {
+      background-color: #444;
+      cursor: default;
+    }
+
+    /* Correct position highlight (optional subtle hint) */
+    .tile.correct {
+      color: #006400; /* Dark Green text for correct tiles */
+    }
+
+    #controls {
+      margin-top: 10px;
+    }
+
+    button, select {
+      font-family: "Times New Roman", Times, serif;
+      background-color: #f0f0f0;
+      color: #000;
+      border: 1px solid #808080;
+      padding: 6px 12px;
+      margin: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    button:hover {
+      background-color: #ccc;
+    }
+
+    #message {
+      margin-top: 1rem;
+      min-height: 1.5rem;
+      font-weight: bold;
+      color: #b22222; /* Academic red for alerts */
+    }
+
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="../../index.html">Home</a>
+    <a href="../../MiscStuff.html">Back to Misc</a>
+  </nav>
+
+  <h1>Sliding Puzzle</h1>
+  <div class="subtitle">
+    Permutation Group \( S_{N^2} \). Parity is preserved during scramble.
+  </div>
+
+  <div id="game-container">
+    
+    <div style="margin-bottom: 10px;">
+      <label for="size-select">Grid Size: </label>
+      <select id="size-select">
+        <option value="3">3 × 3 (Easy)</option>
+        <option value="4" selected>4 × 4 (Classic)</option>
+        <option value="5">5 × 5 (Hard)</option>
+      </select>
+    </div>
+
+    <div id="stats">
+      <div class="stat-box">Moves: <span id="move-count">0</span></div>
+      <div class="stat-box">Time: <span id="time-elapsed">0</span>s</div>
+      <div class="stat-box" style="grid-column: span 2; text-align: center;">
+        Manhattan Distance: <span id="manhattan-dist">0</span>
+      </div>
+    </div>
+
+    <div id="board"></div>
+
+    <div id="controls">
+      <button id="scramble-btn">Scramble</button>
+      <button id="reset-btn">Reset</button>
+    </div>
+
+    <div id="message"></div>
+  </div>
+
+  <script>
+    // === CONFIG ===
+    let size = 4;
+    const boardElement = document.getElementById("board");
+    const moveCountElement = document.getElementById("move-count");
+    const timeElement = document.getElementById("time-elapsed");
+    const distElement = document.getElementById("manhattan-dist");
+    const messageElement = document.getElementById("message");
+    const sizeSelect = document.getElementById("size-select");
+    const scrambleBtn = document.getElementById("scramble-btn");
+    const resetBtn = document.getElementById("reset-btn");
+
+    let tiles = [];         
+    let moveCount = 0;
+    let timerId = null;
+    let startTime = null;
+    let gameActive = false;
+
+    // Change grid size
+    sizeSelect.addEventListener("change", (e) => {
+      size = parseInt(e.target.value);
+      initBoard();
+    });
+
+    function initBoard() {
+      // Update CSS Grid
+      boardElement.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+      
+      const total = size * size;
+      tiles = [];
+      for (let i = 1; i < total; i++) tiles.push(i);
+      tiles.push(0); // Blank
+
+      moveCount = 0;
+      updateStats();
+      stopTimer();
+      timeElement.textContent = "0";
+      gameActive = false;
+      renderBoard();
+      messageElement.textContent = "";
+      distElement.textContent = "0"; // Solved state = 0 distance
+    }
+
+    function calculateManhattan() {
+      let totalDist = 0;
+      for (let i = 0; i < tiles.length; i++) {
+        const val = tiles[i];
+        if (val === 0) continue; // Don't count blank
+
+        // Current position
+        const currentPos = indexToPos(i);
+        
+        // Target position (value 1 is at index 0, etc.)
+        const targetIndex = val - 1;
+        const targetPos = indexToPos(targetIndex);
+
+        totalDist += Math.abs(currentPos.row - targetPos.row) + 
+                     Math.abs(currentPos.col - targetPos.col);
+      }
+      return totalDist;
+    }
+
+    function updateStats() {
+      moveCountElement.textContent = moveCount;
+      distElement.textContent = calculateManhattan();
+    }
+
+    function renderBoard() {
+      boardElement.innerHTML = "";
+      tiles.forEach((value, index) => {
+        const tileDiv = document.createElement("div");
+        tileDiv.classList.add("tile");
+        
+        if (value === 0) {
+          tileDiv.classList.add("blank");
+        } else {
+          tileDiv.textContent = value;
+          // Check if in correct spot for visual aid
+          if (value === index + 1) tileDiv.classList.add("correct");
+          
+          tileDiv.addEventListener("click", () => handleTileClick(index));
+        }
+        boardElement.appendChild(tileDiv);
+      });
+    }
+
+    function indexToPos(index) {
+      return { row: Math.floor(index / size), col: index % size };
+    }
+
+    function posToIndex(row, col) {
+      return row * size + col;
+    }
+
+    function isAdjacentToBlank(index) {
+      const blankIndex = tiles.indexOf(0);
+      const pos = indexToPos(index);
+      const blankPos = indexToPos(blankIndex);
+      return (Math.abs(pos.row - blankPos.row) + Math.abs(pos.col - blankPos.col) === 1);
+    }
+
+    function swapTiles(i, j) {
+      [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+    }
+
+    function handleTileClick(index) {
+      if (!isAdjacentToBlank(index)) return;
+
+      const blankIndex = tiles.indexOf(0);
+      swapTiles(index, blankIndex);
+      
+      moveCount++;
+      if (!gameActive) { gameActive = true; startTimer(); }
+      
+      updateStats();
+      renderBoard();
+      checkWin();
+    }
+
+    function checkWin() {
+      const total = size * size;
+      let solved = true;
+      for (let i = 0; i < total - 1; i++) {
+        if (tiles[i] !== i + 1) { solved = false; break; }
+      }
+      
+      if (solved) {
+        stopTimer();
+        gameActive = false;
+        messageElement.textContent = "Solution Found!";
+      }
+    }
+
+    function scramble() {
+      // Reset logic
+      initBoard();
+      const moves = size === 3 ? 100 : 300;
+      
+      let blankIndex = tiles.indexOf(0);
+      let lastMove = -1; // Prevent immediate undoing of moves
+
+      for (let k = 0; k < moves; k++) {
+        const neighbors = [];
+        const { row, col } = indexToPos(blankIndex);
+        const dirs = [[-1,0], [1,0], [0,-1], [0,1]];
+        
+        dirs.forEach(d => {
+          const nr = row + d[0], nc = col + d[1];
+          if (nr >= 0 && nr < size && nc >= 0 && nc < size) {
+            neighbors.push(posToIndex(nr, nc));
+          }
+        });
+
+        // Pick random neighbor (try to avoid going back immediately)
+        let choice = neighbors[Math.floor(Math.random() * neighbors.length)];
+        if (neighbors.length > 1 && choice === lastMove) {
+           choice = neighbors.find(n => n !== lastMove); 
+        }
+
+        swapTiles(blankIndex, choice);
+        lastMove = blankIndex;
+        blankIndex = choice;
+      }
+
+      moveCount = 0;
+      updateStats();
+      timeElement.textContent = "0";
+      gameActive = true;
+      startTimer();
+      renderBoard();
+      messageElement.textContent = "";
+    }
+
+    function startTimer() {
+      startTime = Date.now();
+      if (timerId) clearInterval(timerId);
+      timerId = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        timeElement.textContent = elapsed;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerId) clearInterval(timerId);
+    }
+
+    scrambleBtn.addEventListener("click", scramble);
+    resetBtn.addEventListener("click", initBoard);
+
+    // Arrow Keys
+    document.addEventListener("keydown", (e) => {
+      if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) {
+        e.preventDefault();
+        const blankIndex = tiles.indexOf(0);
+        const { row, col } = indexToPos(blankIndex);
+        let tr = row, tc = col;
+
+        // Inverse Logic: Press UP to move the tile BELOW the blank UP
+        if (e.key === "ArrowUp") tr++;
+        if (e.key === "ArrowDown") tr--;
+        if (e.key === "ArrowLeft") tc++;
+        if (e.key === "ArrowRight") tc--;
+
+        if (tr >= 0 && tr < size && tc >= 0 && tc < size) {
+          handleTileClick(posToIndex(tr, tc));
+        }
+      }
+    });
+
+    initBoard();
+  </script>
+</body>
+</html>

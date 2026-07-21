@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Jacob Monzel's Homepage</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Germanic Fraktur font -->
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      line-height: 1.5;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 0.75rem;
+    }
+
+    img#headshot {
+      border-radius: 6px;
+      max-width: 100%;
+      height: auto;
+    }
+
+    ul {
+      list-style: disc;
+      padding-left: 1.5rem;
+    }
+
+    #lastUpdated {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    /* Quote styling */
+    #quote {
+      text-align: center;
+      font-size: 1.5rem;
+      margin: 0.9rem 0 0.4rem;
+      color: #333;
+      font-family: 'UnifrakturMaguntia', serif;
+    }
+
+    /* Subtle gradient divider under quote */
+    #quote-divider {
+      height: 1px;
+      margin: 0.6rem auto 1.4rem;
+      width: 60%;
+      background: linear-gradient(to right, transparent, #bbb, transparent);
+    }
+  </style>
+
+  <script type="text/javascript">
+    function update_image() {
+      var images = [
+        ["../Images/IMG_0345.jpg", "Columbus Triatholan, 2023", "My dad"],
+        ["../Images/IMG_0996.jpg", "Outside Fischer, 2021", "Unknown"],
+        ["../Images/IMG_1375.jpg", "Monterrey MX Mission Trip, 2023", "My mom"],
+        ["../Images/IMG_6701.jpg", "New Photo", "Unknown"] // NEW PHOTO
+      ];
+
+      var img = images[Math.floor(Math.random() * images.length)];
+      var filename = "headshots/" + img[0];
+      var titletext = "Spacetime Coordinates: " + img[1] + "\nPhoto Credit: " + img[2];
+      document.getElementById("headshot").src = filename;
+      document.getElementById("headshot").title = titletext;
+    }
+
+    function generateDailyMessage() {
+      const adjectives = {
+        Monday: ["Magnificent", "Marvelous", "Motivated", "Meaningful", "Mindful", "Mighty"],
+        Tuesday: ["Terrific", "Tremendous", "Thankful", "Tenacious", "Thriving", "Thoughtful"],
+        Wednesday: ["Wonderful", "Wacky", "Winning", "Wise", "Wellbeing", "Work-it"],
+        Thursday: ["Thrilling", "Thankful", "Thoughtful", "Triumphant", "Thrive-on", "Trust-filled"],
+        Friday: ["Fantastic", "Fabulous", "Fun-filled", "Fearless", "Focused", "Feel-good"],
+        Saturday: ["Spectacular", "Super", "Satisfying", "Sunny", "Soulful", "Strong"],
+        Sunday: ["Serene", "Sunny", "Spiritual", "Sweet", "Slow-down", "Self-care"]
+      };
+
+      const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const today = new Date();
+      const dayName = days[today.getDay()];
+      const options = adjectives[dayName];
+      const randomAdj = options[Math.floor(Math.random() * options.length)];
+
+      const message = `Have a ${randomAdj} ${dayName}!`;
+      document.getElementById("dailyMessage").textContent = message;
+    }
+  </script>
+</head>
+
+<body onload="update_image(); generateDailyMessage();">
+
+  <header>
+    <h1>Jacob Monzel's Homepage</h1>
+    <img id="headshot" alt="Jacob headshot"><br>
+  </header>
+
+  <!-- German quote -->
+  <div id="quote">„Wir müssen wissen. Wir werden wissen.“</div>
+  <div id="quote-divider"></div>
+
+  <main>
+    <p>
+      I am attending the University of Pennsylvania. I enjoy studying algebraic geometry and number theory
+      (especially their connections).
+    </p>
+
+    <ul>
+      <li><a href="CV.html">Curriculum Vitae</a></li>
+      <li><a href="Papers.html">Papers &amp; Preprints</a></li>
+      <li><a href="ExpoNotes.html">Expository Notes</a></li>
+      <li><a href="CourseList.html">Teaching / Seminars</a></li>
+      <li><a href="MathProblemsList.html">Quick Math Problems</a></li>
+      <li><a href="MiscStuff.html">Misc / Personal</a></li>
+    </ul>
+
+    <p>
+      My email is <i>monzel [at] sas [dot] upenn [dot] edu</i>, which you can feel free to use if you have
+      any questions or concerns.
+      <strong><span id="dailyMessage"></span></strong>
+    </p>
+  </main>
+
+  <footer>
+    <div id="lastUpdated"></div>
+    <script>
+      document.getElementById("lastUpdated").innerText = "Last Updated: February 5th, 2026";
+    </script>
+  </footer>
+
+</body>
+</html>

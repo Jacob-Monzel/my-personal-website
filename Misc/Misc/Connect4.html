@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Connect Four Trainer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <style>
+    /* --- Academic Style --- */
+    body {
+      font-family: "Times New Roman", Times, serif;
+      background-color: #fff;
+      color: #000;
+      text-align: center;
+      margin: 0;
+      padding: 10px;
+    }
+
+    nav {
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      text-align: center; 
+      background-color: #f0f0f0;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+    }
+
+    nav a {
+      margin: 0 0.5rem;
+      text-decoration: none;
+      color: #0000EE;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.8rem;
+      border-bottom: 2px solid #000;
+      display: inline-block;
+      padding-bottom: 5px;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #444;
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+
+    #container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    #game-board {
+      background-color: #34495e;
+      padding: 10px;
+      border-radius: 10px;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1.5vmin; 
+      border: 2px solid #2c3e50;
+      max-width: 95vw;
+      box-sizing: border-box;
+    }
+
+    .cell {
+      width: 11vmin;
+      height: 11vmin;
+      max-width: 60px;
+      max-height: 60px;
+      background-color: #fff;
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .cell.red { background-color: #e74c3c; box-shadow: inset 0 0 5px rgba(0,0,0,0.3); }
+    .cell.yellow { background-color: #f1c40f; box-shadow: inset 0 0 5px rgba(0,0,0,0.3); }
+    
+    .cell.hint-anim { border: 4px solid #2ecc71; box-sizing: border-box; }
+
+    #analysis-panel {
+      width: 300px;
+      border: 1px solid #808080;
+      padding: 15px;
+      text-align: left;
+      background-color: #fafafa;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .panel-header { font-weight: bold; border-bottom: 1px solid #ccc; margin-bottom: 15px; padding-bottom: 5px; }
+
+    #eval-bar-container {
+      width: 100%;
+      height: 25px;
+      background-color: #e74c3c;
+      margin-top: 10px;
+      position: relative;
+      border: 1px solid #000;
+    }
+
+    #eval-bar-fill {
+      width: 50%;
+      height: 100%;
+      background-color: #f1c40f;
+      transition: width 0.5s ease;
+    }
+
+    #eval-text { font-weight: bold; margin-top: 5px; text-align: center; font-size: 0.9rem; }
+    
+    #quality-text {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-top: 5px;
+      min-height: 1.2em;
+    }
+
+    .hint-box { margin-top: 15px; padding: 10px; background-color: #eef; border: 1px solid #0000EE; color: #000080; font-size: 0.9rem; }
+
+    .btn-group { display: flex; gap: 5px; margin-top: 10px; }
+    button { font-family: "Times New Roman", Times, serif; padding: 10px 10px; cursor: pointer; background: #f0f0f0; border: 1px solid #999; font-size: 0.9rem; flex: 1; font-weight: bold; }
+    button:hover { background: #ddd; }
+    
+    .count-feedback {
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      color: #856404;
+      padding: 10px;
+      margin-top: 10px;
+      display: none; 
+      font-size: 0.9rem;
+    }
+
+    /* Modal Styles */
+    #strategy-modal {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid #808080;
+      z-index: 20;
+      text-align: left;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    
+    #strategy-modal h2 { margin-top: 0; border-bottom: 1px solid #000; }
+    #strategy-modal h3 { margin-top: 1.5rem; margin-bottom: 0.5rem; color: #333; }
+    #strategy-modal ul { padding-left: 20px; margin-top: 0; }
+    #strategy-modal li { margin-bottom: 8px; }
+
+    .close-btn { float: right; background: #d00; color: #fff; border: none; padding: 5px 10px; font-weight: bold; cursor: pointer; width: auto; }
+    .close-btn:hover { background: #a00; }
+
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="../../index.html">Home</a>
+    <a href="../../MiscStuff.html">Back to Misc</a>
+  </nav>
+
+  <h1>Connect Four Trainer</h1>
+  <div class="subtitle">
+    BigInt Bitboard Engine (Depth 10 Capable)
+  </div>
+
+  <div id="container">
+    <div id="game-board"></div>
+
+    <div id="analysis-panel">
+      <div id="strategy-modal">
+        <button class="close-btn" onclick="toggleStrategy()">[X] Close</button>
+        <h2>Connect Four Strategy Guide</h2>
+        
+        <h3>1. The Odd/Even Rule (Parity)</h3>
+        <p><strong>Red (Player 1)</strong> wants to win on <strong>Odd Rows</strong> (1, 3, 5).<br>
+        <strong>Yellow (Player 2)</strong> wants to win on <strong>Even Rows</strong> (2, 4, 6).</p>
+        <p><em>Why?</em> As the board fills up, you naturally claim the slots matching your parity. If you are Red, you cannot force a win on Row 4 unless Yellow helps you.</p>
+
+        <h3>2. Zugzwang (The "Squeeze")</h3>
+        <p>In the endgame, players run out of "good" moves. Zugzwang is when <strong>every possible move you make loses the game immediately.</strong> You are forced to commit suicide because you cannot pass your turn.</p>
+
+        <h3>3. Common Traps</h3>
+        <ul>
+          <li><strong>The "7":</strong> A shape combining a horizontal 3 and a diagonal 3. Creates two threats at once.</li>
+          <li><strong>Double-Ended:</strong> <code>_ R R R _</code>. If they block left, you win right.</li>
+          <li><strong>The Force:</strong> Playing a threat that forces the opponent to block exactly where you want them to be.</li>
+        </ul>
+      </div>
+
+      <div class="panel-header">Engine Analysis</div>
+
+      <div id="eval-bar-container"><div id="eval-bar-fill"></div></div>
+      <div id="eval-text">Even (0.0)</div>
+      <div id="quality-text"></div>
+      
+      <button onclick="checkCountAdvice()" style="margin-top: 15px; background: #eef; border-color: #0000EE; color: #000080;">Should I start counting?</button>
+      <div id="count-feedback" class="count-feedback"></div>
+      
+      <div style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px;">
+        <label><strong>Opponent Strength:</strong></label>
+        <select id="depth-select">
+          <option value="2">Greedy / Trap Practice (Depth 2)</option>
+          <option value="4">Casual (Depth 4)</option>
+          <option value="6" selected>Club Player (Depth 6)</option>
+          <option value="8">Master (Depth 8)</option>
+          <option value="10">Grandmaster (Depth 10)</option>
+        </select>
+        <div style="margin-top: 10px;">
+          <label><input type="checkbox" id="go-second-check"> Engine Goes First</label>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button onclick="undoMove()">Undo</button>
+        <button onclick="showHint()">Hint</button>
+      </div>
+      
+      <button onclick="toggleStrategy()" style="margin-top: 10px; width: 100%;">Strategy Guide</button>
+      <button onclick="resetGame()" style="width: 100%; margin-top: 5px;">New Game</button>
+
+    </div>
+  </div>
+
+  <script>
+    // --- Config ---
+    const ROWS = 6;
+    const COLS = 7;
+    const MAX_MOVES = 42;
+    
+    // Game State (BigInts)
+    let bitboard = [0n, 0n]; 
+    let height = [0, 7, 14, 21, 28, 35, 42]; 
+    let moves = []; 
+    let gameActive = true;
+    let humanIsRed = true;
+    let turn = 0; 
+
+    // UI Elements
+    const boardElement = document.getElementById("game-board");
+    const evalBarFill = document.getElementById("eval-bar-fill");
+    const evalText = document.getElementById("eval-text");
+    const qualityText = document.getElementById("quality-text");
+    const goSecondCheck = document.getElementById("go-second-check");
+    const depthSelect = document.getElementById("depth-select");
+    const strategyModal = document.getElementById("strategy-modal");
+    const countFeedback = document.getElementById("count-feedback");
+
+    // --- BigInt Bitboard Logic ---
+
+    function makeMove(col) {
+      const move = 1n << BigInt(height[col]);
+      bitboard[turn] ^= move; 
+      moves.push(col);
+      height[col]++;
+      turn ^= 1;
+    }
+
+    function undoBitMove() {
+      if (moves.length === 0) return;
+      const col = moves.pop();
+      turn ^= 1;
+      height[col]--;
+      const move = 1n << BigInt(height[col]);
+      bitboard[turn] ^= move;
+    }
+
+    function canPlay(col) {
+      const top = (col + 1) * 7 - 1; 
+      return height[col] < top;
+    }
+
+    function isWin(pos) {
+      let m = pos & (pos >> 1n); 
+      if ((m & (m >> 2n)) !== 0n) return true;
+      m = pos & (pos >> 7n); 
+      if ((m & (m >> 14n)) !== 0n) return true;
+      m = pos & (pos >> 6n); 
+      if ((m & (m >> 12n)) !== 0n) return true;
+      m = pos & (pos >> 8n); 
+      if ((m & (m >> 16n)) !== 0n) return true;
+      return false;
+    }
+
+    // --- Solver ---
+
+    function solve(depth, alpha, beta) {
+      const prevTurn = turn ^ 1;
+      if (isWin(bitboard[prevTurn])) return -(100000 - moves.length); 
+      if (depth === 0 || moves.length === MAX_MOVES) return 0;
+
+      const colOrder = [3, 2, 4, 1, 5, 0, 6];
+      for (let i = 0; i < 7; i++) {
+        const col = colOrder[i];
+        if (canPlay(col)) {
+          makeMove(col);
+          let score = -solve(depth - 1, -beta, -alpha);
+          undoBitMove();
+          if (score >= beta) return score;
+          if (score > alpha) alpha = score;
+        }
+      }
+      return alpha;
+    }
+
+    function getBestMove(depth) {
+      let bestScore = -Infinity;
+      let bestMove = -1;
+      const colOrder = [3, 2, 4, 1, 5, 0, 6];
+
+      for (let i = 0; i < 7; i++) {
+        const col = colOrder[i];
+        if (canPlay(col)) {
+          makeMove(col);
+          let score = -solve(depth - 1, -Infinity, Infinity);
+          undoBitMove();
+          
+          // Center Bias for tie-breaking
+          const positionalBias = (10 - Math.abs(3 - col)) / 1000;
+          
+          if (score + positionalBias > bestScore) {
+            bestScore = score + positionalBias;
+            bestMove = col;
+          }
+        }
+      }
+      return { col: bestMove, score: bestScore };
+    }
+
+    // --- UI/Game Logic ---
+
+    function initGame() {
+      bitboard = [0n, 0n];
+      height = [0, 7, 14, 21, 28, 35, 42];
+      moves = [];
+      gameActive = true;
+      humanIsRed = !goSecondCheck.checked;
+      turn = 0; 
+
+      renderBoard();
+      updateEval(0);
+      qualityText.textContent = "";
+      countFeedback.style.display = "none";
+
+      if (!humanIsRed) {
+        setTimeout(() => {
+          const result = getBestMove(parseInt(depthSelect.value));
+          handleAiMove(result.col);
+        }, 500);
+      }
+    }
+
+    function renderBoard() {
+      boardElement.innerHTML = "";
+      for (let r = ROWS - 1; r >= 0; r--) {
+        for (let c = 0; c < COLS; c++) {
+          const cell = document.createElement("div");
+          cell.classList.add("cell");
+          cell.id = `cell-${r}-${c}`;
+          
+          const idx = BigInt(c * 7 + r);
+          const mask = 1n << idx;
+          if ((bitboard[0] & mask) !== 0n) cell.classList.add("red");
+          else if ((bitboard[1] & mask) !== 0n) cell.classList.add("yellow");
+
+          cell.addEventListener("click", () => handleHumanClick(c));
+          boardElement.appendChild(cell);
+        }
+      }
+    }
+
+    function handleHumanClick(col) {
+      if (!gameActive) return;
+      const humanPlayer = humanIsRed ? 0 : 1;
+      if (turn !== humanPlayer) return;
+      if (!canPlay(col)) return;
+
+      countFeedback.style.display = "none";
+
+      makeMove(col);
+      renderBoard();
+
+      if (isWin(bitboard[humanPlayer])) {
+        endGame("You Win!");
+        updateEval(100000); 
+        qualityText.textContent = "Winning Move!";
+        qualityText.style.color = "green";
+        return;
+      }
+      if (moves.length === 42) { endGame("Draw!"); return; }
+
+      // Post-Move Analysis (Using Depth 6 for Accuracy)
+      // Even if playing vs Greedy, we want accurate feedback.
+      const evalDepth = 6; 
+      const evalRes = getBestMove(evalDepth); 
+      const aiAdvantage = evalRes.score; 
+
+      let msg = "Neutral";
+      let color = "#555";
+      if (aiAdvantage > 90000) { msg = "Blunder (Forced Loss)"; color = "#d00"; }
+      else if (aiAdvantage > 200) { msg = "Mistake"; color = "orange"; }
+      else if (aiAdvantage < -90000) { msg = "Winning Move!"; color = "green"; }
+      else if (aiAdvantage < -200) { msg = "Strong Move"; color = "green"; }
+      else { msg = "Neutral / Even"; color = "#333"; }
+
+      qualityText.textContent = msg;
+      qualityText.style.color = color;
+      updateEval(-evalRes.score);
+
+      setTimeout(() => {
+        const depth = parseInt(depthSelect.value);
+        const result = getBestMove(depth);
+        handleAiMove(result.col);
+      }, 50);
+    }
+
+    function handleAiMove(col) {
+      if (!gameActive) return;
+      const aiPlayer = humanIsRed ? 1 : 0;
+      makeMove(col);
+      renderBoard();
+
+      if (isWin(bitboard[aiPlayer])) {
+        endGame("Engine Wins!");
+        updateEval(-100000); 
+      } else if (moves.length === 42) {
+        endGame("Draw!");
+      } else {
+        const evalRes = getBestMove(6); 
+        updateEval(evalRes.score);
+      }
+    }
+
+    function undoMove() {
+      if (moves.length < 2 && humanIsRed) return;
+      if (moves.length < 1 && !humanIsRed) return;
+
+      undoBitMove(); 
+      if (moves.length > 0) undoBitMove(); 
+      else if (!humanIsRed) {
+         renderBoard();
+         updateEval(0);
+         qualityText.textContent = "";
+         setTimeout(() => {
+            const result = getBestMove(parseInt(depthSelect.value));
+            handleAiMove(result.col);
+         }, 500);
+         return;
+      }
+      gameActive = true;
+      renderBoard();
+      qualityText.textContent = ""; 
+      countFeedback.style.display = "none";
+      const evalRes = getBestMove(6);
+      updateEval(evalRes.score);
+    }
+
+    function showHint() {
+      if (!gameActive) return;
+      const humanPlayer = humanIsRed ? 0 : 1;
+      if (turn !== humanPlayer) return;
+      const res = getBestMove(parseInt(depthSelect.value));
+      const col = res.col;
+      const row = height[col] % 7;
+      const cell = document.getElementById(`cell-${row}-${col}`);
+      if (cell) {
+        cell.classList.add("hint-anim");
+        setTimeout(() => cell.classList.remove("hint-anim"), 1000);
+      }
+    }
+
+    function checkCountAdvice() {
+      const movesPlayed = moves.length;
+      const movesLeft = MAX_MOVES - movesPlayed;
+      
+      countFeedback.style.display = "block";
+      
+      if (movesLeft > 26) {
+        countFeedback.textContent = "NO. Still in Opening/Early Game. Focus on controlling the Center (Col 4) and building horizontal threats.";
+        countFeedback.style.backgroundColor = "#e2e3e5";
+        countFeedback.style.color = "#383d41";
+        countFeedback.style.borderColor = "#d6d8db";
+      } 
+      else if (movesLeft > 14) {
+        countFeedback.textContent = "NOT YET. Still Mid-Game. Watch for simple traps (The '7') and 2-move threats. Don't calculate full endgames yet.";
+        countFeedback.style.backgroundColor = "#fff3cd";
+        countFeedback.style.color = "#856404";
+        countFeedback.style.borderColor = "#ffeeba";
+      }
+      else {
+        countFeedback.innerHTML = `<strong>YES! ENDGAME REACHED.</strong><br>${movesLeft} spots left. The game is solvable.<br>1. Count Odd/Even Parity.<br>2. Check for Zugzwang.<br>3. Calculate every line to the end.`;
+        countFeedback.style.backgroundColor = "#f8d7da";
+        countFeedback.style.color = "#721c24";
+        countFeedback.style.borderColor = "#f5c6cb";
+      }
+    }
+
+    function toggleStrategy() {
+      strategyModal.style.display = (strategyModal.style.display === "block") ? "none" : "block";
+    }
+
+    function updateEval(score) {
+      let percent = 50;
+      let text = "Even";
+      if (score > 90000) { percent = 0; text = "You Win"; }
+      else if (score < -90000) { percent = 100; text = "Engine Wins"; }
+      else {
+        const clamped = Math.max(-1000, Math.min(1000, score));
+        if (humanIsRed) percent = 50 - (clamped / 20); 
+        else percent = 50 + (clamped / 20);
+        text = Math.abs(score).toFixed(0);
+      }
+      evalBarFill.style.width = percent + "%";
+      evalText.textContent = "Advantage: " + text;
+    }
+
+    function endGame(msg) { gameActive = false; }
+    function resetGame() { initGame(); }
+
+    initGame();
+  </script>
+</body>
+</html>

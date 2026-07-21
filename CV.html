@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Curriculum Vitae – Jacob Monzel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: "Times New Roman", Times, serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      color: #000;
+      background-color: #fff;
+      line-height: 1.5;
+    }
+
+    nav {
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+    }
+
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #0000EE;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.2rem;
+      margin-bottom: 2rem;
+      font-weight: bold;
+      border-bottom: 2px solid #000;
+      padding-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      border-bottom: 1px solid #808080;
+      padding-bottom: 5px;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .cv-item {
+      display: flex;
+      margin-bottom: 12px;
+    }
+
+    /* Fixed width for dates on desktop */
+    .cv-date {
+      flex: 0 0 120px; 
+      font-weight: bold;
+      color: #444;
+      padding-right: 15px;
+      text-align: right;
+    }
+
+    .cv-content {
+      flex: 1;
+    }
+
+    .institution {
+      font-weight: bold;
+      font-size: 1.05rem;
+    }
+
+    .role {
+      font-style: italic;
+    }
+
+    .description {
+      color: #333;
+    }
+    
+    @media (max-width: 600px) {
+      /* Reduce page padding on small screens so text goes wider */
+      body {
+        padding: 1rem;
+      }
+      
+      .cv-item {
+        flex-direction: column;
+      }
+      
+      .cv-date {
+        /* CRITICAL FIX: Reset the flex basis so it doesn't force a 120px height */
+        flex: auto; 
+        text-align: left;
+        margin-bottom: 4px;
+        padding-right: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html">Home</a>
+  </nav>
+
+  <main>
+    <h1>Curriculum Vitae</h1>
+    
+    <h2>Education</h2>
+    
+    <div class="cv-item">
+      <div class="cv-date">2025–Present</div>
+      <div class="cv-content">
+        <div class="institution">University of Pennsylvania</div>
+        <div class="description">PhD Student in Mathematics</div>
+      </div>
+    </div>
+
+    <div class="cv-item">
+      <div class="cv-date">2023–2025</div>
+      <div class="cv-content">
+        <div class="institution">New York University</div>
+        <div class="description">
+          M.S. in Mathematics<br>
+          <span class="role">Thesis:</span> Applications of Arakelov Geometry in the Arithmetic of Abelian Varieties<br>
+          <span class="role">Advisor:</span> Fedor Bogomolov
+        </div>
+      </div>
+    </div>
+
+    <div class="cv-item">
+      <div class="cv-date">2019–2023</div>
+      <div class="cv-content">
+        <div class="institution">The Ohio State University</div>
+        <div class="description">B.S. in Mathematics and Economics (Dual Degree)</div>
+      </div>
+    </div>
+
+    <h2>Employment</h2>
+
+    <div class="cv-item">
+      <div class="cv-date">2024</div>
+      <div class="cv-content">
+        <div class="institution">New York University</div>
+        <div class="description">Teaching Assistant, Calculus I (2 sections)</div>
+      </div>
+    </div>
+
+    <div class="cv-item">
+      <div class="cv-date">2023–2024</div>
+      <div class="cv-content">
+        <div class="institution">New York University</div>
+        <div class="description">Grader: Honors Algebra II, Real Analysis</div>
+      </div>
+    </div>
+
+    <div class="cv-item">
+      <div class="cv-date">2022–2023</div>
+      <div class="cv-content">
+        <div class="institution">The Ohio State University</div>
+        <div class="description">
+          Tutor, Economics Learning Center<br>
+          Grader: Real Analysis II, Finite Linear Math, Linear Algebra
+        </div>
+      </div>
+    </div>
+
+    <h2>Service &amp; Seminars</h2>
+
+    <div class="cv-item">
+      <div class="cv-date">2024–2025</div>
+      <div class="cv-content">
+        <div class="institution">Algebraic and Analytic Geometry Seminar (NYU)</div>
+        <div class="description">Co-Organizer</div>
+      </div>
+    </div>
+
+    <div class="cv-item">
+      <div class="cv-date">2024–2025</div>
+      <div class="cv-content">
+        <div class="institution">Arithmetic Geometry Seminar (NYU)</div>
+        <div class="description">Co-Organizer</div>
+      </div>
+    </div>
+
+    <h2>Awards &amp; Honors</h2>
+
+    <div class="cv-item">
+      <div class="cv-date">2022</div>
+      <div class="cv-content">
+        <div class="institution">Gordon Memorial Fund Scholarship</div>
+        <div class="description">The Ohio State University</div>
+      </div>
+    </div>
+
+    <div class="cv-item">
+      <div class="cv-date">2021</div>
+      <div class="cv-content">
+        <div class="institution">Rasor Math Scholarship</div>
+        <div class="description">The Ohio State University</div>
+      </div>
+    </div>
+
+    <div class="cv-item">
+      <div class="cv-date">2020</div>
+      <div class="cv-content">
+        <div class="institution">Tumbleson Scholarship</div>
+        <div class="description">The Ohio State University</div>
+      </div>
+    </div>
+
+  </main>
+</body>
+</html>
