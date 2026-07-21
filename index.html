@@ -24,8 +24,11 @@
 
     img#headshot {
       border-radius: 6px;
-      max-width: 100%;
+      display: block;
+      margin: 0 auto;
+      width: min(260px, 70vw);
       height: auto;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 
     ul {
@@ -60,17 +63,12 @@
   <script type="text/javascript">
     function update_image() {
       var images = [
-        ["../Images/IMG_0345.jpg", "Columbus Triatholan, 2023", "My dad"],
-        ["../Images/IMG_0996.jpg", "Outside Fischer, 2021", "Unknown"],
-        ["../Images/IMG_1375.jpg", "Monterrey MX Mission Trip, 2023", "My mom"],
-        ["../Images/IMG_6701.jpg", "New Photo", "Unknown"] // NEW PHOTO
+        "Images/IMG_0996.jpg",
+        "Images/IMG_6701.jpg"
       ];
 
-      var img = images[Math.floor(Math.random() * images.length)];
-      var filename = "headshots/" + img[0];
-      var titletext = "Spacetime Coordinates: " + img[1] + "\nPhoto Credit: " + img[2];
+      var filename = images[Math.floor(Math.random() * images.length)];
       document.getElementById("headshot").src = filename;
-      document.getElementById("headshot").title = titletext;
     }
 
     function generateDailyMessage() {
@@ -132,7 +130,7 @@
   <footer>
     <div id="lastUpdated"></div>
     <script>
-      document.getElementById("lastUpdated").innerText = "Last Updated: February 5th, 2026";
+      document.getElementById("lastUpdated").innerText = "Last Updated: July 21st, 2026";
     </script>
   </footer>
 
