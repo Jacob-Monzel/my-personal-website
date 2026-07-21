@@ -44,7 +44,8 @@
     /* Quote styling */
     #quote {
       text-align: center;
-      font-size: 1.3rem;
+      font-size: clamp(0.95rem, 3.4vw, 1.3rem);
+      white-space: nowrap;
       margin: 0.9rem 0 0.4rem;
       color: #444;
       font-family: 'UnifrakturMaguntia', serif;
@@ -74,22 +75,25 @@
 
     function generateDailyMessage() {
       const adjectives = {
-        Monday: ["Magnificent", "Marvelous", "Motivated", "Meaningful", "Mindful", "Mighty"],
-        Tuesday: ["Terrific", "Tremendous", "Thankful", "Tenacious", "Thriving", "Thoughtful"],
-        Wednesday: ["Wonderful", "Wacky", "Winning", "Wise", "Wellbeing", "Work-it"],
-        Thursday: ["Thrilling", "Thankful", "Thoughtful", "Triumphant", "Thrive-on", "Trust-filled"],
-        Friday: ["Fantastic", "Fabulous", "Fun-filled", "Fearless", "Focused", "Feel-good"],
-        Saturday: ["Spectacular", "Super", "Satisfying", "Sunny", "Soulful", "Strong"],
-        Sunday: ["Serene", "Sunny", "Spiritual", "Sweet", "Slow-down", "Self-care"]
+        Monday: ["Magnificent", "Marvelous", "Motivated"],
+        Tuesday: ["Terrific", "Tremendous"],
+        Wednesday: ["Wonderful"],
+        Thursday: ["Thrilling", "Thankful"],
+        Friday: ["Fantastic", "Fabulous"],
+        Saturday: ["Super"],
+        Sunday: ["Serene", "Sunny"]
       };
 
       const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
       const today = new Date();
       const dayName = days[today.getDay()];
       const options = adjectives[dayName];
-      const randomAdj = options[Math.floor(Math.random() * options.length)];
 
-      const message = `Have a ${randomAdj} ${dayName}!`;
+      // Seed from the date so the word is fixed for the whole day
+      const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+      const dailyAdj = options[seed % options.length];
+
+      const message = `Have a ${dailyAdj} ${dayName}!`;
       document.getElementById("dailyMessage").textContent = message;
     }
   </script>
@@ -124,8 +128,8 @@
     </ul>
 
     <p>
-      My email is <i>monzel [at] sas [dot] upenn [dot] edu</i>, which you can feel free to use if you have
-      any questions or concerns.
+      I am always happy to talk about mathematics, research ideas, or anything on this site, so
+      please feel free to reach out at <i>monzel@sas.upenn.edu</i>.
       <strong><span id="dailyMessage"></span></strong>
     </p>
   </main>
