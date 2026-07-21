@@ -1,0 +1,35 @@
+# Permanent redirects from the pre-2026 site structure.
+# Cloudflare Pages reads this file natively. Do not delete old entries:
+# they keep old links (emails, bookmarks, search results) alive.
+# Removed content redirects to its section index rather than 404ing.
+
+# Old root pages -> section bundles
+/CV.html                  /cv/        301
+/Papers.html              /papers/    301
+/ExpoNotes.html           /notes/     301
+/CourseList.html          /teaching/  301
+/MathProblemsList.html    /problems/  301
+/MiscStuff.html           /misc/      301
+
+# Old image folder
+/Images/*                 /assets/images/:splat  301
+
+# Old shared PDFs folder
+/PDFs/Diagram_chasing_and_the_snake_lemma.pdf   /notes/Diagram_chasing_and_the_snake_lemma.pdf   301
+# Removed documents -> section landing pages
+/PDFs/MS_Thesis_Preview.pdf   /papers/    301
+/PDFs/abvarnotes.pdf          /teaching/  301
+/PDFs/LombardAbVar.pdf        /teaching/  301
+
+# Old teaching pages (content retired) -> teaching index
+/Teaching/*   /teaching/   301
+
+# Old double-nested misc pages
+/Misc/Misc/ArtDaily.html             /misc/art-daily.html             301
+/Misc/Misc/BlackJack.html            /misc/blackjack.html             301
+/Misc/Misc/BooksIveRead.html         /misc/books-ive-read.html        301
+/Misc/Misc/CardCountingTrainer.html  /misc/card-counting-trainer.html 301
+/Misc/Misc/Connect4.html             /misc/connect4.html              301
+/Misc/Misc/DinoGameRipOff.html       /misc/dino-game.html             301
+/Misc/Misc/HardPuzzle.html           /misc/hard-puzzle.html           301
+/Misc/Misc/PizzaPlaces.html          /misc/pizza-places.html          301
