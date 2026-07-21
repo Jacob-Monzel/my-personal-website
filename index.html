@@ -29,7 +29,6 @@
       width: min(340px, 75vw);
       aspect-ratio: 1 / 1;
       object-fit: cover;
-      object-position: 50% 25%;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 
@@ -65,12 +64,14 @@
   <script type="text/javascript">
     function update_image() {
       var images = [
-        "Images/IMG_0996.jpg",
-        "Images/IMG_6701.jpg"
+        ["Images/IMG_0996.jpg", "50% 25%"],
+        ["Images/IMG_6701.jpg", "50% 55%"]
       ];
 
-      var filename = images[Math.floor(Math.random() * images.length)];
-      document.getElementById("headshot").src = filename;
+      var img = images[Math.floor(Math.random() * images.length)];
+      var el = document.getElementById("headshot");
+      el.src = img[0];
+      el.style.objectPosition = img[1];
     }
 
     function generateDailyMessage() {
