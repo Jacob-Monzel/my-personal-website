@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relational Reasoning Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0A0F;
+    --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    --sans: 'Segoe UI', 'SF Pro Display', -apple-system, system-ui, sans-serif;
+    --blue: #3B82F6;
+    --purple: #8B5CF6;
+    --green: #10B981;
+    --yellow: #F59E0B;
+    --red: #EF4444;
+    --pink: #E879F9;
+    --w10: rgba(255,255,255,0.1);
+    --w05: rgba(255,255,255,0.05);
+    --w04: rgba(255,255,255,0.04);
+    --w03: rgba(255,255,255,0.03);
+    --w25: rgba(255,255,255,0.48);
+    --w30: rgba(255,255,255,0.54);
+    --w35: rgba(255,255,255,0.58);
+    --w40: rgba(255,255,255,0.63);
+    --w50: rgba(255,255,255,0.7);
+    --w60: rgba(255,255,255,0.76);
+    --w70: rgba(255,255,255,0.84);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: #fff; font-family: var(--sans); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  button { font-family: inherit; cursor: pointer; transition: filter 0.15s; }
+  button:hover { filter: brightness(1.15); }
+  input[type="range"] { accent-color: var(--blue); }
+
+  .screen { display: none; max-width: 680px; margin: 0 auto; padding: 48px 20px; }
+  .screen.active { display: block; }
+
+  .hero-sub { font-size: 12px; letter-spacing: 4px; text-transform: uppercase; color: var(--w30); margin-bottom: 14px; font-weight: 500; }
+  .hero-title { font-size: 46px; font-weight: 800; line-height: 1.05; background: linear-gradient(135deg, #fff 0%, #a78bfa 50%, #3b82f6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .hero-desc { font-size: 14px; color: var(--w40); margin-top: 16px; line-height: 1.7; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+  .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .type-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 14px; text-align: left; color: #fff; transition: all 0.2s; }
+  .type-card.active { opacity: 1; }
+  .type-card.inactive { opacity: 0.45; }
+  .type-card-icon { font-size: 20px; margin-bottom: 4px; }
+  .type-card-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+  .type-card-desc { font-size: 11px; color: var(--w35); font-family: var(--mono); }
+
+  .settings-box { background: var(--w03); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 20px; margin-bottom: 20px; }
+  .settings-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--w25); margin-bottom: 16px; }
+  .setting-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 13px; }
+  .setting-row:last-child { margin-bottom: 0; }
+  .setting-label { font-size: 13px; color: var(--w70); }
+  .setting-sub { font-size: 11px; color: var(--w25); margin-left: 6px; }
+
+  .toggle { width: 42px; height: 22px; border-radius: 11px; position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; border: none; }
+  .toggle-knob { width: 16px; height: 16px; border-radius: 8px; background: #fff; position: absolute; top: 3px; transition: left 0.2s; }
+  .toggle.off { background: var(--w10); }
+  .toggle.off .toggle-knob { left: 3px; }
+  .toggle.on .toggle-knob { left: 23px; }
+
+  .science-box { background: rgba(139,92,246,0.05); border: 1px solid rgba(139,92,246,0.12); border-radius: 14px; padding: 18px; margin-bottom: 24px; }
+  .science-title { font-size: 12px; font-weight: 600; color: #a78bfa; margin-bottom: 6px; }
+  .science-text { font-size: 12px; color: var(--w40); line-height: 1.7; }
+
+  .btn-primary { padding: 16px 0; font-size: 16px; font-weight: 700; background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff; border: none; border-radius: 12px; letter-spacing: 0.5px; width: 100%; }
+  .btn-primary:disabled { background: var(--w05); cursor: not-allowed; }
+  .btn-secondary { padding: 13px 0; font-size: 13px; font-weight: 600; background: var(--w04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; color: var(--w50); }
+  .btn-ghost { background: none; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: var(--w40); padding: 7px 14px; font-size: 12px; }
+
+  .shortcuts { text-align: center; margin-top: 12px; font-size: 11px; color: rgba(255,255,255,0.45); }
+
+  /* Training screen */
+  .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .top-stats { display: flex; gap: 16px; font-size: 12px; align-items: center; }
+  .timer-bar { height: 3px; background: var(--w04); border-radius: 2px; margin-bottom: 24px; overflow: hidden; }
+  .timer-fill { height: 100%; border-radius: 2px; transition: width 1s linear, background 0.5s; }
+  .badges { text-align: center; margin-bottom: 20px; display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+  .badge { display: inline-block; padding: 4px 10px; border-radius: 16px; font-size: 11px; font-weight: 600; }
+
+  .premise { background: rgba(255,255,255,0.025); border: 1px solid var(--w05); border-radius: 10px; padding: 12px 18px; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 16px; font-family: var(--mono); animation: fadeIn 0.25s ease both; }
+  .premise .term { font-weight: 700; }
+  .premise .rel { font-size: 13px; font-weight: 500; }
+
+  .question-section { text-align: center; margin-bottom: 30px; }
+  .question-label { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--w25); margin-bottom: 12px; }
+  .question-text { font-size: 20px; font-weight: 700; font-family: var(--mono); display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .question-rel { font-size: 14px; font-weight: 500; }
+
+  .answer-btns { display: flex; gap: 10px; justify-content: center; }
+  .btn-true { flex: 1; max-width: 180px; padding: 14px 0; font-size: 16px; font-weight: 700; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); border-radius: 10px; color: var(--green); }
+  .btn-false { flex: 1; max-width: 180px; padding: 14px 0; font-size: 16px; font-weight: 700; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 10px; color: var(--red); }
+  .btn-unsure { flex: 1; max-width: 180px; padding: 14px 0; font-size: 16px; font-weight: 700; background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.2); border-radius: 10px; color: var(--yellow); }
+
+  .feedback { text-align: center; animation: fadeIn 0.2s ease; }
+  .feedback-icon { width: 64px; height: 64px; border-radius: 32px; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+  .feedback-title { font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+  .feedback-explanation { font-size: 12px; color: var(--w35); line-height: 1.6; max-width: 440px; margin: 0 auto 24px; font-family: var(--mono); }
+  .btn-next { padding: 12px 44px; font-size: 14px; font-weight: 600; background: rgba(255,255,255,0.06); border: 1px solid var(--w10); border-radius: 10px; color: #fff; }
+
+  /* Stats */
+  .stat-grid { display: grid; gap: 8px; margin-bottom: 20px; }
+  .stat-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .stat-card { background: var(--w04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 16px; text-align: center; }
+  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--w35); margin-bottom: 3px; }
+  .stat-value { font-size: 26px; font-weight: 700; font-family: var(--mono); }
+  .stat-sub { font-size: 10px; color: var(--w30); margin-top: 2px; }
+
+  /* Bar charts */
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .bar-label { font-size: 11px; font-weight: 600; width: 80px; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 6px; background: var(--w04); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+  .bar-value { font-size: 12px; font-family: var(--mono); color: var(--w40); width: 36px; text-align: right; }
+
+  /* Mini chart */
+  .chart-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--w30); margin-bottom: 6px; }
+  .chart-range { display: flex; justify-content: space-between; font-size: 10px; color: var(--w25); margin-top: 2px; }
+
+
+  .section-box { background: var(--w03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  .section-title { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--w25); margin-bottom: 12px; }
+
+  .btn-row { display: flex; gap: 10px; }
+  .btn-reset { width: 100%; padding: 10px 0; font-size: 12px; font-weight: 500; background: none; border: 1px solid rgba(239,68,68,0.15); border-radius: 8px; color: rgba(239,68,68,0.5); }
+
+  .results-header { text-align: center; margin-bottom: 32px; }
+  .results-sub { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--w25); margin-bottom: 10px; }
+  .results-title { font-size: 34px; font-weight: 800; background: linear-gradient(135deg, #fff, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .results-meta { font-size: 12px; color: var(--w30); margin-top: 6px; }
+
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+  .progress-title { font-size: 20px; font-weight: 700; }
+
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 500px) {
+    .hero-title { font-size: 36px; }
+    .screen { padding: 32px 16px; }
+    .premise { font-size: 14px; padding: 10px 14px; gap: 8px; }
+    .question-text { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ━━━━ HOME SCREEN ━━━━ -->
+<div id="screen-home" class="screen active">
+  <div style="margin-bottom:18px">
+    <a href="/misc/" style="color:var(--w40);font-family:var(--mono);font-size:12px;text-decoration:none;border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:6px 12px;display:inline-block">&lt;&lt; BACK TO MISC</a>
+  </div>
+  <div style="text-align:center;margin-bottom:44px">
+    <h1 class="hero-title">Relational<br>Reasoning</h1>
+    <p class="hero-desc">Based on the SMART training paradigm.</p>
+  </div>
+
+  <div class="type-grid" id="type-grid"></div>
+
+  <div class="settings-box">
+    <div class="settings-title">Settings</div>
+    <div id="settings-rows"></div>
+  </div>
+
+  <div class="science-box">
+    <div class="science-title">The Science</div>
+    <p class="science-text">Relational integration, the ability to bind separate representations into structured wholes, is among the strongest known predictors of fluid intelligence, explaining variance beyond standard working memory tasks (Chuderski, 2014; Jastrzebski et al., 2020). This trainer follows the SMART paradigm (Roche & Cassidy), which drills relational frames such as same/opposite and more/less at increasing transitive complexity, using nonsense syllables so that answers cannot lean on world knowledge. Early studies reported large IQ gains from this kind of training, but a meta-analysis found only tentative support (May et al., 2022), and recent preregistered randomized trials found that training improves the trained relational skills without clear transfer to IQ. In short, the skill itself is real and closely tied to fluid intelligence, while claims of raising IQ are not well supported. At worst this game does nothing, but it is still somewhat fun and may keep your mind sharp.</p>
+  </div>
+
+  <div class="science-box" style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.08)">
+    <div class="science-title" style="color:rgba(255,255,255,0.54)">Conventions</div>
+    <p class="science-text">Distinct items always take distinct values, so NOT less than means greater than. Same as means the very same item. Opposite to and different from carry no information about order or position. If the premises do not settle the question, the correct answer is CAN'T TELL.</p>
+  </div>
+
+  <div class="btn-row" id="home-buttons"></div>
+  <div class="shortcuts">T / ← = True · F / → = False · U / ↓ = Can't tell · Space = Next</div>
+</div>
+
+<!-- ━━━━ TRAINING SCREEN ━━━━ -->
+<div id="screen-training" class="screen">
+  <div class="top-bar">
+    <button class="btn-ghost" id="btn-end">← End</button>
+    <div class="top-stats" id="top-stats"></div>
+  </div>
+  <div class="timer-bar" id="timer-bar-wrap"><div class="timer-fill" id="timer-fill"></div></div>
+  <div class="badges" id="badges"></div>
+  <div id="premises-container"></div>
+  <div id="question-section"></div>
+  <div id="answer-section"></div>
+  <div id="feedback-section"></div>
+</div>
+
+<!-- ━━━━ RESULTS SCREEN ━━━━ -->
+<div id="screen-results" class="screen">
+  <div id="results-content"></div>
+</div>
+
+<!-- ━━━━ PROGRESS SCREEN ━━━━ -->
+<div id="screen-progress" class="screen">
+  <div id="progress-content"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// RELATIONAL REASONING TRAINER - CORE
+// ═══════════════════════════════════════
+
+const TYPES = {
+  comparison: { name:"Comparison", icon:"⇅", color:"#3B82F6", desc:"A > B, B > C → A > C" },
+  temporal: { name:"Temporal", icon:"≺", color:"#F59E0B", desc:"A before B, B before C → A before C" },
+  sameopposite: { name:"Same / Opposite", icon:"≡≢", color:"#8B5CF6", desc:"same, opposite, different" },
+  spatial: { name:"Spatial", icon:"◈", color:"#10B981", desc:"1D-3D: above, left of, behind" },
+};
+
+// ─── State ───
+const S = {
+  screen: "home",
+  enabledTypes: ["comparison","temporal","sameopposite"],
+  useMeaningful: false,
+  adaptiveMode: true,
+  enableNegation: false,
+  enableMixed: false,
+  enableMutualEntailment: true,
+  enableDistinction: false,
+  allowUndetermined: false,
+  spatialDims: 1,
+  fixedPremises: 3,
+  fixedTimer: 25,
+  problem: null,
+  timeLeft: 0,
+  totalTimer: 0,
+  sessionHistory: [],
+  feedback: null,
+  streak: 0,
+  bestStreak: 0,
+  sessionStartTime: null,
+  fluencyLog: [],
+  allSessions: [],
+  totalTrainingMinutes: 0,
+  timerInterval: null,
+  startTime: null,
+};
+
+// ─── Persistence ───
+function loadProgress() {
+  try {
+    const d = localStorage.getItem("relreason-progress");
+    if (d) {
+      const p = JSON.parse(d);
+      S.allSessions = p.sessions || [];
+      S.totalTrainingMinutes = p.totalMinutes || 0;
+    }
+  } catch(e) {}
+}
+function saveProgress() {
+  try {
+    localStorage.setItem("relreason-progress", JSON.stringify({ sessions: S.allSessions.slice(-100), totalMinutes: S.totalTrainingMinutes }));
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RELATIONAL ENGINE v2 — constraint models, three-valued truth
+// Frames: order (comparison/temporal), spatial Z^1..Z^3,
+//         identity (same / opposite / different)
+// Semantics conventions (stated in-game):
+//   * On any order dimension, distinct items take distinct values
+//     (so "NOT less than" = "greater than").
+//   * "same as" = identical item (shares all values).
+//   * "opposite to" = identity-level opposition; carries NO
+//     magnitude/order information across items.
+//   * "different from" = not the same item; nothing more.
+// ═══════════════════════════════════════════════════════════════
+(function (global) {
+
+const REL = {
+  "greater than": { dim: "value", dir: 1 }, "less than": { dim: "value", dir: -1 },
+  "after":        { dim: "time",  dir: 1 }, "before":    { dim: "time",  dir: -1 },
+  "right of":     { dim: "x",     dir: 1 }, "left of":   { dim: "x",     dir: -1 },
+  "above":        { dim: "y",     dir: 1 }, "below":     { dim: "y",     dir: -1 },
+  "in front of":  { dim: "z",     dir: 1 }, "behind":    { dim: "z",     dir: -1 },
+};
+const IDENT = { "same as": "same", "opposite to": "opp", "different from": "diff" };
+const DIM_RELS = {
+  value: ["greater than", "less than"], time: ["after", "before"],
+  x: ["right of", "left of"], y: ["above", "below"], z: ["in front of", "behind"],
+};
+const FRAME_OF_DIM = { value: "comparison", time: "temporal", x: "spatial", y: "spatial", z: "spatial" };
+// A constraint rel R is displayed negated as "is NOT <NEG_DISPLAY[R]>"
+const NEG_DISPLAY = {
+  "greater than": "less than", "less than": "greater than",
+  "after": "before", "before": "after",
+  "right of": "left of", "left of": "right of",
+  "above": "below", "below": "above",
+  "in front of": "behind", "behind": "in front of",
+  "different from": "same as",
+};
+
+// ─── Model: signed union-find (identity) + per-dim order graphs ───
+function buildModel(cons) {
+  const parent = {}, parity = {};
+  const terms = [];
+  cons.forEach(c => [c.a, c.b].forEach(t => {
+    if (!(t in parent)) { parent[t] = t; parity[t] = 0; terms.push(t); }
+  }));
+  function find(x) {
+    if (parent[x] === x) return x;
+    const par = parent[x];
+    const root = find(par);
+    parity[x] ^= parity[par];
+    parent[x] = root;
+    return root;
+  }
+  let conflict = false;
+  function union(a, b, p) { // p: 0 same, 1 opposite
+    const ra = find(a), rb = find(b);
+    if (ra === rb) { if ((parity[a] ^ parity[b]) !== p) conflict = true; return; }
+    parent[ra] = rb;
+    parity[ra] = parity[a] ^ parity[b] ^ p;
+  }
+  const diffs = [];               // raw "different from" pairs
+  const edges = {};               // dim -> list of [a, b] meaning a > b on dim
+  cons.forEach(c => {
+    const k = IDENT[c.rel];
+    if (k === "same") union(c.a, c.b, 0);
+    else if (k === "opp") union(c.a, c.b, 1);
+    else if (k === "diff") diffs.push([c.a, c.b]);
+    else {
+      const { dim, dir } = REL[c.rel];
+      if (!edges[dim]) edges[dim] = [];
+      edges[dim].push(dir === 1 ? [c.a, c.b] : [c.b, c.a]);
+    }
+  });
+  // freeze parities/keys after all unions
+  const key = t => { const r = find(t); return r + ":" + parity[t]; };
+  // adjacency per dim over signed-class keys
+  const adj = {};
+  Object.keys(edges).forEach(dim => {
+    const m = new Map();
+    edges[dim].forEach(([a, b]) => {
+      const ka = key(a), kb = key(b);
+      if (!m.has(ka)) m.set(ka, new Set());
+      m.get(ka).add(kb);
+    });
+    adj[dim] = m;
+  });
+  return { terms, find, parity, key, adj, diffs, conflict };
+}
+
+function reach(adjMap, from, to) {
+  if (!adjMap) return false;
+  const seen = new Set([from]), q = [from];
+  while (q.length) {
+    const cur = q.shift();
+    if (cur === to) return true;
+    const nx = adjMap.get(cur);
+    if (nx) nx.forEach(k => { if (!seen.has(k)) { seen.add(k); q.push(k); } });
+  }
+  return false;
+}
+
+// ─── Three-valued evaluation: 'T' | 'F' | 'U' ───
+function separated(model, k1, k2) {
+  // a strict order path in either direction on any dimension forces the two
+  // signed classes to hold different values, i.e. to be different items
+  for (const dim in model.adj)
+    if (reach(model.adj[dim], k1, k2) || reach(model.adj[dim], k2, k1)) return true;
+  return false;
+}
+
+function evalIdent(model, a, b, q) {
+  const ra = model.find(a), rb = model.find(b);
+  const pa = model.parity[a], pb = model.parity[b];
+  if (ra === rb) {
+    const same = (pa === pb);
+    if (q === "same") return same ? "T" : "F";
+    if (q === "opp") return same ? "F" : "T";
+    return same ? "F" : "T"; // diff: opposite items are different items
+  }
+  // different classes: explicit "different" constraints + implicit
+  // distinctness derived from order separation
+  let notSame = false, notOpp = false;
+  // check both algebraically equivalent signed-class pairs, since order
+  // edges only exist on classes that carry order premises:
+  //   S(a)=S(b)  <=> val(ra,pa)=val(rb,pb)   <=> val(ra,1^pa)=val(rb,1^pb)
+  //   S(a)=-S(b) <=> val(ra,pa)=val(rb,1^pb) <=> val(ra,1^pa)=val(rb,pb)
+  const ka = ra + ":" + pa, kaF = ra + ":" + (1 ^ pa);
+  const kb = rb + ":" + pb, kbF = rb + ":" + (1 ^ pb);
+  if (separated(model, ka, kb) || separated(model, kaF, kbF)) notSame = true;
+  if (separated(model, ka, kbF) || separated(model, kaF, kb)) notOpp = true;
+  for (const [da, db] of model.diffs) {
+    const r1 = model.find(da), r2 = model.find(db);
+    let c1 = da, c2 = db;
+    if (r1 === rb && r2 === ra) { c1 = db; c2 = da; }
+    else if (!(r1 === ra && r2 === rb)) continue;
+    const m1 = model.parity[c1] ^ pa, m2 = model.parity[c2] ^ pb;
+    if ((m1 ^ m2) === 0) notSame = true; else notOpp = true;
+  }
+  if (q === "same") return notSame ? "F" : "U";
+  if (q === "opp") return notOpp ? "F" : "U";
+  return notSame ? "T" : "U"; // diff
+}
+
+function evalOrder(model, a, b, dim, dir) {
+  const ka = model.key(a), kb = model.key(b);
+  if (ka === kb) return "F"; // same item: strict relation is false
+  let t;
+  if (reach(model.adj[dim], ka, kb)) t = "T";        // a > b on dim
+  else if (reach(model.adj[dim], kb, ka)) t = "F";   // a < b on dim
+  else return "U";
+  if (dir === -1) t = (t === "T") ? "F" : "T";
+  return t;
+}
+
+function evalRel(model, a, b, rel) {
+  if (IDENT[rel]) return evalIdent(model, a, b, IDENT[rel]);
+  const { dim, dir } = REL[rel];
+  return evalOrder(model, a, b, dim, dir);
+}
+
+function evalConj(model, a, b, rels) {
+  let anyU = false;
+  for (const r of rels) {
+    const t = evalRel(model, a, b, r);
+    if (t === "F") return "F";
+    if (t === "U") anyU = true;
+  }
+  return anyU ? "U" : "T";
+}
+
+// ─── Term generators ───
+const CON = "BCDFGHJKLMNPQRSTVWXYZ", VOW = "AEIOU";
+function syl(rnd) { return CON[rnd() * CON.length | 0] + VOW[rnd() * VOW.length | 0] + CON[rnd() * CON.length | 0]; }
+function uniqueTerms(n, rnd) { const s = new Set(); while (s.size < n) s.add(syl(rnd)); return [...s]; }
+const POOLS = [
+  ["Alpha","Bravo","Charlie","Delta","Echo","Foxtrot","Golf","Hotel","India","Juliet","Kilo","Lima"],
+  ["Mercury","Venus","Earth","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto","Ceres","Titan","Europa"],
+  ["Ruby","Topaz","Jade","Opal","Pearl","Onyx","Amber","Quartz","Coral","Garnet","Lapis","Ivory"],
+  ["Maple","Cedar","Birch","Willow","Aspen","Spruce","Hazel","Rowan","Linden","Cypress","Olive","Laurel"],
+];
+function meaningfulTerms(n, rnd) {
+  const p = POOLS[rnd() * POOLS.length | 0];
+  return [...p].sort(() => rnd() - 0.5).slice(0, n);
+}
+
+// ─── Problem generation ───
+// cfg: { enabledTypes, premises, spatialDims, enableDistinction, enableNegation,
+//        enableMixed, enableMutualEntailment, allowUndetermined, useMeaningful }
+function genProblemCore(cfg, rnd) {
+  rnd = rnd || Math.random;
+  for (let att = 0; att < 140; att++) {
+    const p = tryGenCore(cfg, rnd, false);
+    if (p) return p;
+  }
+  return tryGenCore({
+    enabledTypes: ["comparison"], premises: Math.max(2, Math.min(cfg.premises, 4)),
+    spatialDims: 1, enableDistinction: false, enableNegation: false,
+    enableMixed: false, enableMutualEntailment: false, allowUndetermined: false,
+    useMeaningful: cfg.useMeaningful,
+  }, rnd, true);
+}
+
+function tryGenCore(cfg, rnd, fallback) {
+  const np = cfg.premises, n = np + 1;
+  const terms = cfg.useMeaningful ? meaningfulTerms(n, rnd) : uniqueTerms(n, rnd);
+  const enabled = cfg.enabledTypes;
+  if (!enabled.length) return null;
+  const orderFrames = enabled.filter(t => t !== "sameopposite");
+  const primary = enabled[rnd() * enabled.length | 0];
+  let mixed = false, orderFrame = null;
+  if (primary === "sameopposite") {
+    if (cfg.enableMixed && orderFrames.length && rnd() < 0.55) {
+      mixed = true;
+      orderFrame = orderFrames[rnd() * orderFrames.length | 0];
+    }
+  } else {
+    orderFrame = primary;
+    if (cfg.enableMixed && enabled.includes("sameopposite") && rnd() < 0.45) mixed = true;
+  }
+  let axes = null;
+  if (orderFrame === "spatial") {
+    const d = cfg.spatialDims || 1;
+    axes = d >= 3 ? ["x", "y", "z"] : d === 2 ? ["x", "y"] : [["x", "y"][rnd() * 2 | 0]];
+  }
+  // structure: each premise attaches a new term to an existing one
+  const cons = [];
+  let isTree = false;
+  for (let i = 0; i < np; i++) {
+    const newT = terms[i + 1];
+    let base = terms[i];
+    if (cfg.allowUndetermined && np >= 3 && i >= 1 && rnd() < 0.3) {
+      const j = rnd() * (i + 1) | 0;
+      base = terms[j];
+      if (j !== i) isTree = true;
+    }
+    let isId;
+    if (!mixed) isId = (primary === "sameopposite");
+    else isId = rnd() < 0.42;
+    let rel;
+    if (isId) {
+      const opts = ["same as", "opposite to"];
+      if (cfg.enableDistinction) opts.push("different from");
+      rel = opts[rnd() * opts.length | 0];
+    } else {
+      const dim = orderFrame === "spatial" ? axes[rnd() * axes.length | 0]
+        : orderFrame === "comparison" ? "value" : "time";
+      rel = DIM_RELS[dim][rnd() * 2 | 0];
+    }
+    if (fallback) rel = DIM_RELS[orderFrame === "comparison" ? "value" : "time"][0];
+    const flip = fallback ? false : rnd() < 0.5;
+    const [a, b] = flip ? [newT, base] : [base, newT];
+    const negated = !!(cfg.enableNegation && !fallback && NEG_DISPLAY[rel] && rnd() < 0.28);
+    cons.push({ a, b, rel, negated });
+  }
+  const model = buildModel(cons);
+  if (model.conflict) return null;
+
+  // undirected premise-graph distances (question must not restate a premise)
+  const und = new Map();
+  terms.forEach(t => und.set(t, new Set()));
+  cons.forEach(c => { und.get(c.a).add(c.b); und.get(c.b).add(c.a); });
+  function dist(x, y) {
+    const seen = new Map([[x, 0]]); const q = [x];
+    while (q.length) {
+      const cur = q.shift();
+      if (cur === y) return seen.get(cur);
+      und.get(cur).forEach(nx => { if (!seen.has(nx)) { seen.set(nx, seen.get(cur) + 1); q.push(nx); } });
+    }
+    return Infinity;
+  }
+  let pairs = [];
+  if (cfg.enableMutualEntailment) {
+    for (const x of terms) for (const y of terms)
+      if (x !== y && dist(x, y) >= 2) pairs.push([x, y]);
+  } else {
+    if (dist(terms[0], terms[n - 1]) >= 2) pairs = [[terms[0], terms[n - 1]]];
+  }
+  if (!pairs.length) return null;
+
+  // candidate presented relations
+  const hasId = cons.some(c => IDENT[c.rel]) || primary === "sameopposite";
+  const dimsUsed = [...new Set(cons.filter(c => REL[c.rel]).map(c => REL[c.rel].dim))];
+  const relSets = [];
+  if (hasId) {
+    const opts = ["same as", "opposite to"];
+    if (cfg.enableDistinction) opts.push("different from");
+    opts.forEach(r => relSets.push([r]));
+  }
+  dimsUsed.forEach(d => DIM_RELS[d].forEach(r => relSets.push([r])));
+  if (orderFrame === "spatial" && dimsUsed.length >= 2) {
+    for (let i = 0; i < dimsUsed.length; i++)
+      for (let j = i + 1; j < dimsUsed.length; j++)
+        for (const r1 of DIM_RELS[dimsUsed[i]])
+          for (const r2 of DIM_RELS[dimsUsed[j]])
+            relSets.push([r1, r2]);
+    if (dimsUsed.length >= 3)
+      for (const r1 of DIM_RELS[dimsUsed[0]])
+        for (const r2 of DIM_RELS[dimsUsed[1]])
+          for (const r3 of DIM_RELS[dimsUsed[2]])
+            relSets.push([r1, r2, r3]);
+  }
+  if (!relSets.length) return null;
+
+  const byTruth = { T: [], F: [], U: [] };
+  pairs.forEach(([x, y]) => relSets.forEach(rs => {
+    byTruth[evalConj(model, x, y, rs)].push({ x, y, rs });
+  }));
+
+  let order;
+  if (cfg.allowUndetermined && !fallback) {
+    const r = rnd();
+    order = r < 0.36 ? ["T", "F", "U"] : r < 0.70 ? ["F", "T", "U"] : ["U", "T", "F"];
+  } else {
+    order = rnd() < 0.5 ? ["T", "F"] : ["F", "T"];
+  }
+  let pick = null, ans = null;
+  for (const t of order) {
+    if (byTruth[t].length) { pick = byTruth[t][rnd() * byTruth[t].length | 0]; ans = t; break; }
+  }
+  if (!pick) return null;
+  if (!cfg.allowUndetermined && ans === "U") return null;
+
+  const premises = cons.map(c => ({
+    a: c.a, b: c.b, rel: c.rel, negated: c.negated,
+    displayRel: c.negated ? NEG_DISPLAY[c.rel] : c.rel,
+    frameKey: IDENT[c.rel] ? "sameopposite" : FRAME_OF_DIM[REL[c.rel].dim],
+  }));
+  const types = [...new Set(premises.map(p => p.frameKey))];
+  const qFrame = IDENT[pick.rs[0]] ? "sameopposite" : FRAME_OF_DIM[REL[pick.rs[0]].dim];
+  const shuffled = np > 2 ? [...premises].sort(() => rnd() - 0.5) : [...premises];
+  return {
+    premises: shuffled, originalPremises: premises,
+    questionA: pick.x, questionB: pick.y, questionRels: pick.rs, questionFrame: qFrame,
+    answer: ans, numPremises: np, types,
+    isMixed: types.includes("sameopposite") && types.length > 1,
+    hasNegation: premises.some(p => p.negated),
+    isMutualEntailment: !(pick.x === terms[0] && pick.y === terms[n - 1]),
+    structure: isTree ? "tree" : "chain",
+  };
+}
+
+const RelEngine = {
+  REL, IDENT, DIM_RELS, FRAME_OF_DIM, NEG_DISPLAY,
+  buildModel, evalRel, evalConj, genProblemCore, uniqueTerms, meaningfulTerms,
+};
+global.RelEngine = RelEngine;
+if (typeof module !== "undefined" && module.exports) module.exports = RelEngine;
+
+})(typeof window !== "undefined" ? window : globalThis);
+
+// ─── Generation adapter ───
+function genProblem() {
+  return RelEngine.genProblemCore({
+    enabledTypes: S.enabledTypes,
+    premises: currentLevel().premises,
+    spatialDims: S.spatialDims,
+    enableDistinction: S.enableDistinction,
+    enableNegation: S.enableNegation,
+    enableMixed: S.enableMixed,
+    enableMutualEntailment: S.enableMutualEntailment,
+    allowUndetermined: S.allowUndetermined,
+    useMeaningful: S.useMeaningful,
+  });
+}
+
+function currentLevel() {
+  if (!S.adaptiveMode) return {premises:S.fixedPremises,timer:S.fixedTimer};
+  const h=S.sessionHistory;
+  if (h.length<3) return {premises:2,timer:30};
+  const r=h.slice(-6), acc=r.filter(x=>x.correct).length/r.length, avg=r.reduce((s,x)=>s+x.time,0)/r.length;
+  let p=r[r.length-1].premises||2, t=r[r.length-1].timer||30;
+  if (acc>=0.8&&avg<t*0.55) { p=Math.min(p+1,8); t=Math.max(t-2,8); }
+  else if (acc<0.45) { p=Math.max(p-1,2); t=Math.min(t+3,50); }
+  return {premises:p,timer:t};
+}
+
+// ═══════════════════════════════════════
+// RENDERING
+// ═══════════════════════════════════════
+
+function showScreen(name) {
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById("screen-"+name).classList.add("active");
+  S.screen = name;
+}
+
+function renderHome() {
+  // Type grid
+  const grid = document.getElementById("type-grid");
+  grid.innerHTML = "";
+  Object.entries(TYPES).forEach(([key,info])=>{
+    const on = S.enabledTypes.includes(key);
+    const card = document.createElement("button");
+    card.className = "type-card "+(on?"active":"inactive");
+    card.style.background = on?info.color+"12":"rgba(255,255,255,0.02)";
+    card.style.borderColor = on?info.color+"35":"rgba(255,255,255,0.06)";
+    card.innerHTML = `<div class="type-card-icon">${info.icon}</div><div class="type-card-name">${info.name}</div><div class="type-card-desc">${info.desc}</div>`;
+    if (key==="spatial") {
+      const chips = document.createElement("div");
+      chips.style.cssText = "display:flex;gap:6px;justify-content:center;margin-top:8px";
+      [1,2,3].forEach(d=>{
+        const c = document.createElement("span");
+        c.textContent = d+"D";
+        const sel = S.spatialDims===d;
+        c.style.cssText = `padding:2px 10px;border-radius:6px;font-size:11px;font-family:var(--mono);cursor:pointer;border:1px solid ${sel?info.color+"60":"rgba(255,255,255,0.12)"};color:${sel?info.color:"rgba(255,255,255,0.63)"};background:${sel?info.color+"18":"transparent"}`;
+        c.onclick = (e)=>{ e.stopPropagation(); S.spatialDims=d; renderHome(); };
+        chips.appendChild(c);
+      });
+      card.appendChild(chips);
+    }
+    card.onclick = ()=>{
+      if (S.enabledTypes.includes(key)) { if(S.enabledTypes.length>1) S.enabledTypes=S.enabledTypes.filter(t=>t!==key); }
+      else S.enabledTypes.push(key);
+      renderHome();
+    };
+    grid.appendChild(card);
+  });
+
+  // Settings
+  const rows = document.getElementById("settings-rows");
+  rows.innerHTML = "";
+  const settings = [
+    {label:"Adaptive difficulty",key:"adaptiveMode",color:"#3B82F6"},
+    {label:"Meaningful words",sub:"vs nonsense",key:"useMeaningful",color:"#8B5CF6"},
+    {label:"Mutual entailment",sub:"reversed & middle pairs",key:"enableMutualEntailment",color:"#F59E0B"},
+    {label:"Negation",sub:"NOT less = greater",key:"enableNegation",color:"#EF4444"},
+    {label:"Mixed relations",sub:"combine types in one problem",key:"enableMixed",color:"#E879F9"},
+    {label:"Distinction",sub:"adds: different from",key:"enableDistinction",color:"#10B981"},
+    {label:"Indeterminate problems",sub:"adds a CAN'T TELL FROM THIS INFO answer",key:"allowUndetermined",color:"#EAB308"},
+  ];
+  settings.forEach(s=>{
+    const row = document.createElement("div");
+    row.className = "setting-row";
+    row.innerHTML = `<div><span class="setting-label">${s.label}</span>${s.sub?`<span class="setting-sub">${s.sub}</span>`:""}</div>`;
+    const tog = document.createElement("button");
+    tog.className = "toggle "+(S[s.key]?"on":"off");
+    tog.style.background = S[s.key]?s.color:"rgba(255,255,255,0.1)";
+    tog.innerHTML = '<div class="toggle-knob"></div>';
+    tog.onclick = ()=>{ S[s.key]=!S[s.key]; renderHome(); };
+    row.appendChild(tog);
+    rows.appendChild(row);
+  });
+
+  if (!S.adaptiveMode) {
+    [{label:"Premises",key:"fixedPremises",min:2,max:8,step:1},{label:"Timer",key:"fixedTimer",min:8,max:60,step:2,suffix:"s"}].forEach(sl=>{
+      const row = document.createElement("div");
+      row.className = "setting-row";
+      row.innerHTML = `<span class="setting-label" style="color:var(--w60)">${sl.label}: ${S[sl.key]}${sl.suffix||""}</span>`;
+      const inp = document.createElement("input");
+      inp.type="range"; inp.min=sl.min; inp.max=sl.max; inp.step=sl.step; inp.value=S[sl.key];
+      inp.style.width="130px";
+      inp.oninput = ()=>{ S[sl.key]=Number(inp.value); row.querySelector(".setting-label").textContent=`${sl.label}: ${S[sl.key]}${sl.suffix||""}`; };
+      row.appendChild(inp);
+      rows.appendChild(row);
+    });
+  }
+
+  // Buttons
+  const btns = document.getElementById("home-buttons");
+  btns.innerHTML = "";
+  if (S.allSessions.length>0) {
+    const pb = document.createElement("button");
+    pb.className="btn-secondary"; pb.style.flex="1"; pb.textContent="Progress";
+    pb.onclick = ()=>{ renderProgress(); showScreen("progress"); };
+    btns.appendChild(pb);
+  }
+  const sb = document.createElement("button");
+  sb.className="btn-primary"; sb.style.flex="2";
+  sb.textContent="Begin Training"; sb.disabled=S.enabledTypes.length===0;
+  sb.onclick = startSession;
+  btns.appendChild(sb);
+}
+
+// ─── Training ───
+function startSession() {
+  S.sessionHistory=[]; S.streak=0; S.bestStreak=0; S.fluencyLog=[];
+  S.sessionStartTime=Date.now(); S.feedback=null;
+  showScreen("training");
+  nextProblem();
+}
+
+function nextProblem() {
+  S.problem = genProblem();
+  if (!S.problem) return;
+  const lv = currentLevel();
+  S.timeLeft = lv.timer;
+  S.totalTimer = lv.timer;
+  S.feedback = null;
+  S.startTime = Date.now();
+  renderTraining();
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(S.timerInterval);
+  S.timerInterval = setInterval(()=>{
+    S.timeLeft--;
+    updateTimerBar();
+    if (S.timeLeft<=0) { clearInterval(S.timerInterval); recordAnswer(null); }
+  },1000);
+}
+
+function updateTimerBar() {
+  const prog = S.totalTimer>0?S.timeLeft/S.totalTimer:1;
+  const fill = document.getElementById("timer-fill");
+  if (fill) {
+    fill.style.width = (prog*100)+"%";
+    fill.style.background = prog>0.5?"var(--green)":prog>0.25?"var(--yellow)":"var(--red)";
+  }
+}
+
+function recordAnswer(answer) {
+  clearInterval(S.timerInterval);
+  if (!S.problem||S.feedback) return;
+  const p=S.problem, elapsed=(Date.now()-S.startTime)/1000;
+  const timedOut=answer===null;
+  const correctAns = {T:"true",F:"false",U:"undet"}[p.answer];
+  const correct=!timedOut&&answer===correctAns;
+
+  const rec = { correct, time:elapsed, premises:p.numPremises, timer:S.totalTimer, types:p.types, timedOut, isMixed:p.isMixed, hasNegation:p.hasNegation, isMutualEntailment:p.isMutualEntailment, qUndet:p.answer==="U", ts:Date.now() };
+  S.sessionHistory.push(rec);
+
+  if (correct) { S.streak++; S.bestStreak=Math.max(S.bestStreak,S.streak); }
+  else S.streak=0;
+
+  // Fluency
+  if (S.sessionStartTime) {
+    const mi = Math.floor((Date.now()-S.sessionStartTime)/60000);
+    while(S.fluencyLog.length<=mi) S.fluencyLog.push({minute:S.fluencyLog.length,correct:0,total:0});
+    S.fluencyLog[mi].total++;
+    if (correct) S.fluencyLog[mi].correct++;
+  }
+
+  const chain = p.originalPremises.map(pr=>`${pr.a} is ${pr.negated?"NOT ":""}${pr.displayRel} ${pr.b}`).join(" · ");
+  const why = p.answer==="U" ? `The premises do not determine this relation. Given: ${chain}` : `Given: ${chain}`;
+  S.feedback = { correct, timedOut, explanation: timedOut?`Time's up. ${why}`:correct?"Correct!":`Incorrect. ${why}` };
+  renderTraining();
+}
+
+function renderTraining() {
+  const p=S.problem;
+  if (!p) return;
+  const h=S.sessionHistory, acc=h.length?Math.round(h.filter(r=>r.correct).length/h.length*100):0;
+  const recent=h.filter(r=>r.ts&&Date.now()-r.ts<60000);
+  const fluency=recent.filter(r=>r.correct).length;
+
+  document.getElementById("top-stats").innerHTML = `
+    <span style="color:var(--w30)">#${h.length+(S.feedback?0:1)}</span>
+    <span style="color:var(--yellow)">streak ${S.streak}</span>
+    <span style="color:var(--w30)">${acc}%</span>
+    <span style="color:var(--purple);font-family:var(--mono);font-size:11px">${fluency}/min</span>
+  `;
+
+  // Timer
+  const tbw=document.getElementById("timer-bar-wrap");
+  tbw.style.display = S.feedback?"none":"block";
+  if (!S.feedback) updateTimerBar();
+
+  // Badges
+  const badges=document.getElementById("badges");
+  badges.innerHTML = p.types.map(t=>`<span class="badge" style="background:${TYPES[t].color}10;border:1px solid ${TYPES[t].color}25;color:${TYPES[t].color}">${TYPES[t].icon} ${TYPES[t].name}</span>`).join("")
+    +`<span class="badge" style="background:var(--w04);color:var(--w30)">${p.numPremises}P${p.hasNegation?" · NEG":""}${p.isMixed?" · MIX":""}${p.isMutualEntailment?" · ME":""}</span>`;
+
+  // Premises
+  const pc = document.getElementById("premises-container");
+  pc.innerHTML = "";
+  p.premises.forEach((pr,i)=>{
+    const div = document.createElement("div");
+    div.className = "premise";
+    div.style.animationDelay = (i*0.06)+"s";
+    const col = TYPES[pr.frameKey].color;
+    if (pr.negated) {
+      div.innerHTML = `<span class="term">${pr.a}</span><span class="rel"><span style="color:var(--red)">is NOT</span> <span style="color:${col}">${pr.displayRel}</span></span><span class="term">${pr.b}</span>`;
+    } else {
+      div.innerHTML = `<span class="term">${pr.a}</span><span class="rel" style="color:${col}">is ${pr.displayRel}</span><span class="term">${pr.b}</span>`;
+    }
+    pc.appendChild(div);
+  });
+
+  // Question / Feedback
+  const qs = document.getElementById("question-section");
+  const as = document.getElementById("answer-section");
+  const fs = document.getElementById("feedback-section");
+
+  if (!S.feedback) {
+    const qCol = TYPES[p.questionFrame]?.color||"#a78bfa";
+    qs.innerHTML = `<div class="question-section"><div class="question-label">Therefore</div><div class="question-text"><span>${p.questionA}</span><span class="question-rel" style="color:${qCol}">is ${p.questionRels.join(" and ")}</span><span>${p.questionB}</span><span style="font-size:16px;color:var(--w25)">?</span></div></div>`;
+    const uBtn = S.allowUndetermined ? `<button class="btn-unsure" id="btn-unsure">CAN'T TELL</button>` : "";
+    as.innerHTML = `<div class="answer-btns"><button class="btn-true" id="btn-true">TRUE</button><button class="btn-false" id="btn-false">FALSE</button>${uBtn}</div>`;
+    document.getElementById("btn-true").onclick = ()=>recordAnswer("true");
+    document.getElementById("btn-false").onclick = ()=>recordAnswer("false");
+    if (S.allowUndetermined) document.getElementById("btn-unsure").onclick = ()=>recordAnswer("undet");
+    fs.innerHTML = "";
+  } else {
+    qs.innerHTML = "";
+    as.innerHTML = "";
+    const fb=S.feedback;
+    const col = fb.correct?"var(--green)":fb.timedOut?"var(--yellow)":"var(--red)";
+    const bg = fb.correct?"rgba(16,185,129,0.12)":fb.timedOut?"rgba(245,158,11,0.12)":"rgba(239,68,68,0.12)";
+    const icon = fb.correct?"✓":fb.timedOut?"!":"✗";
+    const title = fb.correct?"Correct!":fb.timedOut?"Time's Up":"Incorrect";
+    fs.innerHTML = `<div class="feedback">
+      <div class="feedback-icon" style="background:${bg};color:${col}">${icon}</div>
+      <div class="feedback-title" style="color:${col}">${title}</div>
+      ${!fb.correct?`<p class="feedback-explanation">${fb.explanation}</p>`:""}
+      <button class="btn-next" id="btn-next" style="margin-top:${fb.correct?"14px":"0"}">Next →</button>
+    </div>`;
+    document.getElementById("btn-next").onclick = nextProblem;
+  }
+}
+
+function endSession() {
+  clearInterval(S.timerInterval);
+  const dur = S.sessionStartTime?(Date.now()-S.sessionStartTime)/60000:0;
+  const h=S.sessionHistory, total=h.length, correct=h.filter(r=>r.correct).length;
+  const maxP=total?Math.max(...h.map(r=>r.premises)):0;
+  const avgT=total?h.reduce((s,r)=>s+r.time,0)/total:0;
+  const fluVals=S.fluencyLog.map(f=>f.correct);
+
+  if (total>0) {
+    const summary = { date:new Date().toISOString(), duration:Math.round(dur*10)/10, total, correct, accuracy:Math.round(correct/total*100), maxPremises:maxP, avgTime:Math.round(avgT*10)/10, bestStreak:S.bestStreak, fluency:fluVals, peakFluency:fluVals.length?Math.max(...fluVals):0 };
+    S.allSessions.push(summary);
+    S.totalTrainingMinutes += summary.duration;
+    saveProgress();
+    renderResults();
+    showScreen("results");
+  } else {
+    renderHome();
+    showScreen("home");
+  }
+}
+
+// ─── Results ───
+function renderResults() {
+  const h=S.sessionHistory, total=h.length, correct=h.filter(r=>r.correct).length;
+  const timedOut=h.filter(r=>r.timedOut).length;
+  const acc=total?Math.round(correct/total*100):0;
+  const avg=total?(h.reduce((s,r)=>s+r.time,0)/total).toFixed(1):"—";
+  const maxP=total?Math.max(...h.map(r=>r.premises)):0;
+  const dur=S.sessionStartTime?((Date.now()-S.sessionStartTime)/60000).toFixed(1):"—";
+  const fluData=S.fluencyLog.map(f=>f.correct);
+  const peakFlu=fluData.length?Math.max(...fluData):0;
+
+  // By type
+  const byType={};
+  h.forEach(r=>(r.types||[]).forEach(t=>{ if(!byType[t]) byType[t]={total:0,correct:0}; byType[t].total++; if(r.correct) byType[t].correct++; }));
+
+  // Features
+  const features = [
+    {label:"Negation",data:h.filter(r=>r.hasNegation),color:"var(--red)"},
+    {label:"Mixed",data:h.filter(r=>r.isMixed),color:"var(--pink)"},
+    {label:"Mutual Ent.",data:h.filter(r=>r.isMutualEntailment),color:"var(--yellow)"},
+    {label:"Can't tell",data:h.filter(r=>r.qUndet),color:"var(--green)"},
+  ].filter(f=>f.data.length>0);
+
+  let html = `
+    <div class="results-header">
+      <div class="results-sub">Session Complete</div>
+      <h2 class="results-title">${acc}% Accuracy</h2>
+      <div class="results-meta">${dur} min · ${total} trials</div>
+    </div>
+    <div class="stat-grid stat-grid-3">
+      ${statCardHTML("Correct",correct,"of "+total,"var(--green)")}
+      ${statCardHTML("Avg Time",avg+"s","","var(--blue)")}
+      ${statCardHTML("Streak",S.bestStreak,"","var(--yellow)")}
+    </div>
+    <div class="stat-grid stat-grid-3">
+      ${statCardHTML("Max Premises",maxP,"","var(--purple)")}
+      ${statCardHTML("Timed Out",timedOut,"","var(--red)")}
+      ${statCardHTML("Peak Fluency",peakFlu,"/min","var(--pink)")}
+    </div>`;
+
+  if (fluData.length>=2) {
+    html += `<div class="section-box">${miniChartHTML(fluData,"var(--pink)","Fluency (correct/min over session)",45)}</div>`;
+  }
+
+  if (Object.keys(byType).length) {
+    html += `<div class="section-box"><div class="section-title">By Relation Type</div>`;
+    Object.entries(byType).forEach(([t,d])=>{
+      const pct=Math.round(d.correct/d.total*100);
+      html += barRowHTML(TYPES[t].icon+" "+TYPES[t].name, pct, TYPES[t].color);
+    });
+    html += `</div>`;
+  }
+
+  if (features.length) {
+    html += `<div class="section-box"><div class="section-title">Feature Breakdown</div>`;
+    features.forEach(f=>{
+      const pct=Math.round(f.data.filter(r=>r.correct).length/f.data.length*100);
+      html += barRowHTML(f.label, pct, f.color);
+    });
+    html += `</div>`;
+  }
+
+  html += `<div class="btn-row">
+    <button class="btn-secondary" style="flex:1" onclick="renderHome();showScreen('home')">Home</button>
+    <button class="btn-primary" style="flex:2" onclick="startSession()">Train Again</button>
+  </div>`;
+
+  document.getElementById("results-content").innerHTML = html;
+}
+
+// ─── Progress Dashboard ───
+function renderProgress() {
+  const ss=S.allSessions;
+  const accD=ss.map(s=>s.accuracy), premD=ss.map(s=>s.maxPremises), fluD=ss.map(s=>s.peakFluency||0), timeD=ss.map(s=>s.avgTime), streakD=ss.map(s=>s.bestStreak||0);
+  const avgAcc=accD.length?Math.round(accD.reduce((a,b)=>a+b,0)/accD.length):0;
+
+  let html = `
+    <div class="progress-header">
+      <button class="btn-ghost" onclick="renderHome();showScreen('home')">← Back</button>
+      <h2 class="progress-title">Progress</h2>
+      <div style="width:60px"></div>
+    </div>
+    <div class="stat-grid stat-grid-3">
+      ${statCardHTML("Sessions",ss.length,"","var(--blue)")}
+      ${statCardHTML("Total Min",Math.round(S.totalTrainingMinutes),"","var(--purple)")}
+      ${statCardHTML("Avg Accuracy",avgAcc+"%","","var(--green)")}
+    </div>
+    <div class="section-box">
+      ${miniChartHTML(accD,"var(--green)","Accuracy % over sessions",50)}
+      ${miniChartHTML(premD,"var(--purple)","Max premises reached",40)}
+      ${miniChartHTML(fluD,"var(--pink)","Peak fluency (correct/min)",40)}
+      ${miniChartHTML(timeD,"var(--blue)","Avg response time (s)",40)}
+      ${miniChartHTML(streakD,"var(--yellow)","Best streak per session",40)}
+    </div>
+    <button class="btn-reset" onclick="resetProgress()">Reset All Progress</button>`;
+
+  document.getElementById("progress-content").innerHTML = html;
+}
+
+function resetProgress() {
+  if (confirm("Reset all progress data? This cannot be undone.")) {
+    S.allSessions=[]; S.totalTrainingMinutes=0;
+    saveProgress();
+    renderHome(); showScreen("home");
+  }
+}
+
+// ─── HTML helpers ───
+function statCardHTML(label,value,sub,color) {
+  return `<div class="stat-card"><div class="stat-label">${label}</div><div class="stat-value" style="color:${color}">${value}</div>${sub?`<div class="stat-sub">${sub}</div>`:""}</div>`;
+}
+
+function barRowHTML(label,pct,color) {
+  return `<div class="bar-row"><span class="bar-label" style="color:${color}">${label}</span><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div><span class="bar-value">${pct}%</span></div>`;
+}
+
+function miniChartHTML(data,color,label,height) {
+  if (!data||data.length<2) return "";
+  const w=200, max=Math.max(...data,1), min=Math.min(...data,0), range=max-min||1;
+  const pts=data.map((v,i)=>`${(i/(data.length-1))*w},${height-((v-min)/range)*(height-4)}`).join(" ");
+  const lastX=(data.length-1)/(data.length-1)*w, lastY=height-((data[data.length-1]-min)/range)*(height-4);
+  const first=typeof data[0]==="number"?(Number.isInteger(data[0])?data[0]:data[0].toFixed(1)):data[0];
+  const last=typeof data[data.length-1]==="number"?(Number.isInteger(data[data.length-1])?data[data.length-1]:data[data.length-1].toFixed(1)):data[data.length-1];
+  return `<div style="margin-bottom:16px">
+    ${label?`<div class="chart-label">${label}</div>`:""}
+    <svg width="${w}" height="${height}" style="display:block">
+      <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${lastX}" cy="${lastY}" r="3" fill="${color}"/>
+    </svg>
+    <div class="chart-range"><span>${first}</span><span>${last}</span></div>
+  </div>`;
+}
+
+// ─── Keyboard ───
+document.addEventListener("keydown",e=>{
+  if (S.screen!=="training") return;
+  if (S.feedback) {
+    if (e.key===" "||e.key==="Enter") { e.preventDefault(); nextProblem(); }
+    return;
+  }
+  if (e.key==="ArrowLeft"||e.key==="t"||e.key==="T") { e.preventDefault(); recordAnswer("true"); }
+  if (e.key==="ArrowRight"||e.key==="f"||e.key==="F") { e.preventDefault(); recordAnswer("false"); }
+  if ((e.key==="ArrowDown"||e.key==="u"||e.key==="U")&&S.allowUndetermined) { e.preventDefault(); recordAnswer("undet"); }
+});
+
+// ─── Wire up end button ───
+document.getElementById("btn-end").onclick = endSession;
+
+// ─── Init ───
+loadProgress();
+renderHome();
+</script>
+</body>
+</html>
