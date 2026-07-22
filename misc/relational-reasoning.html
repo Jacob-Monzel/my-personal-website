@@ -176,7 +176,7 @@
 
   <div class="science-box" style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.08)">
     <div class="science-title" style="color:rgba(255,255,255,0.54)">Conventions</div>
-    <p class="science-text">Distinct items always take distinct values, so NOT less than means greater than. Same as means the very same item. Opposite to and different from carry no information about order or position. If the premises do not settle the question, the correct answer is CAN'T TELL. Containment is one-way and is never negated. A conditional question reads as: supposing the first item, what follows about the second.</p>
+    <p class="science-text">Distinct items always take distinct values, so NOT less than means greater than. Same as means the very same item. Opposite to and different from carry no information about order or position. If the premises do not settle the question, the correct answer is CAN'T TELL. Containment is one-way and is never negated. A conditional question reads as: supposing the first item, what follows about the second. An analogy question asks whether the second pair stands in the same relation as the first.</p>
   </div>
 
   <div class="btn-row" id="home-buttons"></div>
@@ -254,6 +254,7 @@ const S = {
   enableDistinction: false,
   allowUndetermined: false,
   enableBranching: false,
+  enableAnalogy: false,
   spatialDims: 1,
   fixedPremises: 3,
   fixedTimer: 25,
@@ -460,6 +461,20 @@ function evalConj(model, a, b, rels) {
   return anyU ? "U" : "T";
 }
 
+// ─── Analogy evaluation (pure order frames only) ───
+// "A : B relates as C : D on dim": T iff the same strict relation holds
+// between both pairs in every model, F iff they disagree in every model.
+// With both pairs individually undetermined, full correlation is impossible
+// for distinct pairs (it would force a directed cycle in the premises),
+// except a pair against its own reversal, which always mismatches.
+function evalAnalogy(model, dim, A, B, C, D) {
+  const t1 = evalOrder(model, A, B, dim, 1);
+  const t2 = evalOrder(model, C, D, dim, 1);
+  if (t1 !== "U" && t2 !== "U") return t1 === t2 ? "T" : "F";
+  if (A === D && B === C) return "F";
+  return "U";
+}
+
 // ─── Term generators ───
 const CON = "BCDFGHJKLMNPQRSTVWXYZ", VOW = "AEIOU";
 function syl(rnd) { return CON[rnd() * CON.length | 0] + VOW[rnd() * VOW.length | 0] + CON[rnd() * CON.length | 0]; }
@@ -510,7 +525,7 @@ function genProblemCore(cfg, rnd) {
     enabledTypes: ["comparison"], premises: Math.max(2, Math.min(cfg.premises, 4)),
     spatialDims: 1, enableDistinction: false, enableNegation: false,
     enableMixed: false, enableMutualEntailment: false, allowUndetermined: false,
-    enableBranching: false, useMeaningful: cfg.useMeaningful,
+    enableBranching: false, enableAnalogy: false, useMeaningful: cfg.useMeaningful,
   }, rnd, true);
 }
 
@@ -530,6 +545,7 @@ function tryGenCore(cfg, rnd, fallback) {
     }
   } else {
     orderFrame = primary;
+    if (cfg.enableAnalogy && !fallback && rnd() < 0.4) return tryGenAnalogy(cfg, rnd, primary);
     if (cfg.enableMixed && enabled.includes("sameopposite") && rnd() < 0.45) mixed = true;
   }
   let axes = null;
@@ -814,10 +830,135 @@ function tryGenCond(cfg, rnd) {
   };
 }
 
+function tryGenAnalogy(cfg, rnd, frame) {
+  const np = cfg.premises;
+  const allTerms = cfg.useMeaningful ? meaningfulTerms(np + 1, rnd) : uniqueTerms(np + 1, rnd);
+  let axes = null;
+  if (frame === "spatial") {
+    const d = cfg.spatialDims || 1;
+    axes = d >= 3 ? ["x", "y", "z"] : d === 2 ? ["x", "y"] : [["x", "y"][rnd() * 2 | 0]];
+  }
+  const dimOf = () => frame === "spatial" ? axes[rnd() * axes.length | 0]
+    : frame === "comparison" ? "value" : frame === "temporal" ? "time" : "containment";
+  let extraTarget = 0;
+  if (cfg.enableBranching && np >= 3) extraTarget = 1 + (np >= 5 && rnd() < 0.4 ? 1 : 0);
+  const branchProb = ((cfg.allowUndetermined || cfg.enableBranching) && np >= 3) ? 0.3 : 0;
+  const cons = [];
+  const adjPairs = new Set();
+  const pairKey = (x, y) => x < y ? x + "|" + y : y + "|" + x;
+  let used = 1, isTree = false, isDag = false;
+  function addTreeEdge() {
+    const newT = allTerms[used];
+    let base = allTerms[used - 1];
+    if (used >= 2 && rnd() < branchProb) {
+      const j = rnd() * used | 0;
+      base = allTerms[j];
+      if (j !== used - 1) isTree = true;
+    }
+    const rel = DIM_RELS[dimOf()][rnd() * 2 | 0];
+    const flip = rnd() < 0.5;
+    const [a, b] = flip ? [newT, base] : [base, newT];
+    const negated = !!(cfg.enableNegation && NEG_DISPLAY[rel] && rnd() < 0.28);
+    cons.push({ a, b, rel, negated });
+    adjPairs.add(pairKey(a, b));
+    used++;
+  }
+  while (used < np + 1 - extraTarget) addTreeEdge();
+  let extras = extraTarget;
+  while (cons.length < np) {
+    let placed = false;
+    if (extras > 0 && used >= 3) {
+      for (let t = 0; t < 20 && !placed; t++) {
+        const i = rnd() * used | 0, j = rnd() * used | 0;
+        if (i === j) continue;
+        const u = allTerms[i], v = allTerms[j];
+        if (adjPairs.has(pairKey(u, v))) continue;
+        const rel = DIM_RELS[dimOf()][rnd() * 2 | 0];
+        const flip = rnd() < 0.5;
+        const [a, b] = flip ? [v, u] : [u, v];
+        if (evalRel(buildModel(cons), a, b, rel) !== "U") continue;
+        const negated = !!(cfg.enableNegation && NEG_DISPLAY[rel] && rnd() < 0.28);
+        cons.push({ a, b, rel, negated });
+        adjPairs.add(pairKey(a, b));
+        isDag = true; extras--; placed = true;
+      }
+    }
+    if (!placed) {
+      if (used >= allTerms.length) return null;
+      addTreeEdge();
+    }
+  }
+  const model = buildModel(cons);
+  if (model.conflict) return null;
+  if (isDag) {
+    for (let i = 0; i < cons.length; i++) {
+      const rest = cons.filter((_, k) => k !== i);
+      if (evalRel(buildModel(rest), cons[i].a, cons[i].b, cons[i].rel) !== "U") return null;
+    }
+  }
+  const terms = allTerms.slice(0, used);
+  const und = new Map();
+  terms.forEach(t => und.set(t, new Set()));
+  cons.forEach(c => { und.get(c.a).add(c.b); und.get(c.b).add(c.a); });
+  function dist(x, y) {
+    const seen = new Map([[x, 0]]); const q = [x];
+    while (q.length) {
+      const cur = q.shift();
+      if (cur === y) return seen.get(cur);
+      und.get(cur).forEach(nx => { if (!seen.has(nx)) { seen.set(nx, seen.get(cur) + 1); q.push(nx); } });
+    }
+    return Infinity;
+  }
+  const dimsUsed = [...new Set(cons.map(c => REL[c.rel].dim))];
+  const byTruth = { T: [], F: [], U: [] };
+  for (const dim of dimsUsed) {
+    for (const a of terms) for (const b of terms) {
+      if (a === b) continue;
+      for (const c of terms) for (const d of terms) {
+        if (c === d) continue;
+        // exclude identical and reversed pair-sets: trivial or gotcha questions
+        if ((a === c && b === d) || (a === d && b === c)) continue;
+        // at least one pair must not restate a premise
+        if (dist(a, b) < 2 && dist(c, d) < 2) continue;
+        byTruth[evalAnalogy(model, dim, a, b, c, d)].push({ a, b, c, d, dim });
+      }
+    }
+  }
+  let order;
+  if (cfg.allowUndetermined) {
+    const r = rnd();
+    order = r < 0.36 ? ["T", "F", "U"] : r < 0.70 ? ["F", "T", "U"] : ["U", "T", "F"];
+  } else {
+    order = rnd() < 0.5 ? ["T", "F"] : ["F", "T"];
+  }
+  let pick = null, ans = null;
+  for (const t of order) {
+    if (byTruth[t].length) { pick = byTruth[t][rnd() * byTruth[t].length | 0]; ans = t; break; }
+  }
+  if (!pick) return null;
+  if (!cfg.allowUndetermined && ans === "U") return null;
+
+  const premises = cons.map(c => ({
+    a: c.a, b: c.b, rel: c.rel, negated: c.negated,
+    displayRel: c.negated ? NEG_DISPLAY[c.rel] : c.rel,
+    frameKey: FRAME_OF_DIM[REL[c.rel].dim],
+  }));
+  const shuffled = np > 2 ? [...premises].sort(() => rnd() - 0.5) : [...premises];
+  return {
+    premises: shuffled, originalPremises: premises, analog: true,
+    questionA: pick.a, questionB: pick.b, questionC: pick.c, questionD: pick.d,
+    questionDim: pick.dim, questionFrame: frame, questionRels: ["relates as"],
+    answer: ans, numPremises: np, types: [frame],
+    isMixed: false, hasNegation: premises.some(p => p.negated),
+    isMutualEntailment: true,
+    structure: isDag ? "dag" : isTree ? "tree" : "chain",
+  };
+}
+
 const RelEngine = {
   REL, IDENT, DIM_RELS, FRAME_OF_DIM, NEG_DISPLAY,
   buildModel, evalRel, evalConj, genProblemCore, uniqueTerms, meaningfulTerms,
-  buildCondModel, evalCond, condNOT,
+  buildCondModel, evalCond, condNOT, evalAnalogy,
 };
 global.RelEngine = RelEngine;
 if (typeof module !== "undefined" && module.exports) module.exports = RelEngine;
@@ -836,6 +977,7 @@ function genProblem() {
     enableMutualEntailment: S.enableMutualEntailment,
     allowUndetermined: S.allowUndetermined,
     enableBranching: S.enableBranching,
+    enableAnalogy: S.enableAnalogy,
     useMeaningful: S.useMeaningful,
   });
 }
@@ -905,6 +1047,7 @@ function renderHome() {
     {label:"Distinction",sub:"adds: different from",key:"enableDistinction",color:"#10B981"},
     {label:"Indeterminate problems",sub:"adds a CAN'T TELL FROM THIS INFO answer",key:"allowUndetermined",color:"#EAB308"},
     {label:"Branching structures",sub:"problems fork and rejoin",key:"enableBranching",color:"#38BDF8"},
+    {label:"Analogy questions",sub:"A : B as C : D",key:"enableAnalogy",color:"#A78BFA"},
   ];
   settings.forEach(s=>{
     const row = document.createElement("div");
@@ -995,7 +1138,7 @@ function recordAnswer(answer) {
   const correctAns = {T:"true",F:"false",U:"undet"}[p.answer];
   const correct=!timedOut&&answer===correctAns;
 
-  const rec = { correct, time:elapsed, premises:p.numPremises, timer:S.totalTimer, types:p.types, timedOut, isMixed:p.isMixed, hasNegation:p.hasNegation, isMutualEntailment:p.isMutualEntailment, qUndet:p.answer==="U", structure:p.structure, ts:Date.now() };
+  const rec = { correct, time:elapsed, premises:p.numPremises, timer:S.totalTimer, types:p.types, timedOut, isMixed:p.isMixed, hasNegation:p.hasNegation, isMutualEntailment:p.isMutualEntailment, qUndet:p.answer==="U", structure:p.structure, analog:!!p.analog, ts:Date.now() };
   S.sessionHistory.push(rec);
 
   if (correct) { S.streak++; S.bestStreak=Math.max(S.bestStreak,S.streak); }
@@ -1058,14 +1201,19 @@ function renderTraining() {
   if (!S.feedback) {
     const qCol = TYPES[p.questionFrame]?.color||"#a78bfa";
     let qInner;
-    if (p.questionFrame === "conditional") {
+    if (p.analog) {
+      const AX = { x: "horizontally", y: "vertically", z: "in depth" };
+      const axis = (p.questionFrame === "spatial" && (S.spatialDims || 1) > 1)
+        ? ` <span style="color:var(--w25);font-size:14px">(${AX[p.questionDim]})</span>` : "";
+      qInner = `<span>${p.questionA}</span><span class="question-rel" style="color:${qCol}">is to</span><span>${p.questionB}</span><span class="question-rel" style="color:${qCol}">as</span><span>${p.questionC}</span><span class="question-rel" style="color:${qCol}">is to</span><span>${p.questionD}</span>${axis}`;
+    } else if (p.questionFrame === "conditional") {
       qInner = `<span class="question-rel" style="color:${qCol}">if</span><span>${p.questionA}</span><span class="question-rel" style="color:${qCol}">${p.questionRels[0]}</span><span>${p.questionB}</span>`;
     } else if (p.questionFrame === "hierarchy") {
       qInner = `<span>${p.questionA}</span><span class="question-rel" style="color:${qCol}">${p.questionRels.join(" and ")}</span><span>${p.questionB}</span>`;
     } else {
       qInner = `<span>${p.questionA}</span><span class="question-rel" style="color:${qCol}">is ${p.questionRels.join(" and ")}</span><span>${p.questionB}</span>`;
     }
-    qs.innerHTML = `<div class="question-section"><div class="question-label">Therefore</div><div class="question-text">${qInner}<span style="font-size:16px;color:var(--w25)">?</span></div></div>`;
+    qs.innerHTML = `<div class="question-section"><div class="question-label">${p.analog?"Analogy":"Therefore"}</div><div class="question-text">${qInner}<span style="font-size:16px;color:var(--w25)">?</span></div></div>`;
     const uBtn = S.allowUndetermined ? `<button class="btn-unsure" id="btn-unsure">CAN'T TELL</button>` : "";
     as.innerHTML = `<div class="answer-btns"><button class="btn-true" id="btn-true">TRUE</button><button class="btn-false" id="btn-false">FALSE</button>${uBtn}</div>`;
     document.getElementById("btn-true").onclick = ()=>recordAnswer("true");
@@ -1133,6 +1281,7 @@ function renderResults() {
     {label:"Mutual Ent.",data:h.filter(r=>r.isMutualEntailment),color:"var(--yellow)"},
     {label:"Can't tell",data:h.filter(r=>r.qUndet),color:"var(--green)"},
     {label:"Branching",data:h.filter(r=>r.structure&&r.structure!=="chain"),color:"#38BDF8"},
+    {label:"Analogy",data:h.filter(r=>r.analog),color:"#A78BFA"},
   ].filter(f=>f.data.length>0);
 
   let html = `
