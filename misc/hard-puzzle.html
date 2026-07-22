@@ -15,6 +15,25 @@
       padding: 20px;
     }
 
+    nav {
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      text-align: center; 
+      background-color: #f0f0f0;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+    }
+
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #0000EE;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
     h1 {
       margin-top: 0;
       font-size: 2.2rem;
@@ -119,6 +138,11 @@
   </style>
 </head>
 <body>
+
+  <nav>
+    <a href="/">Home</a>
+    <a href="/misc/">Back to Misc</a>
+  </nav>
 
   <h1>Sliding Puzzle</h1>
 
@@ -278,16 +302,13 @@
       const clickedPos = indexToPos(index);
       const blankPos = indexToPos(blankIndex);
 
-      // Check if in the same row or column
       if (clickedPos.row !== blankPos.row && clickedPos.col !== blankPos.col) {
         return; 
       }
 
-      // Save state for undo
       undoStack.push([...tiles]);
       redoStack = []; 
 
-      // Determine the path of indices to shift (Multi-Slide Logic)
       const path = [];
       if (clickedPos.row === blankPos.row) {
         const step = clickedPos.col > blankPos.col ? 1 : -1;
@@ -301,7 +322,6 @@
         }
       }
 
-      // Shift tiles along the path one by one
       let currentBlank = blankIndex;
       for (const pos of path) {
         [tiles[currentBlank], tiles[pos]] = [tiles[pos], tiles[currentBlank]];
@@ -407,7 +427,6 @@
     scrambleBtn.addEventListener("click", scramble);
     resetBtn.addEventListener("click", initBoard);
 
-    // Keyboard controls
     document.addEventListener("keydown", (e) => {
       if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) {
         e.preventDefault();
@@ -423,12 +442,10 @@
         if (tr >= 0 && tr < size && tc >= 0 && tc < size) handleTileClick(posToIndex(tr, tc));
       }
       
-      // Optional: Add Ctrl+Z for Undo and Ctrl+Y for Redo
       if (e.ctrlKey && e.key === 'z') undo();
       if (e.ctrlKey && e.key === 'y') redo();
     });
 
-    // Mobile Swipe Support
     let touchStartX = 0;
     let touchStartY = 0;
     
