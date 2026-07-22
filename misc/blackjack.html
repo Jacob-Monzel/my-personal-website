@@ -127,7 +127,7 @@
       min-width: 100px;
     }
 
-    button:hover {
+    button:hover:not(:disabled) {
       background-color: #e0e0e0;
       text-decoration: underline;
     }
@@ -146,7 +146,7 @@
       padding: 15px;
       border: 1px solid transparent;
       font-weight: bold;
-      display: none; /* Hidden by default */
+      display: none; 
       text-align: center;
     }
 
@@ -186,7 +186,6 @@
   </p>
 
   <div id="game">
-    
     <div class="hand-area">
       <div class="hand-title">Dealer</div>
       <div id="dealer-cards" class="cards-container"></div>
@@ -205,6 +204,8 @@
       <button id="hit">Hit</button>
       <button id="stand">Stand</button>
       <button id="double-down">Double</button>
+      <button id="split">Split</button>
+      <button id="surrender">Surrender</button>
     </div>
 
     <div id="message"></div>
@@ -219,6 +220,8 @@
     const hitButton = document.getElementById("hit");
     const standButton = document.getElementById("stand");
     const doubleDownButton = document.getElementById("double-down");
+    const splitButton = document.getElementById("split");
+    const surrenderButton = document.getElementById("surrender");
     const messageElement = document.getElementById("message");
     const strategyBox = document.getElementById("strategy-box");
     const dealNextHandButton = document.getElementById("deal-next-hand");
@@ -235,10 +238,13 @@
       const suits = ["♠", "♣", "♥", "♦"];
       const values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
       let d = [];
-      for (let suit of suits) {
-        for (let value of values) {
-          d.push({ suit, value });
-        }
+      // Create a 6-deck shoe for realism and to prevent running out quickly
+      for (let i = 0; i < 6; i++) {
+          for (let suit of suits) {
+            for (let value of values) {
+              d.push({ suit, value });
+            }
+          }
       }
       return shuffle(d);
     }
@@ -261,7 +267,8 @@
               </div>`;
     }
 
-    function calculateScore(hand) {
+    // Consolidated hand evaluation
+    function getHandDetails(hand) {
       let score = 0;
       let aces = 0;
       for (let card of hand) {
@@ -278,33 +285,17 @@
         score -= 10;
         aces--;
       }
-      return score;
-    }
-
-    function isSoft(hand) {
-      let score = 0;
-      let aces = 0;
-      for (let card of hand) {
-        if (card.value === "A") {
-          aces++;
-          score += 11;
-        } else if (["J", "Q", "K"].includes(card.value)) {
-          score += 10;
-        } else {
-          score += parseInt(card.value);
-        }
-      }
-      while (score > 21 && aces > 0) {
-        score -= 10;
-        aces--;
-      }
-      return aces > 0; 
+      return { score, isSoft: aces > 0 && score <= 21 };
     }
 
     // --- Game Logic ---
 
     function initializeGame() {
-      deck = createDeck();
+      // Replenish deck if it's getting low (penetration)
+      if (deck.length < 30) {
+          deck = createDeck();
+      }
+      
       dealerCards = [];
       playerCards = [];
       gameStarted = false;
@@ -313,18 +304,19 @@
       messageElement.textContent = "";
       strategyBox.style.display = "none";
       
-      // Enable buttons
       hitButton.disabled = false;
       standButton.disabled = false;
       doubleDownButton.disabled = false;
+      surrenderButton.disabled = false;
+      splitButton.disabled = false;
 
       dealNextHandButton.style.display = "none";
-      updateUI();
     }
 
     function startHand() {
+      initializeGame();
       gameStarted = true;
-      // Deal initial cards
+      
       playerCards.push(deck.pop());
       dealerCards.push(deck.pop());
       playerCards.push(deck.pop());
@@ -340,9 +332,8 @@
       if (dealerCards.length > 0) {
         if (dealerRevealed) {
           dealerCards.forEach(c => dealerCardsElement.innerHTML += getCardHTML(c));
-          dealerScoreElement.textContent = calculateScore(dealerCards);
+          dealerScoreElement.textContent = getHandDetails(dealerCards).score;
         } else {
-          // Show first, hide second
           dealerCardsElement.innerHTML += getCardHTML(dealerCards[0]);
           dealerCardsElement.innerHTML += getCardHTML(null, true);
           dealerScoreElement.textContent = "?";
@@ -353,20 +344,35 @@
       playerCardsElement.innerHTML = "";
       playerCards.forEach(c => playerCardsElement.innerHTML += getCardHTML(c));
       
-      const pScore = calculateScore(playerCards);
+      const { score: pScore } = getHandDetails(playerCards);
       playerScoreElement.textContent = pScore;
 
-      // Controls State
+      // Handle Control States dynamically
       if (turnOver) {
         hitButton.disabled = true;
         standButton.disabled = true;
         doubleDownButton.disabled = true;
+        surrenderButton.disabled = true;
+        splitButton.disabled = true;
+      } else {
+        // Can only double or surrender on the first two cards
+        if (playerCards.length > 2) {
+            doubleDownButton.disabled = true;
+            surrenderButton.disabled = true;
+        }
+        
+        // Can only split if it's the first two cards and they are a pair
+        const isPair = playerCards.length === 2 && (
+            playerCards[0].value === playerCards[1].value || 
+            (["10","J","Q","K"].includes(playerCards[0].value) && ["10","J","Q","K"].includes(playerCards[1].value))
+        );
+        splitButton.disabled = !isPair;
       }
     }
 
     function checkBlackjack() {
-      const pScore = calculateScore(playerCards);
-      const dScore = calculateScore(dealerCards);
+      const pScore = getHandDetails(playerCards).score;
+      const dScore = getHandDetails(dealerCards).score;
 
       if (pScore === 21) {
         turnOver = true;
@@ -381,16 +387,22 @@
       }
     }
 
-    // --- Strategy Engine (Basic Strategy) ---
+    // --- Strategy Engine ---
     function getAdvice() {
-      const pScore = calculateScore(playerCards);
+      const { score: pScore, isSoft: soft } = getHandDetails(playerCards);
       const dCardVal = dealerCards[0].value;
       const dScore = (["J","Q","K"].includes(dCardVal)) ? 10 : (dCardVal === "A" ? 11 : parseInt(dCardVal));
-      const soft = isSoft(playerCards);
-      const pair = playerCards.length === 2 && playerCards[0].value === playerCards[1].value;
+      const isPair = playerCards.length === 2 && playerCards[0].value === playerCards[1].value;
+      const canSurrender = playerCards.length === 2;
+
+      // Surrender logic (Late Surrender)
+      if (canSurrender) {
+          if (pScore === 16 && [9, 10, 11].includes(dScore) && playerCards[0].value !== "8") return "Surrender, else Hit";
+          if (pScore === 15 && dScore === 10) return "Surrender, else Hit";
+      }
 
       // Pairs
-      if (pair) {
+      if (isPair) {
         const val = playerCards[0].value;
         if (val === "A" || val === "8") return "Split";
         if (val === "9") {
@@ -416,7 +428,7 @@
         if (pScore === 18) {
            if ([2,3,4,5,6].includes(dScore)) return "Double (if allowed), else Stand";
            if ([9,10,11].includes(dScore)) return "Hit";
-           return "Stand"; // vs 7,8
+           return "Stand"; 
         }
         if (pScore === 17) {
            if ([3,4,5,6].includes(dScore)) return "Double (if allowed), else Hit";
@@ -471,29 +483,33 @@
       
       let isCorrect = false;
 
-      // Logic to determine if user move matched advice
       if (playerAction === "Hit") {
-         if (advice === "Hit") isCorrect = true;
-         else if (advice.includes("else Hit") && !canDbl) isCorrect = true;
+         if (advice === "Hit" || advice.includes("else Hit")) isCorrect = true;
+         // If advice was double but they can't, hit is correct
+         if (advice.includes("Double") && advice.includes("else Hit") && !canDbl) isCorrect = true;
       } 
       else if (playerAction === "Stand") {
-         if (advice === "Stand") isCorrect = true;
-         else if (advice.includes("else Stand") && !canDbl) isCorrect = true;
+         if (advice === "Stand" || advice.includes("else Stand")) isCorrect = true;
+         if (advice.includes("Double") && advice.includes("else Stand") && !canDbl) isCorrect = true;
       }
       else if (playerAction === "Double") {
          if (advice.includes("Double")) isCorrect = true;
       }
-
-      // Note: If advice is "Split", any basic move is technically 'wrong' but we will just mark it wrong to teach them.
+      else if (playerAction === "Split") {
+         if (advice === "Split") isCorrect = true;
+      }
+      else if (playerAction === "Surrender") {
+         if (advice.includes("Surrender")) isCorrect = true;
+      }
       
       strategyBox.style.display = "block";
       if (isCorrect) {
-        strategyBox.style.backgroundColor = "#dff0d8"; // Light Green
+        strategyBox.style.backgroundColor = "#dff0d8"; 
         strategyBox.style.color = "#3c763d";
         strategyBox.style.borderColor = "#d6e9c6";
         strategyBox.innerHTML = `✅ Correct! Optimal strategy was: <em>${advice}</em>`;
       } else {
-        strategyBox.style.backgroundColor = "#f2dede"; // Light Red
+        strategyBox.style.backgroundColor = "#f2dede"; 
         strategyBox.style.color = "#a94442";
         strategyBox.style.borderColor = "#ebccd1";
         strategyBox.innerHTML = `❌ Mistake. You chose <strong>${playerAction}</strong>, but strategy said: <em>${advice}</em>`;
@@ -503,13 +519,11 @@
     // --- Button Actions ---
 
     hitButton.addEventListener("click", () => {
-      evaluateMove("Hit"); // Grade the move BEFORE changing state
-      
+      evaluateMove("Hit"); 
       playerCards.push(deck.pop());
       updateUI();
-      doubleDownButton.disabled = true; // Can't double after hitting
 
-      if (calculateScore(playerCards) > 21) {
+      if (getHandDetails(playerCards).score > 21) {
         turnOver = true;
         endGame("Bust! You lose.", "lose");
       }
@@ -526,7 +540,7 @@
       playerCards.push(deck.pop());
       turnOver = true;
       
-      if (calculateScore(playerCards) > 21) {
+      if (getHandDetails(playerCards).score > 21) {
         updateUI();
         endGame("Bust! You lose.", "lose");
       } else {
@@ -534,15 +548,34 @@
       }
     });
 
+    splitButton.addEventListener("click", () => {
+      evaluateMove("Split");
+      // Note: For a basic trainer, simulating the playing out of two separate 
+      // hands drastically increases code complexity. We just grade the initial decision.
+      turnOver = true;
+      updateUI();
+      endGame("Hand graded. (Playing out split hands not simulated)", "push");
+    });
+
+    surrenderButton.addEventListener("click", () => {
+      evaluateMove("Surrender");
+      turnOver = true;
+      updateUI();
+      endGame("You surrendered.", "lose");
+    });
+
     function dealerTurn() {
       dealerRevealed = true;
       updateUI();
 
-      let dScore = calculateScore(dealerCards);
+      let { score: dScore, isSoft } = getHandDetails(dealerCards);
+      
       // Dealer hits on Soft 17
-      while (dScore < 17 || (dScore === 17 && isSoft(dealerCards))) {
+      while (dScore < 17 || (dScore === 17 && isSoft)) {
         dealerCards.push(deck.pop());
-        dScore = calculateScore(dealerCards);
+        const details = getHandDetails(dealerCards);
+        dScore = details.score;
+        isSoft = details.isSoft;
       }
       
       updateUI();
@@ -550,8 +583,8 @@
     }
 
     function determineWinner() {
-      const pScore = calculateScore(playerCards);
-      const dScore = calculateScore(dealerCards);
+      const pScore = getHandDetails(playerCards).score;
+      const dScore = getHandDetails(dealerCards).score;
 
       if (dScore > 21) {
         endGame("Dealer Busts! You Win.", "win");
@@ -573,12 +606,11 @@
     }
 
     dealNextHandButton.addEventListener("click", () => {
-      initializeGame();
       startHand();
     });
 
     // Start
-    initializeGame();
+    deck = createDeck();
     startHand();
 
   </script>
