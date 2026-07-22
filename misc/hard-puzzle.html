@@ -5,7 +5,7 @@
   <title>Sliding Puzzle – Jacob Monzel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
-    /* --- Academic Style (Enhanced) --- */
+    /* --- Academic Style --- */
     body {
       font-family: "Times New Roman", Times, serif;
       background-color: #f9f9f9;
@@ -21,14 +21,7 @@
       border-bottom: 2px solid #000;
       display: inline-block;
       padding-bottom: 5px;
-      margin-bottom: 0.5rem;
-    }
-
-    .subtitle {
-      font-size: 1.1rem;
-      color: #444;
       margin-bottom: 1.5rem;
-      font-style: italic;
     }
 
     #game-container {
@@ -58,13 +51,12 @@
       border-radius: 3px;
     }
 
-    /* --- New Animation-Friendly Board --- */
     #board {
-      position: relative; /* Required for absolute positioning of tiles */
+      position: relative;
       margin: 1.5rem auto;
       border: 2px solid #000;
       background-color: #222;
-      touch-action: none; /* Prevents scrolling while swiping on mobile */
+      touch-action: none; 
     }
 
     .tile {
@@ -77,9 +69,8 @@
       font-size: 1.8rem;
       cursor: pointer;
       user-select: none;
-      /* The magic line that makes them slide smoothly */
       transition: transform 0.15s ease-in-out, background-color 0.2s;
-      box-shadow: inset 0 0 0 1px #222; /* Creates grid lines */
+      box-shadow: inset 0 0 0 1px #222; 
     }
 
     .tile:hover {
@@ -94,6 +85,10 @@
       margin-top: 15px;
     }
 
+    .control-group {
+      margin-bottom: 10px;
+    }
+
     button, select {
       font-family: "Times New Roman", Times, serif;
       background-color: #f0f0f0;
@@ -106,7 +101,14 @@
       border-radius: 3px;
     }
 
-    button:hover { background-color: #e0e0e0; }
+    button:hover:not(:disabled) { 
+      background-color: #e0e0e0; 
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
     #message {
       margin-top: 1rem;
@@ -119,9 +121,6 @@
 <body>
 
   <h1>Sliding Puzzle</h1>
-  <div class="subtitle">
-    Permutation Group \( S_{N^2} \). Parity is preserved during scramble.
-  </div>
 
   <div id="game-container">
     <div style="margin-bottom: 15px;">
@@ -144,8 +143,14 @@
     <div id="board"></div>
 
     <div id="controls">
-      <button id="scramble-btn">Scramble</button>
-      <button id="reset-btn">Reset</button>
+      <div class="control-group">
+        <button id="undo-btn" disabled>Undo</button>
+        <button id="redo-btn" disabled>Redo</button>
+      </div>
+      <div class="control-group">
+        <button id="scramble-btn">Scramble</button>
+        <button id="reset-btn">Reset</button>
+      </div>
     </div>
     <div id="message"></div>
   </div>
@@ -153,7 +158,7 @@
   <script>
     // === CONFIG ===
     let size = 4;
-    const TILE_SIZE = 70; // Fixed pixel size per tile for easier math
+    const TILE_SIZE = 70; 
     
     const boardElement = document.getElementById("board");
     const moveCountElement = document.getElementById("move-count");
@@ -163,14 +168,20 @@
     const sizeSelect = document.getElementById("size-select");
     const scrambleBtn = document.getElementById("scramble-btn");
     const resetBtn = document.getElementById("reset-btn");
+    const undoBtn = document.getElementById("undo-btn");
+    const redoBtn = document.getElementById("redo-btn");
 
     let tiles = []; 
-    let tileElements = []; // Store DOM elements to avoid recreating them
+    let tileElements = []; 
     let moveCount = 0;
     let timerId = null;
     let startTime = null;
     let gameActive = false;
     let isScrambling = false;
+
+    // Undo/Redo Stacks
+    let undoStack = [];
+    let redoStack = [];
 
     sizeSelect.addEventListener("change", (e) => {
       size = parseInt(e.target.value);
@@ -183,17 +194,15 @@
       for (let i = 1; i < total; i++) tiles.push(i);
       tiles.push(0); 
 
-      // Setup physical board dimensions
       boardElement.style.width = `${size * TILE_SIZE}px`;
       boardElement.style.height = `${size * TILE_SIZE}px`;
       boardElement.innerHTML = "";
       tileElements = [];
 
-      // Create DOM elements once
       for (let i = 0; i < total; i++) {
         const val = tiles[i];
         if (val === 0) {
-          tileElements.push(null); // No visual tile for the blank space
+          tileElements.push(null);
           continue;
         }
         
@@ -203,14 +212,15 @@
         tileDiv.style.height = `${TILE_SIZE}px`;
         tileDiv.textContent = val;
         
-        // Click listener
         tileDiv.addEventListener("click", () => handleTileClick(tiles.indexOf(val)));
         
         boardElement.appendChild(tileDiv);
-        tileElements[val] = tileDiv; // Store by value so we can easily look it up
+        tileElements[val] = tileDiv; 
       }
 
       moveCount = 0;
+      undoStack = [];
+      redoStack = [];
       stopTimer();
       timeElement.textContent = "0";
       gameActive = false;
@@ -218,9 +228,9 @@
       
       updateVisuals();
       updateStats();
+      updateUndoRedoButtons();
     }
 
-    // Positions tiles using CSS transforms based on their current array index
     function updateVisuals() {
       for (let i = 0; i < tiles.length; i++) {
         const val = tiles[i];
@@ -229,10 +239,8 @@
         const pos = indexToPos(i);
         const el = tileElements[val];
         
-        // Move element to new coordinates
         el.style.transform = `translate(${pos.col * TILE_SIZE}px, ${pos.row * TILE_SIZE}px)`;
         
-        // Highlight correct positions
         if (val === i + 1) el.classList.add("correct");
         else el.classList.remove("correct");
       }
@@ -255,30 +263,82 @@
       distElement.textContent = calculateManhattan();
     }
 
+    function updateUndoRedoButtons() {
+      undoBtn.disabled = undoStack.length === 0;
+      redoBtn.disabled = redoStack.length === 0;
+    }
+
     function indexToPos(index) { return { row: Math.floor(index / size), col: index % size }; }
     function posToIndex(row, col) { return row * size + col; }
 
-    function isAdjacentToBlank(index) {
-      const blankIndex = tiles.indexOf(0);
-      const pos = indexToPos(index);
-      const blankPos = indexToPos(blankIndex);
-      return (Math.abs(pos.row - blankPos.row) + Math.abs(pos.col - blankPos.col) === 1);
-    }
-
     function handleTileClick(index) {
-      if (!isAdjacentToBlank(index)) return;
-
-      const blankIndex = tiles.indexOf(0);
-      [tiles[index], tiles[blankIndex]] = [tiles[blankIndex], tiles[index]];
+      if (isScrambling) return;
       
-      if (!isScrambling) {
-        moveCount++;
-        if (!gameActive) { gameActive = true; startTimer(); }
-        updateStats();
-        checkWin();
+      const blankIndex = tiles.indexOf(0);
+      const clickedPos = indexToPos(index);
+      const blankPos = indexToPos(blankIndex);
+
+      // Check if in the same row or column
+      if (clickedPos.row !== blankPos.row && clickedPos.col !== blankPos.col) {
+        return; 
       }
+
+      // Save state for undo
+      undoStack.push([...tiles]);
+      redoStack = []; 
+
+      // Determine the path of indices to shift (Multi-Slide Logic)
+      const path = [];
+      if (clickedPos.row === blankPos.row) {
+        const step = clickedPos.col > blankPos.col ? 1 : -1;
+        for (let c = blankPos.col + step; c !== clickedPos.col + step; c += step) {
+          path.push(posToIndex(clickedPos.row, c));
+        }
+      } else {
+        const step = clickedPos.row > blankPos.row ? 1 : -1;
+        for (let r = blankPos.row + step; r !== clickedPos.row + step; r += step) {
+          path.push(posToIndex(r, clickedPos.col));
+        }
+      }
+
+      // Shift tiles along the path one by one
+      let currentBlank = blankIndex;
+      for (const pos of path) {
+        [tiles[currentBlank], tiles[pos]] = [tiles[pos], tiles[currentBlank]];
+        currentBlank = pos;
+      }
+      
+      moveCount++;
+      if (!gameActive) { gameActive = true; startTimer(); }
+      
+      updateStats();
       updateVisuals();
+      updateUndoRedoButtons();
+      checkWin();
     }
+
+    function undo() {
+      if (undoStack.length === 0) return;
+      redoStack.push([...tiles]);
+      tiles = undoStack.pop();
+      moveCount = Math.max(0, moveCount - 1);
+      updateStats();
+      updateVisuals();
+      updateUndoRedoButtons();
+    }
+
+    function redo() {
+      if (redoStack.length === 0) return;
+      undoStack.push([...tiles]);
+      tiles = redoStack.pop();
+      moveCount++;
+      updateStats();
+      updateVisuals();
+      updateUndoRedoButtons();
+    }
+
+    undoBtn.addEventListener("click", undo);
+    redoBtn.addEventListener("click", redo);
 
     function checkWin() {
       let solved = true;
@@ -323,12 +383,15 @@
       }
 
       isScrambling = false;
+      undoStack = [];
+      redoStack = [];
       moveCount = 0;
       timeElement.textContent = "0";
       gameActive = true;
       startTimer();
       updateVisuals();
       updateStats();
+      updateUndoRedoButtons();
       messageElement.textContent = "";
     }
 
@@ -359,6 +422,10 @@
 
         if (tr >= 0 && tr < size && tc >= 0 && tc < size) handleTileClick(posToIndex(tr, tc));
       }
+      
+      // Optional: Add Ctrl+Z for Undo and Ctrl+Y for Redo
+      if (e.ctrlKey && e.key === 'z') undo();
+      if (e.ctrlKey && e.key === 'y') redo();
     });
 
     // Mobile Swipe Support
@@ -378,7 +445,6 @@
       const dx = touchEndX - touchStartX;
       const dy = touchEndY - touchStartY;
       
-      // Minimum swipe distance
       if (Math.abs(dx) < 30 && Math.abs(dy) < 30) return;
 
       const blankIndex = tiles.indexOf(0);
@@ -386,13 +452,11 @@
       let tr = row, tc = col;
 
       if (Math.abs(dx) > Math.abs(dy)) {
-        // Horizontal swipe
-        if (dx > 0) tc--; // Swipe right (move tile to the left of blank right)
-        else tc++;        // Swipe left
+        if (dx > 0) tc--; 
+        else tc++;        
       } else {
-        // Vertical swipe
-        if (dy > 0) tr--; // Swipe down
-        else tr++;        // Swipe up
+        if (dy > 0) tr--; 
+        else tr++;        
       }
 
       if (tr >= 0 && tr < size && tc >= 0 && tc < size) {
