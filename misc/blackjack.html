@@ -73,10 +73,34 @@
       gap: 10px;
     }
 
-    .card {
+    /* --- 3D Card Flipping CSS --- */
+    .card-container {
       width: 60px;
       height: 90px;
-      background-color: #fff;
+      perspective: 1000px; /* Gives the 3D depth effect */
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transition: transform 0.6s ease-in-out;
+      transform-style: preserve-3d;
+    }
+
+    /* Controls the flip state */
+    .card-inner.face-down {
+      transform: rotateY(180deg);
+    }
+    .card-inner.face-up {
+      transform: rotateY(0deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden; /* Hides the backside of the div */
       border: 1px solid #000;
       border-radius: 4px;
       display: flex;
@@ -85,23 +109,21 @@
       justify-content: center;
       font-size: 1.5rem;
       font-weight: bold;
-      position: relative;
       box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
     }
 
-    .card.red { color: #d00; }
-    .card.black { color: #000; }
+    .card-front {
+      background-color: #fff;
+    }
 
     .card-back {
-      background: repeating-linear-gradient(
-        45deg,
-        #ddd,
-        #ddd 5px,
-        #fff 5px,
-        #fff 10px
-      );
-      color: transparent;
+      background: repeating-linear-gradient(45deg, #ddd, #ddd 5px, #fff 5px, #fff 10px);
+      transform: rotateY(180deg); /* This faces backward initially */
     }
+
+    .red { color: #d00; }
+    .black { color: #000; }
+    /* ----------------------------- */
 
     .score-display {
       margin-top: 5px;
@@ -140,7 +162,6 @@
       text-decoration: none;
     }
 
-    /* Strategy Advice Box */
     #strategy-box {
       margin-top: 15px;
       padding: 15px;
@@ -233,12 +254,10 @@
     let dealerRevealed = false;
     let turnOver = false;
 
-    // --- Card Utilities ---
     function createDeck() {
       const suits = ["♠", "♣", "♥", "♦"];
       const values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
       let d = [];
-      // Create a 6-deck shoe for realism and to prevent running out quickly
       for (let i = 0; i < 6; i++) {
           for (let suit of suits) {
             for (let value of values) {
@@ -257,17 +276,29 @@
       return array;
     }
 
-    function getCardHTML(card, hidden = false) {
-      if (hidden) return `<div class="card card-back"></div>`;
+    // Updated to return the 3D HTML structure
+    function getCardHTML(card, isHidden = false, id = "") {
+      const isRed = card && (card.suit === "♥" || card.suit === "♦");
+      const colorClass = isRed ? 'red' : 'black';
       
-      const isRed = card.suit === "♥" || card.suit === "♦";
-      return `<div class="card ${isRed ? 'red' : 'black'}">
-                <div>${card.value}</div>
-                <div>${card.suit}</div>
-              </div>`;
+      // Determine starting state
+      const startClass = isHidden ? 'face-down' : 'face-up';
+      const idAttr = id ? `id="${id}"` : "";
+
+      // We always generate the front face so it knows what to show when it flips!
+      return `
+        <div class="card-container" ${idAttr}>
+          <div class="card-inner ${startClass}">
+            <div class="card-face card-front">
+              <div class="${colorClass}">${card.value}</div>
+              <div class="${colorClass}">${card.suit}</div>
+            </div>
+            <div class="card-face card-back"></div>
+          </div>
+        </div>
+      `;
     }
 
-    // Consolidated hand evaluation
     function getHandDetails(hand) {
       let score = 0;
       let aces = 0;
@@ -288,10 +319,7 @@
       return { score, isSoft: aces > 0 && score <= 21 };
     }
 
-    // --- Game Logic ---
-
     function initializeGame() {
-      // Replenish deck if it's getting low (penetration)
       if (deck.length < 30) {
           deck = createDeck();
       }
@@ -303,6 +331,10 @@
       turnOver = false;
       messageElement.textContent = "";
       strategyBox.style.display = "none";
+      
+      // Clear out the HTML so we can append fresh for the new hand
+      dealerCardsElement.innerHTML = "";
+      playerCardsElement.innerHTML = "";
       
       hitButton.disabled = false;
       standButton.disabled = false;
@@ -327,27 +359,37 @@
     }
 
     function updateUI() {
-      // Dealer
-      dealerCardsElement.innerHTML = "";
-      if (dealerCards.length > 0) {
-        if (dealerRevealed) {
-          dealerCards.forEach(c => dealerCardsElement.innerHTML += getCardHTML(c));
-          dealerScoreElement.textContent = getHandDetails(dealerCards).score;
-        } else {
-          dealerCardsElement.innerHTML += getCardHTML(dealerCards[0]);
-          dealerCardsElement.innerHTML += getCardHTML(null, true);
-          dealerScoreElement.textContent = "?";
-        }
+      // --- Dealer Update ---
+      // Instead of wiping the HTML, we only append cards that are missing from the screen.
+      for (let i = dealerCardsElement.children.length; i < dealerCards.length; i++) {
+        // The second card dealt is the hole card. Keep it face down initially.
+        const isHidden = (i === 1 && !dealerRevealed);
+        const id = isHidden ? "dealer-hole-card" : "";
+        dealerCardsElement.insertAdjacentHTML('beforeend', getCardHTML(dealerCards[i], isHidden, id));
       }
 
-      // Player
-      playerCardsElement.innerHTML = "";
-      playerCards.forEach(c => playerCardsElement.innerHTML += getCardHTML(c));
-      
-      const { score: pScore } = getHandDetails(playerCards);
-      playerScoreElement.textContent = pScore;
+      // If it's time to reveal, trigger the CSS flip animation on the hole card
+      if (dealerRevealed) {
+        const holeCard = document.getElementById("dealer-hole-card");
+        if (holeCard) {
+          const inner = holeCard.querySelector('.card-inner');
+          inner.classList.remove('face-down');
+          inner.classList.add('face-up');
+          holeCard.removeAttribute("id"); // Remove ID so we don't try to flip it again
+        }
+        dealerScoreElement.textContent = getHandDetails(dealerCards).score;
+      } else if (dealerCards.length > 0) {
+        // Only show the score of the single face-up card
+        dealerScoreElement.textContent = getHandDetails([dealerCards[0]]).score;
+      }
 
-      // Handle Control States dynamically
+      // --- Player Update ---
+      for (let i = playerCardsElement.children.length; i < playerCards.length; i++) {
+        playerCardsElement.insertAdjacentHTML('beforeend', getCardHTML(playerCards[i], false, ""));
+      }
+      playerScoreElement.textContent = getHandDetails(playerCards).score;
+
+      // Handle Control States
       if (turnOver) {
         hitButton.disabled = true;
         standButton.disabled = true;
@@ -355,13 +397,10 @@
         surrenderButton.disabled = true;
         splitButton.disabled = true;
       } else {
-        // Can only double or surrender on the first two cards
         if (playerCards.length > 2) {
             doubleDownButton.disabled = true;
             surrenderButton.disabled = true;
         }
-        
-        // Can only split if it's the first two cards and they are a pair
         const isPair = playerCards.length === 2 && (
             playerCards[0].value === playerCards[1].value || 
             (["10","J","Q","K"].includes(playerCards[0].value) && ["10","J","Q","K"].includes(playerCards[1].value))
@@ -379,15 +418,17 @@
         dealerRevealed = true;
         updateUI();
         
-        if (dScore === 21) {
-          endGame("Push (Both Blackjack)", "push");
-        } else {
-          endGame("Blackjack! You win.", "win");
-        }
+        // Add a slight delay to the win message so the card has time to flip
+        setTimeout(() => {
+            if (dScore === 21) {
+              endGame("Push (Both Blackjack)", "push");
+            } else {
+              endGame("Blackjack! You win.", "win");
+            }
+        }, 600);
       }
     }
 
-    // --- Strategy Engine ---
     function getAdvice() {
       const { score: pScore, isSoft: soft } = getHandDetails(playerCards);
       const dCardVal = dealerCards[0].value;
@@ -395,13 +436,11 @@
       const isPair = playerCards.length === 2 && playerCards[0].value === playerCards[1].value;
       const canSurrender = playerCards.length === 2;
 
-      // Surrender logic (Late Surrender)
       if (canSurrender) {
           if (pScore === 16 && [9, 10, 11].includes(dScore) && playerCards[0].value !== "8") return "Surrender, else Hit";
           if (pScore === 15 && dScore === 10) return "Surrender, else Hit";
       }
 
-      // Pairs
       if (isPair) {
         const val = playerCards[0].value;
         if (val === "A" || val === "8") return "Split";
@@ -418,7 +457,6 @@
         }
       }
 
-      // Soft Totals
       if (soft) {
         if (pScore >= 20) return "Stand";
         if (pScore === 19) {
@@ -444,7 +482,6 @@
         }
       }
 
-      // Hard Totals
       if (pScore >= 17) return "Stand";
       if (pScore <= 8) return "Hit";
       
@@ -474,7 +511,7 @@
         return "Hit";
       }
 
-      return "Hit"; // Fallback
+      return "Hit"; 
     }
 
     function evaluateMove(playerAction) {
@@ -485,7 +522,6 @@
 
       if (playerAction === "Hit") {
          if (advice === "Hit" || advice.includes("else Hit")) isCorrect = true;
-         // If advice was double but they can't, hit is correct
          if (advice.includes("Double") && advice.includes("else Hit") && !canDbl) isCorrect = true;
       } 
       else if (playerAction === "Stand") {
@@ -515,8 +551,6 @@
         strategyBox.innerHTML = `❌ Mistake. You chose <strong>${playerAction}</strong>, but strategy said: <em>${advice}</em>`;
       }
     }
-
-    // --- Button Actions ---
 
     hitButton.addEventListener("click", () => {
       evaluateMove("Hit"); 
@@ -550,8 +584,6 @@
 
     splitButton.addEventListener("click", () => {
       evaluateMove("Split");
-      // Note: For a basic trainer, simulating the playing out of two separate 
-      // hands drastically increases code complexity. We just grade the initial decision.
       turnOver = true;
       updateUI();
       endGame("Hand graded. (Playing out split hands not simulated)", "push");
@@ -568,18 +600,20 @@
       dealerRevealed = true;
       updateUI();
 
-      let { score: dScore, isSoft } = getHandDetails(dealerCards);
-      
-      // Dealer hits on Soft 17
-      while (dScore < 17 || (dScore === 17 && isSoft)) {
-        dealerCards.push(deck.pop());
-        const details = getHandDetails(dealerCards);
-        dScore = details.score;
-        isSoft = details.isSoft;
-      }
-      
-      updateUI();
-      determineWinner();
+      // Delay the dealer drawing new cards slightly so the flip animation finishes first
+      setTimeout(() => {
+          let { score: dScore, isSoft } = getHandDetails(dealerCards);
+          
+          while (dScore < 17 || (dScore === 17 && isSoft)) {
+            dealerCards.push(deck.pop());
+            const details = getHandDetails(dealerCards);
+            dScore = details.score;
+            isSoft = details.isSoft;
+          }
+          
+          updateUI();
+          determineWinner();
+      }, 600); // 600ms matches our CSS transition time
     }
 
     function determineWinner() {
