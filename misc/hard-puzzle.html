@@ -3,35 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <title>Sliding Puzzle – Jacob Monzel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
-    /* --- Academic Style --- */
+    /* --- Academic Style (Enhanced) --- */
     body {
       font-family: "Times New Roman", Times, serif;
-      background-color: #fff;
+      background-color: #f9f9f9;
       color: #000;
       text-align: center;
       margin: 0;
       padding: 20px;
-    }
-
-    nav {
-      margin-bottom: 2rem;
-      font-size: 1.1rem;
-      text-align: center; 
-      background-color: #f0f0f0;
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-    }
-
-    nav a {
-      margin: 0 1rem;
-      text-decoration: none;
-      color: #0000EE;
-    }
-
-    nav a:hover {
-      text-decoration: underline;
     }
 
     h1 {
@@ -40,7 +21,7 @@
       border-bottom: 2px solid #000;
       display: inline-block;
       padding-bottom: 5px;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
     }
 
     .subtitle {
@@ -51,10 +32,12 @@
     }
 
     #game-container {
-      border: 1px solid #808080;
+      border: 1px solid #ccc;
       padding: 20px;
       display: inline-block;
-      background-color: #fafafa;
+      background-color: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border-radius: 4px;
     }
 
     #stats {
@@ -64,54 +47,51 @@
       grid-template-columns: 1fr 1fr;
       gap: 10px;
       text-align: left;
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid #eee;
       padding-bottom: 10px;
     }
     
     .stat-box {
-      background: #fff;
+      background: #fafafa;
       border: 1px solid #ddd;
       padding: 5px 10px;
+      border-radius: 3px;
     }
 
+    /* --- New Animation-Friendly Board --- */
     #board {
-      display: grid;
-      gap: 4px;
+      position: relative; /* Required for absolute positioning of tiles */
       margin: 1.5rem auto;
       border: 2px solid #000;
-      background-color: #000;
-      width: fit-content;
+      background-color: #222;
+      touch-action: none; /* Prevents scrolling while swiping on mobile */
     }
 
     .tile {
-      width: 60px;
-      height: 60px;
+      position: absolute;
       background-color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       cursor: pointer;
       user-select: none;
+      /* The magic line that makes them slide smoothly */
+      transition: transform 0.15s ease-in-out, background-color 0.2s;
+      box-shadow: inset 0 0 0 1px #222; /* Creates grid lines */
     }
 
     .tile:hover {
-      background-color: #e0e0e0;
+      background-color: #f0f0f0;
     }
 
-    .tile.blank {
-      background-color: #444;
-      cursor: default;
-    }
-
-    /* Correct position highlight (optional subtle hint) */
     .tile.correct {
-      color: #006400; /* Dark Green text for correct tiles */
+      color: #006400;
     }
 
     #controls {
-      margin-top: 10px;
+      margin-top: 15px;
     }
 
     button, select {
@@ -119,31 +99,24 @@
       background-color: #f0f0f0;
       color: #000;
       border: 1px solid #808080;
-      padding: 6px 12px;
+      padding: 8px 16px;
       margin: 5px;
       cursor: pointer;
       font-size: 1rem;
+      border-radius: 3px;
     }
 
-    button:hover {
-      background-color: #ccc;
-    }
+    button:hover { background-color: #e0e0e0; }
 
     #message {
       margin-top: 1rem;
       min-height: 1.5rem;
       font-weight: bold;
-      color: #b22222; /* Academic red for alerts */
+      color: #b22222;
     }
-
   </style>
 </head>
 <body>
-
-  <nav>
-    <a href="/">Home</a>
-    <a href="/misc/">Back to Misc</a>
-  </nav>
 
   <h1>Sliding Puzzle</h1>
   <div class="subtitle">
@@ -151,8 +124,7 @@
   </div>
 
   <div id="game-container">
-    
-    <div style="margin-bottom: 10px;">
+    <div style="margin-bottom: 15px;">
       <label for="size-select">Grid Size: </label>
       <select id="size-select">
         <option value="3">3 × 3 (Easy)</option>
@@ -175,13 +147,14 @@
       <button id="scramble-btn">Scramble</button>
       <button id="reset-btn">Reset</button>
     </div>
-
     <div id="message"></div>
   </div>
 
   <script>
     // === CONFIG ===
     let size = 4;
+    const TILE_SIZE = 70; // Fixed pixel size per tile for easier math
+    
     const boardElement = document.getElementById("board");
     const moveCountElement = document.getElementById("move-count");
     const timeElement = document.getElementById("time-elapsed");
@@ -191,52 +164,88 @@
     const scrambleBtn = document.getElementById("scramble-btn");
     const resetBtn = document.getElementById("reset-btn");
 
-    let tiles = [];         
+    let tiles = []; 
+    let tileElements = []; // Store DOM elements to avoid recreating them
     let moveCount = 0;
     let timerId = null;
     let startTime = null;
     let gameActive = false;
+    let isScrambling = false;
 
-    // Change grid size
     sizeSelect.addEventListener("change", (e) => {
       size = parseInt(e.target.value);
       initBoard();
     });
 
     function initBoard() {
-      // Update CSS Grid
-      boardElement.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
-      
       const total = size * size;
       tiles = [];
       for (let i = 1; i < total; i++) tiles.push(i);
-      tiles.push(0); // Blank
+      tiles.push(0); 
+
+      // Setup physical board dimensions
+      boardElement.style.width = `${size * TILE_SIZE}px`;
+      boardElement.style.height = `${size * TILE_SIZE}px`;
+      boardElement.innerHTML = "";
+      tileElements = [];
+
+      // Create DOM elements once
+      for (let i = 0; i < total; i++) {
+        const val = tiles[i];
+        if (val === 0) {
+          tileElements.push(null); // No visual tile for the blank space
+          continue;
+        }
+        
+        const tileDiv = document.createElement("div");
+        tileDiv.classList.add("tile");
+        tileDiv.style.width = `${TILE_SIZE}px`;
+        tileDiv.style.height = `${TILE_SIZE}px`;
+        tileDiv.textContent = val;
+        
+        // Click listener
+        tileDiv.addEventListener("click", () => handleTileClick(tiles.indexOf(val)));
+        
+        boardElement.appendChild(tileDiv);
+        tileElements[val] = tileDiv; // Store by value so we can easily look it up
+      }
 
       moveCount = 0;
-      updateStats();
       stopTimer();
       timeElement.textContent = "0";
       gameActive = false;
-      renderBoard();
       messageElement.textContent = "";
-      distElement.textContent = "0"; // Solved state = 0 distance
+      
+      updateVisuals();
+      updateStats();
+    }
+
+    // Positions tiles using CSS transforms based on their current array index
+    function updateVisuals() {
+      for (let i = 0; i < tiles.length; i++) {
+        const val = tiles[i];
+        if (val === 0) continue;
+
+        const pos = indexToPos(i);
+        const el = tileElements[val];
+        
+        // Move element to new coordinates
+        el.style.transform = `translate(${pos.col * TILE_SIZE}px, ${pos.row * TILE_SIZE}px)`;
+        
+        // Highlight correct positions
+        if (val === i + 1) el.classList.add("correct");
+        else el.classList.remove("correct");
+      }
     }
 
     function calculateManhattan() {
       let totalDist = 0;
       for (let i = 0; i < tiles.length; i++) {
         const val = tiles[i];
-        if (val === 0) continue; // Don't count blank
-
-        // Current position
+        if (val === 0) continue;
         const currentPos = indexToPos(i);
-        
-        // Target position (value 1 is at index 0, etc.)
-        const targetIndex = val - 1;
-        const targetPos = indexToPos(targetIndex);
-
-        totalDist += Math.abs(currentPos.row - targetPos.row) + 
-                     Math.abs(currentPos.col - targetPos.col);
+        const targetPos = indexToPos(val - 1);
+        totalDist += Math.abs(currentPos.row - targetPos.row) + Math.abs(currentPos.col - targetPos.col);
       }
       return totalDist;
     }
@@ -246,32 +255,8 @@
       distElement.textContent = calculateManhattan();
     }
 
-    function renderBoard() {
-      boardElement.innerHTML = "";
-      tiles.forEach((value, index) => {
-        const tileDiv = document.createElement("div");
-        tileDiv.classList.add("tile");
-        
-        if (value === 0) {
-          tileDiv.classList.add("blank");
-        } else {
-          tileDiv.textContent = value;
-          // Check if in correct spot for visual aid
-          if (value === index + 1) tileDiv.classList.add("correct");
-          
-          tileDiv.addEventListener("click", () => handleTileClick(index));
-        }
-        boardElement.appendChild(tileDiv);
-      });
-    }
-
-    function indexToPos(index) {
-      return { row: Math.floor(index / size), col: index % size };
-    }
-
-    function posToIndex(row, col) {
-      return row * size + col;
-    }
+    function indexToPos(index) { return { row: Math.floor(index / size), col: index % size }; }
+    function posToIndex(row, col) { return row * size + col; }
 
     function isAdjacentToBlank(index) {
       const blankIndex = tiles.indexOf(0);
@@ -280,31 +265,26 @@
       return (Math.abs(pos.row - blankPos.row) + Math.abs(pos.col - blankPos.col) === 1);
     }
 
-    function swapTiles(i, j) {
-      [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
-    }
-
     function handleTileClick(index) {
       if (!isAdjacentToBlank(index)) return;
 
       const blankIndex = tiles.indexOf(0);
-      swapTiles(index, blankIndex);
+      [tiles[index], tiles[blankIndex]] = [tiles[blankIndex], tiles[index]];
       
-      moveCount++;
-      if (!gameActive) { gameActive = true; startTimer(); }
-      
-      updateStats();
-      renderBoard();
-      checkWin();
+      if (!isScrambling) {
+        moveCount++;
+        if (!gameActive) { gameActive = true; startTimer(); }
+        updateStats();
+        checkWin();
+      }
+      updateVisuals();
     }
 
     function checkWin() {
-      const total = size * size;
       let solved = true;
-      for (let i = 0; i < total - 1; i++) {
+      for (let i = 0; i < tiles.length - 1; i++) {
         if (tiles[i] !== i + 1) { solved = false; break; }
       }
-      
       if (solved) {
         stopTimer();
         gameActive = false;
@@ -313,12 +293,12 @@
     }
 
     function scramble() {
-      // Reset logic
       initBoard();
-      const moves = size === 3 ? 100 : 300;
+      isScrambling = true;
       
+      const moves = size === 3 ? 100 : 300;
       let blankIndex = tiles.indexOf(0);
-      let lastMove = -1; // Prevent immediate undoing of moves
+      let lastMove = -1;
 
       for (let k = 0; k < moves; k++) {
         const neighbors = [];
@@ -332,23 +312,23 @@
           }
         });
 
-        // Pick random neighbor (try to avoid going back immediately)
         let choice = neighbors[Math.floor(Math.random() * neighbors.length)];
         if (neighbors.length > 1 && choice === lastMove) {
            choice = neighbors.find(n => n !== lastMove); 
         }
 
-        swapTiles(blankIndex, choice);
+        [tiles[blankIndex], tiles[choice]] = [tiles[choice], tiles[blankIndex]];
         lastMove = blankIndex;
         blankIndex = choice;
       }
 
+      isScrambling = false;
       moveCount = 0;
-      updateStats();
       timeElement.textContent = "0";
       gameActive = true;
       startTimer();
-      renderBoard();
+      updateVisuals();
+      updateStats();
       messageElement.textContent = "";
     }
 
@@ -356,19 +336,15 @@
       startTime = Date.now();
       if (timerId) clearInterval(timerId);
       timerId = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - startTime) / 1000);
-        timeElement.textContent = elapsed;
+        timeElement.textContent = Math.floor((Date.now() - startTime) / 1000);
       }, 1000);
     }
-
-    function stopTimer() {
-      if (timerId) clearInterval(timerId);
-    }
+    function stopTimer() { if (timerId) clearInterval(timerId); }
 
     scrambleBtn.addEventListener("click", scramble);
     resetBtn.addEventListener("click", initBoard);
 
-    // Arrow Keys
+    // Keyboard controls
     document.addEventListener("keydown", (e) => {
       if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) {
         e.preventDefault();
@@ -376,15 +352,51 @@
         const { row, col } = indexToPos(blankIndex);
         let tr = row, tc = col;
 
-        // Inverse Logic: Press UP to move the tile BELOW the blank UP
         if (e.key === "ArrowUp") tr++;
         if (e.key === "ArrowDown") tr--;
         if (e.key === "ArrowLeft") tc++;
         if (e.key === "ArrowRight") tc--;
 
-        if (tr >= 0 && tr < size && tc >= 0 && tc < size) {
-          handleTileClick(posToIndex(tr, tc));
-        }
+        if (tr >= 0 && tr < size && tc >= 0 && tc < size) handleTileClick(posToIndex(tr, tc));
+      }
+    });
+
+    // Mobile Swipe Support
+    let touchStartX = 0;
+    let touchStartY = 0;
+    
+    boardElement.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, {passive: false});
+
+    boardElement.addEventListener('touchend', (e) => {
+      if(isScrambling) return;
+      const touchEndX = e.changedTouches[0].screenX;
+      const touchEndY = e.changedTouches[0].screenY;
+      
+      const dx = touchEndX - touchStartX;
+      const dy = touchEndY - touchStartY;
+      
+      // Minimum swipe distance
+      if (Math.abs(dx) < 30 && Math.abs(dy) < 30) return;
+
+      const blankIndex = tiles.indexOf(0);
+      const { row, col } = indexToPos(blankIndex);
+      let tr = row, tc = col;
+
+      if (Math.abs(dx) > Math.abs(dy)) {
+        // Horizontal swipe
+        if (dx > 0) tc--; // Swipe right (move tile to the left of blank right)
+        else tc++;        // Swipe left
+      } else {
+        // Vertical swipe
+        if (dy > 0) tr--; // Swipe down
+        else tr++;        // Swipe up
+      }
+
+      if (tr >= 0 && tr < size && tc >= 0 && tc < size) {
+        handleTileClick(posToIndex(tr, tc));
       }
     });
 
