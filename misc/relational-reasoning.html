@@ -176,7 +176,7 @@
 
   <div class="science-box" style="background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.08)">
     <div class="science-title" style="color:rgba(255,255,255,0.54)">Conventions</div>
-    <p class="science-text">Distinct items always take distinct values, so NOT less than means greater than. Same as means the very same item. Opposite to and different from carry no information about order or position. If the premises do not settle the question, the correct answer is CAN'T TELL.</p>
+    <p class="science-text">Distinct items always take distinct values, so NOT less than means greater than. Same as means the very same item. Opposite to and different from carry no information about order or position. If the premises do not settle the question, the correct answer is CAN'T TELL. Containment is one-way and is never negated. A conditional question reads as: supposing the first item, what follows about the second.</p>
   </div>
 
   <div class="btn-row" id="home-buttons"></div>
@@ -217,7 +217,30 @@ const TYPES = {
   temporal: { name:"Temporal", icon:"≺", color:"#F59E0B", desc:"A before B, B before C → A before C" },
   sameopposite: { name:"Same / Opposite", icon:"≡≢", color:"#8B5CF6", desc:"same, opposite, different" },
   spatial: { name:"Spatial", icon:"◈", color:"#10B981", desc:"1D-3D: above, left of, behind" },
+  hierarchy: { name:"Hierarchy", icon:"⊇", color:"#14B8A6", desc:"A contains B, B contains C → A contains C" },
+  conditional: { name:"Conditional", icon:"→", color:"#F43F5E", desc:"if A then B, if B then C → if A then C" },
 };
+
+// ─── Premise / question formatting per frame ───
+function premiseHTML(pr){
+  const col = TYPES[pr.frameKey].color;
+  if (pr.frameKey === "conditional") {
+    const bTerm = pr.negated ? `<span style="color:var(--red)">NOT</span> ${pr.b}` : pr.b;
+    return `<span class="rel" style="color:${col}">if</span><span class="term">${pr.a}</span><span class="rel" style="color:${col}">then</span><span class="term">${bTerm}</span>`;
+  }
+  if (pr.frameKey === "hierarchy") {
+    return `<span class="term">${pr.a}</span><span class="rel" style="color:${col}">${pr.displayRel}</span><span class="term">${pr.b}</span>`;
+  }
+  if (pr.negated) {
+    return `<span class="term">${pr.a}</span><span class="rel"><span style="color:var(--red)">is NOT</span> <span style="color:${col}">${pr.displayRel}</span></span><span class="term">${pr.b}</span>`;
+  }
+  return `<span class="term">${pr.a}</span><span class="rel" style="color:${col}">is ${pr.displayRel}</span><span class="term">${pr.b}</span>`;
+}
+function premiseText(pr){
+  if (pr.frameKey === "conditional") return `if ${pr.a} then ${pr.negated?"NOT ":""}${pr.b}`;
+  if (pr.frameKey === "hierarchy") return `${pr.a} ${pr.displayRel} ${pr.b}`;
+  return `${pr.a} is ${pr.negated?"NOT ":""}${pr.displayRel} ${pr.b}`;
+}
 
 // ─── State ───
 const S = {
@@ -230,6 +253,7 @@ const S = {
   enableMutualEntailment: true,
   enableDistinction: false,
   allowUndetermined: false,
+  enableBranching: false,
   spatialDims: 1,
   fixedPremises: 3,
   fixedTimer: 25,
@@ -285,13 +309,15 @@ const REL = {
   "right of":     { dim: "x",     dir: 1 }, "left of":   { dim: "x",     dir: -1 },
   "above":        { dim: "y",     dir: 1 }, "below":     { dim: "y",     dir: -1 },
   "in front of":  { dim: "z",     dir: 1 }, "behind":    { dim: "z",     dir: -1 },
+  "contains":     { dim: "containment", dir: 1 }, "is part of": { dim: "containment", dir: -1 },
 };
 const IDENT = { "same as": "same", "opposite to": "opp", "different from": "diff" };
 const DIM_RELS = {
   value: ["greater than", "less than"], time: ["after", "before"],
   x: ["right of", "left of"], y: ["above", "below"], z: ["in front of", "behind"],
+  containment: ["contains", "is part of"],
 };
-const FRAME_OF_DIM = { value: "comparison", time: "temporal", x: "spatial", y: "spatial", z: "spatial" };
+const FRAME_OF_DIM = { value: "comparison", time: "temporal", x: "spatial", y: "spatial", z: "spatial", containment: "hierarchy" };
 // A constraint rel R is displayed negated as "is NOT <NEG_DISPLAY[R]>"
 const NEG_DISPLAY = {
   "greater than": "less than", "less than": "greater than",
@@ -449,9 +475,31 @@ function meaningfulTerms(n, rnd) {
   return [...p].sort(() => rnd() - 0.5).slice(0, n);
 }
 
+// ─── Conditional frame: 2-SAT implication graph over literals ───
+// Premise {a, b, neg}: "if a then b" (neg: "if a then NOT b").
+// Query semantics (supposition reading, stated in-game): "if x then z?"
+// T: premises plus x entail z. F: premises plus x entail NOT z. U: neither.
+function condNOT(t) { return t.endsWith("'") ? t.slice(0, -1) : t + "'"; }
+function buildCondModel(cons) {
+  const adj = new Map();
+  const edge = (u, v) => { if (!adj.has(u)) adj.set(u, new Set()); adj.get(u).add(v); };
+  cons.forEach(c => {
+    const consq = c.neg ? condNOT(c.b) : c.b;
+    edge(c.a, consq);
+    edge(condNOT(consq), condNOT(c.a)); // contrapositive
+  });
+  return { adj };
+}
+function evalCond(m, x, z, negQ) {
+  const target = negQ ? condNOT(z) : z;
+  if (reach(m.adj, x, condNOT(x))) return "DEGEN"; // antecedent refutable
+  if (reach(m.adj, x, target) || reach(m.adj, condNOT(target), target)) return "T";
+  const anti = condNOT(target);
+  if (reach(m.adj, x, anti) || reach(m.adj, target, anti)) return "F";
+  return "U";
+}
+
 // ─── Problem generation ───
-// cfg: { enabledTypes, premises, spatialDims, enableDistinction, enableNegation,
-//        enableMixed, enableMutualEntailment, allowUndetermined, useMeaningful }
 function genProblemCore(cfg, rnd) {
   rnd = rnd || Math.random;
   for (let att = 0; att < 140; att++) {
@@ -462,17 +510,18 @@ function genProblemCore(cfg, rnd) {
     enabledTypes: ["comparison"], premises: Math.max(2, Math.min(cfg.premises, 4)),
     spatialDims: 1, enableDistinction: false, enableNegation: false,
     enableMixed: false, enableMutualEntailment: false, allowUndetermined: false,
-    useMeaningful: cfg.useMeaningful,
+    enableBranching: false, useMeaningful: cfg.useMeaningful,
   }, rnd, true);
 }
 
 function tryGenCore(cfg, rnd, fallback) {
-  const np = cfg.premises, n = np + 1;
-  const terms = cfg.useMeaningful ? meaningfulTerms(n, rnd) : uniqueTerms(n, rnd);
   const enabled = cfg.enabledTypes;
   if (!enabled.length) return null;
-  const orderFrames = enabled.filter(t => t !== "sameopposite");
   const primary = enabled[rnd() * enabled.length | 0];
+  if (primary === "conditional" && !fallback) return tryGenCond(cfg, rnd);
+  const np = cfg.premises;
+  const allTerms = cfg.useMeaningful ? meaningfulTerms(np + 1, rnd) : uniqueTerms(np + 1, rnd);
+  const orderFrames = enabled.filter(t => t !== "sameopposite" && t !== "conditional");
   let mixed = false, orderFrame = null;
   if (primary === "sameopposite") {
     if (cfg.enableMixed && orderFrames.length && rnd() < 0.55) {
@@ -488,40 +537,85 @@ function tryGenCore(cfg, rnd, fallback) {
     const d = cfg.spatialDims || 1;
     axes = d >= 3 ? ["x", "y", "z"] : d === 2 ? ["x", "y"] : [["x", "y"][rnd() * 2 | 0]];
   }
-  // structure: each premise attaches a new term to an existing one
+  // structure sizing: branching trades tree terms for extra DAG edges
+  let extraTarget = 0;
+  if (cfg.enableBranching && !fallback && np >= 3) extraTarget = 1 + (np >= 5 && rnd() < 0.4 ? 1 : 0);
+  const treeN = np + 1 - extraTarget;
+  const branchProb = ((cfg.allowUndetermined || cfg.enableBranching) && np >= 3 && !fallback) ? 0.3 : 0;
   const cons = [];
-  let isTree = false;
-  for (let i = 0; i < np; i++) {
-    const newT = terms[i + 1];
-    let base = terms[i];
-    if (cfg.allowUndetermined && np >= 3 && i >= 1 && rnd() < 0.3) {
-      const j = rnd() * (i + 1) | 0;
-      base = terms[j];
-      if (j !== i) isTree = true;
-    }
+  const adjPairs = new Set();
+  const pairKey = (x, y) => x < y ? x + "|" + y : y + "|" + x;
+  let used = 1, isTree = false, isDag = false;
+  function pickRel() {
     let isId;
     if (!mixed) isId = (primary === "sameopposite");
     else isId = rnd() < 0.42;
-    let rel;
     if (isId) {
       const opts = ["same as", "opposite to"];
       if (cfg.enableDistinction) opts.push("different from");
-      rel = opts[rnd() * opts.length | 0];
-    } else {
-      const dim = orderFrame === "spatial" ? axes[rnd() * axes.length | 0]
-        : orderFrame === "comparison" ? "value" : "time";
-      rel = DIM_RELS[dim][rnd() * 2 | 0];
+      return opts[rnd() * opts.length | 0];
     }
+    const dim = orderFrame === "spatial" ? axes[rnd() * axes.length | 0]
+      : orderFrame === "comparison" ? "value"
+      : orderFrame === "temporal" ? "time" : "containment";
+    return DIM_RELS[dim][rnd() * 2 | 0];
+  }
+  function addTreeEdge() {
+    const newT = allTerms[used];
+    let base = allTerms[used - 1];
+    if (used >= 2 && rnd() < branchProb) {
+      const j = rnd() * used | 0;
+      base = allTerms[j];
+      if (j !== used - 1) isTree = true;
+    }
+    let rel = pickRel();
     if (fallback) rel = DIM_RELS[orderFrame === "comparison" ? "value" : "time"][0];
     const flip = fallback ? false : rnd() < 0.5;
     const [a, b] = flip ? [newT, base] : [base, newT];
     const negated = !!(cfg.enableNegation && !fallback && NEG_DISPLAY[rel] && rnd() < 0.28);
     cons.push({ a, b, rel, negated });
+    adjPairs.add(pairKey(a, b));
+    used++;
+  }
+  while (used < treeN) addTreeEdge();
+  let extras = extraTarget;
+  while (cons.length < np) {
+    let placed = false;
+    if (extras > 0 && used >= 3) {
+      for (let t = 0; t < 20 && !placed; t++) {
+        const i = rnd() * used | 0, j = rnd() * used | 0;
+        if (i === j) continue;
+        const u = allTerms[i], v = allTerms[j];
+        if (adjPairs.has(pairKey(u, v))) continue;
+        const rel = pickRel();
+        const flip = rnd() < 0.5;
+        const [a, b] = flip ? [v, u] : [u, v];
+        // extra edge must be informative and consistent: currently undetermined
+        if (evalRel(buildModel(cons), a, b, rel) !== "U") continue;
+        const negated = !!(cfg.enableNegation && NEG_DISPLAY[rel] && rnd() < 0.28);
+        cons.push({ a, b, rel, negated });
+        adjPairs.add(pairKey(a, b));
+        isDag = true; extras--; placed = true;
+      }
+    }
+    if (!placed) {
+      if (used >= allTerms.length) return null;
+      addTreeEdge();
+    }
   }
   const model = buildModel(cons);
   if (model.conflict) return null;
+  // no-redundant-premise invariant: later DAG edges may retroactively entail
+  // earlier ones; reject such problems so every premise carries information
+  if (isDag) {
+    for (let i = 0; i < cons.length; i++) {
+      const rest = cons.filter((_, k) => k !== i);
+      if (evalRel(buildModel(rest), cons[i].a, cons[i].b, cons[i].rel) !== "U") return null;
+    }
+  }
+  const terms = allTerms.slice(0, used);
+  const n = used;
 
-  // undirected premise-graph distances (question must not restate a premise)
   const und = new Map();
   terms.forEach(t => und.set(t, new Set()));
   cons.forEach(c => { und.get(c.a).add(c.b); und.get(c.b).add(c.a); });
@@ -543,8 +637,7 @@ function tryGenCore(cfg, rnd, fallback) {
   }
   if (!pairs.length) return null;
 
-  // candidate presented relations
-  const hasId = cons.some(c => IDENT[c.rel]) || primary === "sameopposite";
+  const hasId = cons.some(c => IDENT[c.rel]);
   const dimsUsed = [...new Set(cons.filter(c => REL[c.rel]).map(c => REL[c.rel].dim))];
   const relSets = [];
   if (hasId) {
@@ -601,13 +694,130 @@ function tryGenCore(cfg, rnd, fallback) {
     isMixed: types.includes("sameopposite") && types.length > 1,
     hasNegation: premises.some(p => p.negated),
     isMutualEntailment: !(pick.x === terms[0] && pick.y === terms[n - 1]),
-    structure: isTree ? "tree" : "chain",
+    structure: isDag ? "dag" : isTree ? "tree" : "chain",
+  };
+}
+
+function tryGenCond(cfg, rnd) {
+  const np = cfg.premises;
+  const allTerms = cfg.useMeaningful ? meaningfulTerms(np + 1, rnd) : uniqueTerms(np + 1, rnd);
+  let extraTarget = 0;
+  if (cfg.enableBranching && np >= 3) extraTarget = 1 + (np >= 5 && rnd() < 0.4 ? 1 : 0);
+  const branchProb = ((cfg.allowUndetermined || cfg.enableBranching) && np >= 3) ? 0.3 : 0;
+  const cons = [];
+  const adjPairs = new Set();
+  const pairKey = (x, y) => x < y ? x + "|" + y : y + "|" + x;
+  let used = 1, isTree = false, isDag = false;
+  function addTree() {
+    const newT = allTerms[used];
+    let base = allTerms[used - 1];
+    if (used >= 2 && rnd() < branchProb) {
+      const j = rnd() * used | 0;
+      base = allTerms[j];
+      if (j !== used - 1) isTree = true;
+    }
+    const flip = rnd() < 0.5;
+    const [a, b] = flip ? [newT, base] : [base, newT];
+    const neg = !!(cfg.enableNegation && rnd() < 0.25);
+    cons.push({ a, b, neg });
+    adjPairs.add(pairKey(a, b));
+    used++;
+  }
+  while (used < np + 1 - extraTarget) addTree();
+  let extras = extraTarget;
+  while (cons.length < np) {
+    let placed = false;
+    if (extras > 0 && used >= 3) {
+      for (let t = 0; t < 20 && !placed; t++) {
+        const i = rnd() * used | 0, j = rnd() * used | 0;
+        if (i === j) continue;
+        const u = allTerms[i], v = allTerms[j];
+        if (adjPairs.has(pairKey(u, v))) continue;
+        const neg = !!(cfg.enableNegation && rnd() < 0.25);
+        if (evalCond(buildCondModel(cons), u, v, neg) !== "U") continue;
+        cons.push({ a: u, b: v, neg });
+        adjPairs.add(pairKey(u, v));
+        isDag = true; extras--; placed = true;
+      }
+    }
+    if (!placed) {
+      if (used >= allTerms.length) return null;
+      addTree();
+    }
+  }
+  const model = buildCondModel(cons);
+  // no-redundant-premise invariant
+  for (let i = 0; i < cons.length; i++) {
+    const rest = cons.filter((_, k) => k !== i);
+    if (evalCond(buildCondModel(rest), cons[i].a, cons[i].b, cons[i].neg) !== "U") return null;
+  }
+  const terms = allTerms.slice(0, used);
+  const n = used;
+  const und = new Map();
+  terms.forEach(t => und.set(t, new Set()));
+  cons.forEach(c => { und.get(c.a).add(c.b); und.get(c.b).add(c.a); });
+  function dist(x, y) {
+    const seen = new Map([[x, 0]]); const q = [x];
+    while (q.length) {
+      const cur = q.shift();
+      if (cur === y) return seen.get(cur);
+      und.get(cur).forEach(nx => { if (!seen.has(nx)) { seen.set(nx, seen.get(cur) + 1); q.push(nx); } });
+    }
+    return Infinity;
+  }
+  let pairs = [];
+  if (cfg.enableMutualEntailment) {
+    for (const x of terms) for (const y of terms)
+      if (x !== y && dist(x, y) >= 2) pairs.push([x, y]);
+  } else {
+    if (dist(terms[0], terms[n - 1]) >= 2) pairs = [[terms[0], terms[n - 1]]];
+  }
+  if (!pairs.length) return null;
+
+  const byTruth = { T: [], F: [], U: [] };
+  pairs.forEach(([x, z]) => {
+    [false, true].forEach(negQ => {
+      if (negQ && !cfg.enableNegation) return;
+      const t = evalCond(model, x, z, negQ);
+      if (byTruth[t]) byTruth[t].push({ x, z, negQ }); // DEGEN candidates skipped
+    });
+  });
+  let order;
+  if (cfg.allowUndetermined) {
+    const r = rnd();
+    order = r < 0.36 ? ["T", "F", "U"] : r < 0.70 ? ["F", "T", "U"] : ["U", "T", "F"];
+  } else {
+    order = rnd() < 0.5 ? ["T", "F"] : ["F", "T"];
+  }
+  let pick = null, ans = null;
+  for (const t of order) {
+    if (byTruth[t].length) { pick = byTruth[t][rnd() * byTruth[t].length | 0]; ans = t; break; }
+  }
+  if (!pick) return null;
+  if (!cfg.allowUndetermined && ans === "U") return null;
+
+  const premises = cons.map(c => ({
+    a: c.a, b: c.b, neg: c.neg, negated: c.neg,
+    displayRel: c.neg ? "then NOT" : "then",
+    frameKey: "conditional", rel: "implies",
+  }));
+  const shuffled = np > 2 ? [...premises].sort(() => rnd() - 0.5) : [...premises];
+  return {
+    premises: shuffled, originalPremises: premises,
+    questionA: pick.x, questionB: pick.z,
+    questionRels: [pick.negQ ? "then NOT" : "then"], questionFrame: "conditional",
+    condNeg: pick.negQ,
+    answer: ans, numPremises: np, types: ["conditional"],
+    isMixed: false, hasNegation: premises.some(p => p.neg),
+    isMutualEntailment: !(pick.x === terms[0] && pick.z === terms[n - 1]),
+    structure: isDag ? "dag" : isTree ? "tree" : "chain",
   };
 }
 
 const RelEngine = {
   REL, IDENT, DIM_RELS, FRAME_OF_DIM, NEG_DISPLAY,
   buildModel, evalRel, evalConj, genProblemCore, uniqueTerms, meaningfulTerms,
+  buildCondModel, evalCond, condNOT,
 };
 global.RelEngine = RelEngine;
 if (typeof module !== "undefined" && module.exports) module.exports = RelEngine;
@@ -625,6 +835,7 @@ function genProblem() {
     enableMixed: S.enableMixed,
     enableMutualEntailment: S.enableMutualEntailment,
     allowUndetermined: S.allowUndetermined,
+    enableBranching: S.enableBranching,
     useMeaningful: S.useMeaningful,
   });
 }
@@ -689,10 +900,11 @@ function renderHome() {
     {label:"Adaptive difficulty",key:"adaptiveMode",color:"#3B82F6"},
     {label:"Meaningful words",sub:"vs nonsense",key:"useMeaningful",color:"#8B5CF6"},
     {label:"Mutual entailment",sub:"reversed & middle pairs",key:"enableMutualEntailment",color:"#F59E0B"},
-    {label:"Negation",sub:"NOT less = greater",key:"enableNegation",color:"#EF4444"},
+    {label:"Negation",sub:"NOT less = greater (not for hierarchy)",key:"enableNegation",color:"#EF4444"},
     {label:"Mixed relations",sub:"combine types in one problem",key:"enableMixed",color:"#E879F9"},
     {label:"Distinction",sub:"adds: different from",key:"enableDistinction",color:"#10B981"},
     {label:"Indeterminate problems",sub:"adds a CAN'T TELL FROM THIS INFO answer",key:"allowUndetermined",color:"#EAB308"},
+    {label:"Branching structures",sub:"problems fork and rejoin",key:"enableBranching",color:"#38BDF8"},
   ];
   settings.forEach(s=>{
     const row = document.createElement("div");
@@ -783,7 +995,7 @@ function recordAnswer(answer) {
   const correctAns = {T:"true",F:"false",U:"undet"}[p.answer];
   const correct=!timedOut&&answer===correctAns;
 
-  const rec = { correct, time:elapsed, premises:p.numPremises, timer:S.totalTimer, types:p.types, timedOut, isMixed:p.isMixed, hasNegation:p.hasNegation, isMutualEntailment:p.isMutualEntailment, qUndet:p.answer==="U", ts:Date.now() };
+  const rec = { correct, time:elapsed, premises:p.numPremises, timer:S.totalTimer, types:p.types, timedOut, isMixed:p.isMixed, hasNegation:p.hasNegation, isMutualEntailment:p.isMutualEntailment, qUndet:p.answer==="U", structure:p.structure, ts:Date.now() };
   S.sessionHistory.push(rec);
 
   if (correct) { S.streak++; S.bestStreak=Math.max(S.bestStreak,S.streak); }
@@ -797,7 +1009,7 @@ function recordAnswer(answer) {
     if (correct) S.fluencyLog[mi].correct++;
   }
 
-  const chain = p.originalPremises.map(pr=>`${pr.a} is ${pr.negated?"NOT ":""}${pr.displayRel} ${pr.b}`).join(" · ");
+  const chain = p.originalPremises.map(premiseText).join(" · ");
   const why = p.answer==="U" ? `The premises do not determine this relation. Given: ${chain}` : `Given: ${chain}`;
   S.feedback = { correct, timedOut, explanation: timedOut?`Time's up. ${why}`:correct?"Correct!":`Incorrect. ${why}` };
   renderTraining();
@@ -834,12 +1046,7 @@ function renderTraining() {
     const div = document.createElement("div");
     div.className = "premise";
     div.style.animationDelay = (i*0.06)+"s";
-    const col = TYPES[pr.frameKey].color;
-    if (pr.negated) {
-      div.innerHTML = `<span class="term">${pr.a}</span><span class="rel"><span style="color:var(--red)">is NOT</span> <span style="color:${col}">${pr.displayRel}</span></span><span class="term">${pr.b}</span>`;
-    } else {
-      div.innerHTML = `<span class="term">${pr.a}</span><span class="rel" style="color:${col}">is ${pr.displayRel}</span><span class="term">${pr.b}</span>`;
-    }
+    div.innerHTML = premiseHTML(pr);
     pc.appendChild(div);
   });
 
@@ -850,7 +1057,15 @@ function renderTraining() {
 
   if (!S.feedback) {
     const qCol = TYPES[p.questionFrame]?.color||"#a78bfa";
-    qs.innerHTML = `<div class="question-section"><div class="question-label">Therefore</div><div class="question-text"><span>${p.questionA}</span><span class="question-rel" style="color:${qCol}">is ${p.questionRels.join(" and ")}</span><span>${p.questionB}</span><span style="font-size:16px;color:var(--w25)">?</span></div></div>`;
+    let qInner;
+    if (p.questionFrame === "conditional") {
+      qInner = `<span class="question-rel" style="color:${qCol}">if</span><span>${p.questionA}</span><span class="question-rel" style="color:${qCol}">${p.questionRels[0]}</span><span>${p.questionB}</span>`;
+    } else if (p.questionFrame === "hierarchy") {
+      qInner = `<span>${p.questionA}</span><span class="question-rel" style="color:${qCol}">${p.questionRels.join(" and ")}</span><span>${p.questionB}</span>`;
+    } else {
+      qInner = `<span>${p.questionA}</span><span class="question-rel" style="color:${qCol}">is ${p.questionRels.join(" and ")}</span><span>${p.questionB}</span>`;
+    }
+    qs.innerHTML = `<div class="question-section"><div class="question-label">Therefore</div><div class="question-text">${qInner}<span style="font-size:16px;color:var(--w25)">?</span></div></div>`;
     const uBtn = S.allowUndetermined ? `<button class="btn-unsure" id="btn-unsure">CAN'T TELL</button>` : "";
     as.innerHTML = `<div class="answer-btns"><button class="btn-true" id="btn-true">TRUE</button><button class="btn-false" id="btn-false">FALSE</button>${uBtn}</div>`;
     document.getElementById("btn-true").onclick = ()=>recordAnswer("true");
@@ -917,6 +1132,7 @@ function renderResults() {
     {label:"Mixed",data:h.filter(r=>r.isMixed),color:"var(--pink)"},
     {label:"Mutual Ent.",data:h.filter(r=>r.isMutualEntailment),color:"var(--yellow)"},
     {label:"Can't tell",data:h.filter(r=>r.qUndet),color:"var(--green)"},
+    {label:"Branching",data:h.filter(r=>r.structure&&r.structure!=="chain"),color:"#38BDF8"},
   ].filter(f=>f.data.length>0);
 
   let html = `
