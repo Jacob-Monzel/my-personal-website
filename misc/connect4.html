@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Connect Four Trainer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* --- Academic Style --- */
     body {
@@ -14,150 +14,113 @@
       margin: 0;
       padding: 10px;
     }
-
     nav {
-      margin-bottom: 1.5rem;
-      font-size: 1rem;
-      text-align: center; 
-      background-color: #f0f0f0;
-      padding: 0.5rem;
-      border: 1px solid #ccc;
+      margin-bottom: 1.5rem; font-size: 1rem; text-align: center;
+      background-color: #f0f0f0; padding: 0.5rem; border: 1px solid #ccc;
     }
-
-    nav a {
-      margin: 0 0.5rem;
-      text-decoration: none;
-      color: #0000EE;
-    }
-
+    nav a { margin: 0 0.5rem; text-decoration: none; color: #0000EE; }
     h1 {
-      margin-top: 0;
-      font-size: 1.8rem;
-      border-bottom: 2px solid #000;
-      display: inline-block;
-      padding-bottom: 5px;
-      margin-bottom: 0.5rem;
+      margin-top: 0; font-size: 1.8rem; border-bottom: 2px solid #000;
+      display: inline-block; padding-bottom: 5px; margin-bottom: 0.5rem;
     }
+    .subtitle { font-size: 1rem; color: #444; margin-bottom: 1rem; font-style: italic; }
 
-    .subtitle {
-      font-size: 1rem;
-      color: #444;
-      margin-bottom: 1rem;
-      font-style: italic;
-    }
+    #container { display: flex; justify-content: center; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
 
-    #container {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 20px;
-      flex-wrap: wrap;
+    #board-wrap { display: flex; flex-direction: column; align-items: center; }
+
+    #result-banner {
+      min-height: 1.6em; font-size: 1.25rem; font-weight: bold; margin-bottom: 6px;
     }
 
     #game-board {
-      background-color: #34495e;
-      padding: 10px;
-      border-radius: 10px;
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 1.5vmin; 
-      border: 2px solid #2c3e50;
-      max-width: 95vw;
-      box-sizing: border-box;
+      background-color: #34495e; padding: 10px; border-radius: 10px;
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 1.2vmin;
+      border: 2px solid #2c3e50; max-width: 95vw; box-sizing: border-box;
     }
-
     .cell {
-      width: 11vmin;
-      height: 11vmin;
-      max-width: 60px;
-      max-height: 60px;
-      background-color: #fff;
-      border-radius: 50%;
-      cursor: pointer;
-      position: relative;
+      width: 11vmin; height: 11vmin; max-width: 56px; max-height: 56px;
+      background-color: #fff; border-radius: 50%; cursor: pointer;
+      position: relative; box-sizing: border-box;
     }
+    .disc {
+      position: absolute; inset: 0; border-radius: 50%;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.35);
+    }
+    .disc.red { background-color: #e74c3c; }
+    .disc.yellow { background-color: #f1c40f; }
+    .disc.drop { animation: drop 0.28s cubic-bezier(.5,.05,.7,.5); }
+    @keyframes drop { from { transform: translateY(calc(var(--fall) * -100%)); } to { transform: translateY(0); } }
 
-    .cell.red { background-color: #e74c3c; box-shadow: inset 0 0 5px rgba(0,0,0,0.3); }
-    .cell.yellow { background-color: #f1c40f; box-shadow: inset 0 0 5px rgba(0,0,0,0.3); }
-    
-    .cell.hint-anim { border: 4px solid #2ecc71; box-sizing: border-box; }
+    .ghost { opacity: 0.35; }
+    .last-move::after {
+      content: ""; position: absolute; width: 18%; height: 18%;
+      left: 41%; top: 41%; border-radius: 50%; background: rgba(0,0,0,0.45);
+    }
+    .win-cell { animation: pulse 0.9s ease-in-out infinite alternate; }
+    @keyframes pulse { from { box-shadow: 0 0 0 3px #2ecc71; } to { box-shadow: 0 0 0 6px #2ecc71; } }
+
+    /* threat rings: solid = threat on its useful parity, dashed = wrong parity */
+    .t-red    { border: 3px solid #c0392b; }
+    .t-yellow { border: 3px solid #b7950b; }
+    .t-both   { border: 3px solid #8e44ad; }
+    .t-off    { border-style: dashed; }
+
+    .hint-anim { outline: 4px solid #2ecc71; outline-offset: -2px; }
+
+    #board-legend { font-size: 0.85rem; color: #444; margin-top: 8px; max-width: 480px; }
 
     #analysis-panel {
-      width: 300px;
-      border: 1px solid #808080;
-      padding: 15px;
-      text-align: left;
-      background-color: #fafafa;
-      box-sizing: border-box;
-      position: relative;
+      width: 330px; border: 1px solid #808080; padding: 15px; text-align: left;
+      background-color: #fafafa; box-sizing: border-box; position: relative;
     }
+    .panel-header { font-weight: bold; border-bottom: 1px solid #ccc; margin-bottom: 12px; padding-bottom: 5px; }
 
-    .panel-header { font-weight: bold; border-bottom: 1px solid #ccc; margin-bottom: 15px; padding-bottom: 5px; }
+    #verdict {
+      font-size: 0.95rem; padding: 8px; border: 1px solid #ccc; background: #fff;
+      min-height: 2.4em; margin-bottom: 10px;
+    }
+    #verdict.won  { border-color: #2ecc71; background: #eafaf1; }
+    #verdict.lost { border-color: #e74c3c; background: #fdedec; }
+    #verdict.draw { border-color: #888; background: #f4f4f4; }
 
     #eval-bar-container {
-      width: 100%;
-      height: 25px;
-      background-color: #e74c3c;
-      margin-top: 10px;
-      position: relative;
-      border: 1px solid #000;
+      width: 100%; height: 22px; background-color: #f1c40f; position: relative; border: 1px solid #000;
     }
+    #eval-bar-fill { width: 50%; height: 100%; background-color: #e74c3c; transition: width 0.4s ease; }
+    #eval-bar-mid { position: absolute; left: 50%; top: 0; width: 1px; height: 100%; background: rgba(0,0,0,0.5); }
+    #eval-text { margin-top: 4px; text-align: center; font-size: 0.9rem; }
 
-    #eval-bar-fill {
-      width: 50%;
-      height: 100%;
-      background-color: #f1c40f;
-      transition: width 0.5s ease;
+    #quality-text { text-align: left; font-weight: bold; font-size: 0.95rem; margin-top: 10px; min-height: 2.2em; }
+    #engine-status { font-size: 0.85rem; color: #666; font-style: italic; min-height: 1.1em; margin-top: 4px; }
+
+    #move-log {
+      margin-top: 10px; max-height: 130px; overflow-y: auto; font-size: 0.85rem;
+      border: 1px solid #ddd; background: #fff; padding: 5px 8px;
     }
-
-    #eval-text { font-weight: bold; margin-top: 5px; text-align: center; font-size: 0.9rem; }
-    
-    #quality-text {
-      text-align: center;
-      font-weight: bold;
-      font-size: 1.1rem;
-      margin-top: 5px;
-      min-height: 1.2em;
-    }
-
-    .hint-box { margin-top: 15px; padding: 10px; background-color: #eef; border: 1px solid #0000EE; color: #000080; font-size: 0.9rem; }
+    #move-log div { padding: 1px 0; border-bottom: 1px dotted #eee; }
 
     .btn-group { display: flex; gap: 5px; margin-top: 10px; }
-    button { font-family: "Times New Roman", Times, serif; padding: 10px 10px; cursor: pointer; background: #f0f0f0; border: 1px solid #999; font-size: 0.9rem; flex: 1; font-weight: bold; }
+    button {
+      font-family: "Times New Roman", Times, serif; padding: 9px 10px; cursor: pointer;
+      background: #f0f0f0; border: 1px solid #999; font-size: 0.9rem; flex: 1; font-weight: bold;
+    }
     button:hover { background: #ddd; }
-    
-    .count-feedback {
-      background-color: #fff3cd;
-      border: 1px solid #ffeeba;
-      color: #856404;
-      padding: 10px;
-      margin-top: 10px;
-      display: none; 
-      font-size: 0.9rem;
-    }
+    select { font-family: inherit; width: 100%; padding: 4px; margin-top: 4px; }
+    label { font-size: 0.9rem; }
 
-    /* Modal Styles */
     #strategy-modal {
-      display: none;
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(255, 255, 255, 0.98);
-      border: 1px solid #808080;
-      z-index: 20;
-      text-align: left;
-      padding: 20px;
-      box-sizing: border-box;
-      overflow-y: auto;
+      display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255,255,255,0.98); border: 1px solid #808080; z-index: 20;
+      text-align: left; padding: 20px; box-sizing: border-box; overflow-y: auto;
     }
-    
-    #strategy-modal h2 { margin-top: 0; border-bottom: 1px solid #000; }
-    #strategy-modal h3 { margin-top: 1.5rem; margin-bottom: 0.5rem; color: #333; }
+    #strategy-modal h2 { margin-top: 0; border-bottom: 1px solid #000; font-size: 1.2rem; }
+    #strategy-modal h3 { margin-top: 1.2rem; margin-bottom: 0.4rem; color: #333; font-size: 1rem; }
+    #strategy-modal p, #strategy-modal li { font-size: 0.9rem; }
     #strategy-modal ul { padding-left: 20px; margin-top: 0; }
-    #strategy-modal li { margin-bottom: 8px; }
-
+    #strategy-modal li { margin-bottom: 6px; }
     .close-btn { float: right; background: #d00; color: #fff; border: none; padding: 5px 10px; font-weight: bold; cursor: pointer; width: auto; }
     .close-btn:hover { background: #a00; }
-
   </style>
 </head>
 <body>
@@ -168,54 +131,86 @@
   </nav>
 
   <h1>Connect Four Trainer</h1>
-  <div class="subtitle">
-    BigInt Bitboard Engine (Depth 10 Capable)
-  </div>
+  <div class="subtitle">Exact game solver &middot; threat &amp; parity trainer</div>
 
   <div id="container">
-    <div id="game-board"></div>
+    <div id="board-wrap">
+      <div id="result-banner"></div>
+      <div id="game-board"></div>
+      <div id="board-legend">
+        Rings mark <strong>threats</strong> (a square that completes four-in-a-row):
+        <span style="color:#c0392b;">red</span> /
+        <span style="color:#b7950b;">yellow</span> /
+        <span style="color:#8e44ad;">both</span>.
+        <strong>Solid</strong> ring = threat lies on its useful parity
+        (Red&nbsp;&harr;&nbsp;odd rows, Yellow&nbsp;&harr;&nbsp;even rows);
+        <strong>dashed</strong> = wrong parity, usually only tactical.
+        Keys 1&ndash;7 drop a disc.
+      </div>
+    </div>
 
     <div id="analysis-panel">
       <div id="strategy-modal">
         <button class="close-btn" onclick="toggleStrategy()">[X] Close</button>
-        <h2>Connect Four Strategy Guide</h2>
-        
-        <h3>1. The Odd/Even Rule (Parity)</h3>
-        <p><strong>Red (Player 1)</strong> wants to win on <strong>Odd Rows</strong> (1, 3, 5).<br>
-        <strong>Yellow (Player 2)</strong> wants to win on <strong>Even Rows</strong> (2, 4, 6).</p>
-        <p><em>Why?</em> As the board fills up, you naturally claim the slots matching your parity. If you are Red, you cannot force a win on Row 4 unless Yellow helps you.</p>
+        <h2>How to Beat Any Human</h2>
 
-        <h3>2. Zugzwang (The "Squeeze")</h3>
-        <p>In the endgame, players run out of "good" moves. Zugzwang is when <strong>every possible move you make loses the game immediately.</strong> You are forced to commit suicide because you cannot pass your turn.</p>
+        <h3>0. The game is solved</h3>
+        <p><strong>Red (first player) wins with perfect play, and only by starting in the center column.</strong>
+        Starting adjacent to center draws; anything else loses (with perfect play). Take Red when you can, take the center, and never give it back.</p>
 
-        <h3>3. Common Traps</h3>
+        <h3>1. Threats and parity (the master skill)</h3>
+        <p>A <em>threat</em> is an empty square that would complete your four. Because gravity fills columns bottom-up,
+        as the board fills in a zugzwang endgame, <strong>Red ends up claiming odd rows (1,3,5) and Yellow even rows (2,4,6)</strong>.
+        So a Red threat on an odd row is a long-term winning asset; on an even row it is usually only tactical.
+        The board overlay shows exactly this: collect <em>solid</em> rings, and count your opponent's.</p>
+
+        <h3>2. When is the game already decided?</h3>
+        <p>Watch the <strong>verdict box</strong>. Early on the solver reports a heuristic eval; typically by moves 12&ndash;16
+        it proves an exact result ("forced win in N"). Against humans, your edge is knowing the verdict before they do:
+        once you are proven winning, every move you need exists &mdash; find it. Once you are proven lost, play the
+        longest defense and wait for their mistake (the trainer shows which defense lasts longest).</p>
+
+        <h3>3. Standard winning patterns</h3>
         <ul>
-          <li><strong>The "7":</strong> A shape combining a horizontal 3 and a diagonal 3. Creates two threats at once.</li>
-          <li><strong>Double-Ended:</strong> <code>_ R R R _</code>. If they block left, you win right.</li>
-          <li><strong>The Force:</strong> Playing a threat that forces the opponent to block exactly where you want them to be.</li>
+          <li><strong>Open three</strong>: <code>_ X X X _</code> &mdash; two threats at once, unstoppable.</li>
+          <li><strong>The "7"</strong>: a horizontal three and a diagonal three sharing stones &mdash; creates a double threat.</li>
+          <li><strong>Stacked threats</strong>: two of your threats in the same column, yours directly above theirs, or odd-above-even &mdash; the lower one poisons the square beneath the upper.</li>
+          <li><strong>Forcing sequences</strong>: each threat forces a block; the blocks build your real attack. Practice spotting when a forced sequence ends in an open three.</li>
+        </ul>
+
+        <h3>4. Training regimen</h3>
+        <ul>
+          <li>Play Red vs <em>Perfect</em>. You should eventually convert a win every game &mdash; the win exists.</li>
+          <li>Play Yellow vs <em>Casual/Club</em> and practice punishing inaccuracies instantly (watch for the verdict to flip).</li>
+          <li>After any Mistake/Blunder tag, hit <em>Undo</em> and find the better move before asking for a Hint.</li>
         </ul>
       </div>
 
       <div class="panel-header">Engine Analysis</div>
 
-      <div id="eval-bar-container"><div id="eval-bar-fill"></div></div>
-      <div id="eval-text">Even (0.0)</div>
+      <div id="verdict">Analyzing&hellip;</div>
+
+      <div id="eval-bar-container"><div id="eval-bar-fill"></div><div id="eval-bar-mid"></div></div>
+      <div id="eval-text">&nbsp;</div>
+
       <div id="quality-text"></div>
-      
-      <button onclick="checkCountAdvice()" style="margin-top: 15px; background: #eef; border-color: #0000EE; color: #000080;">Should I start counting?</button>
-      <div id="count-feedback" class="count-feedback"></div>
-      
-      <div style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px;">
-        <label><strong>Opponent Strength:</strong></label>
+      <div id="engine-status"></div>
+
+      <div id="move-log"></div>
+
+      <div style="margin-top: 12px; border-top: 1px solid #ccc; padding-top: 10px;">
+        <label><strong>Opponent:</strong></label>
         <select id="depth-select">
-          <option value="2">Greedy / Trap Practice (Depth 2)</option>
-          <option value="4">Casual (Depth 4)</option>
-          <option value="6" selected>Club Player (Depth 6)</option>
-          <option value="8">Master (Depth 8)</option>
-          <option value="10">Grandmaster (Depth 10)</option>
+          <option value="casual">Casual (shallow, makes mistakes)</option>
+          <option value="club" selected>Club Player</option>
+          <option value="master">Master</option>
+          <option value="perfect">Perfect (plays the solved game)</option>
         </select>
-        <div style="margin-top: 10px;">
-          <label><input type="checkbox" id="go-second-check"> Engine Goes First</label>
+        <div style="margin-top: 8px;">
+          <label><input type="checkbox" id="go-second-check"> Engine goes first (you play Yellow)</label>
+        </div>
+        <div style="margin-top: 4px;">
+          <label><input type="checkbox" id="threat-check" checked> Show threat overlay</label>
         </div>
       </div>
 
@@ -223,309 +218,402 @@
         <button onclick="undoMove()">Undo</button>
         <button onclick="showHint()">Hint</button>
       </div>
-      
-      <button onclick="toggleStrategy()" style="margin-top: 10px; width: 100%;">Strategy Guide</button>
+      <button onclick="toggleStrategy()" style="margin-top: 8px; width: 100%;">Strategy Guide</button>
       <button onclick="resetGame()" style="width: 100%; margin-top: 5px;">New Game</button>
-
     </div>
   </div>
 
   <script>
-    // --- Config ---
-    const ROWS = 6;
-    const COLS = 7;
-    const MAX_MOVES = 42;
-    
-    // Game State (BigInts)
-    let bitboard = [0n, 0n]; 
-    let height = [0, 7, 14, 21, 28, 35, 42]; 
-    let moves = []; 
-    let gameActive = true;
-    let humanIsRed = true;
-    let turn = 0; 
+  "use strict";
+  // ---------- Web Worker (solver) ----------
+  var ENGINE_SRC = "\"use strict\";\n/* Connect 4 solver engine \u2014 bitboard (7-bit columns, sentinel row), negamax +\n   alpha-beta + transposition table + iterative deepening, anytime search.\n   Scores: 0 = draw-ish / heuristic even. |s| > 900 means PROVEN win/loss:\n   plies-to-mate = 1000 - |s|. Heuristic scores are clamped to +/-850 so they\n   can never be mistaken for proven results. */\n\nvar W = 7, H = 6;\nvar BOT = (function () { var b = 0n; for (var c = 0; c < 7; c++) b |= 1n << BigInt(c * 7); return b; })();\nvar FULL = BOT * 63n;                 // all 42 playable cells\nvar ODD_ROWS = BOT * 21n;             // rows 1,3,5 (1-indexed) -> good for Red\nvar EVEN_ROWS = BOT * 42n;            // rows 2,4,6 -> good for Yellow\nvar COLMASK = (function () {\n  var a = []; for (var c = 0; c < 7; c++) a.push(63n << BigInt(c * 7)); return a;\n})();\nvar ORDER = [3, 2, 4, 1, 5, 0, 6];\n\nfunction pc(x) { var n = 0; while (x) { x &= x - 1n; n++; } return n; }\nfunction possible(mask) { return (mask + BOT) & FULL; }\n\nfunction isWin(pos) {\n  var m = pos & (pos >> 1n); if (m & (m >> 2n)) return true;   // vertical\n  m = pos & (pos >> 7n); if (m & (m >> 14n)) return true;      // horizontal\n  m = pos & (pos >> 6n); if (m & (m >> 12n)) return true;      // diag /\n  m = pos & (pos >> 8n); if (m & (m >> 16n)) return true;      // diag \\\n  return false;\n}\n\n/* All empty cells that would complete four-in-a-row for `pos`. */\nfunction winSpots(pos, mask) {\n  var r = (pos << 1n) & (pos << 2n) & (pos << 3n); // vertical\n  var p;\n  p = (pos << 7n) & (pos << 14n);                  // horizontal\n  r |= p & (pos << 21n); r |= p & (pos >> 7n);\n  p = (pos >> 7n) & (pos >> 14n);\n  r |= p & (pos << 7n); r |= p & (pos >> 21n);\n  p = (pos << 6n) & (pos << 12n);                  // diagonal (shift 6)\n  r |= p & (pos << 18n); r |= p & (pos >> 6n);\n  p = (pos >> 6n) & (pos >> 12n);\n  r |= p & (pos << 6n); r |= p & (pos >> 18n);\n  p = (pos << 8n) & (pos << 16n);                  // diagonal (shift 8)\n  r |= p & (pos << 24n); r |= p & (pos >> 8n);\n  p = (pos >> 8n) & (pos >> 16n);\n  r |= p & (pos << 8n); r |= p & (pos >> 24n);\n  return r & (FULL ^ mask);\n}\n\n/* Heuristic for unsolved horizons: threat counts (parity-weighted) + center. */\nfunction evalPos(pos, mask) {\n  var opp = pos ^ mask;\n  var my = winSpots(pos, mask), op = winSpots(opp, mask);\n  var s = 40 * (pc(my) - pc(op));\n  s += 8 * (pc(pos & COLMASK[3]) - pc(opp & COLMASK[3]));\n  var curIsRed = (pc(mask) & 1) === 0;\n  var redT = curIsRed ? my : op, yelT = curIsRed ? op : my;\n  var par = 12 * (pc(redT & ODD_ROWS) - pc(yelT & EVEN_ROWS));\n  s += curIsRed ? par : -par;\n  if (s > 850) s = 850; if (s < -850) s = -850;\n  return s;\n}\n\n/* ---------------- search ---------------- */\nvar TT = new Map();\nvar USE_TT = true;\nvar nodes = 0, hzCount = 0, deadline = 0;\nvar ABORT = { abort: true };\n\nfunction negamax(pos, mask, depth, alpha, beta) {\n  nodes++;\n  if ((nodes & 2047) === 0 && Date.now() > deadline) throw ABORT;\n  if (mask === FULL) return 0;\n\n  var poss = possible(mask);\n  if (winSpots(pos, mask) & poss) return 999;          // win this ply\n\n  if (depth <= 0) { hzCount++; return evalPos(pos, mask); }\n\n  var opp = pos ^ mask;\n  var oppWin = winSpots(opp, mask) & poss;\n  var forced = 0n;\n  if (oppWin) {\n    if (oppWin & (oppWin - 1n)) return -998;           // two threats: dead\n    forced = oppWin;                                    // must block here\n  }\n\n  var key = pos + mask;\n  var e = USE_TT ? TT.get(key) : undefined;\n  var a0 = alpha;\n  if (e && (e.d >= depth || e.s > 900 || e.s < -900)) {\n    if (e.h && !(e.s > 900 || e.s < -900)) hzCount++;\n    if (e.f === 0) return e.s;\n    if (e.f === 1) { if (e.s > alpha) alpha = e.s; }\n    else { if (e.s < beta) beta = e.s; }\n    if (alpha >= beta) return e.s;\n  }\n\n  var movesArr = [];\n  if (forced) movesArr.push(forced);\n  else {\n    for (var i = 0; i < 7; i++) {\n      var b = poss & COLMASK[ORDER[i]];\n      if (b) movesArr.push(b);\n    }\n    if (movesArr.length > 1) {\n      var scored = movesArr.map(function (m) {\n        return [pc(winSpots(pos | m, mask | m)), m];\n      });\n      scored.sort(function (x, y) { return y[0] - x[0]; });\n      movesArr = scored.map(function (t) { return t[1]; });\n    }\n  }\n\n  var h0 = hzCount, best = -100000;\n  for (var j = 0; j < movesArr.length; j++) {\n    var m2 = movesArr[j], mask2 = mask | m2;\n    var s = -negamax(mask2 ^ (pos | m2), mask2, depth - 1, -beta, -alpha);\n    if (s > 900) s--; else if (s < -900) s++;\n    if (s > best) best = s;\n    if (s > alpha) alpha = s;\n    if (alpha >= beta) break;\n  }\n\n  var flag = best <= a0 ? 2 : (best >= beta ? 1 : 0);\n  if (USE_TT) {\n    if (TT.size > 1200000) TT.clear();\n    TT.set(key, { d: depth, s: best, f: flag, h: hzCount > h0 });\n  }\n  return best;\n}\n\n/* Analyze position: iterative deepening with a time budget.\n   Returns per-column scores from the last COMPLETED iteration.\n   solved === true means the verdict is exact (win/loss/draw proven). */\nfunction analyze(movesList, budgetMs, maxDepthCap, useTT) {\n  USE_TT = useTT !== false;\n  var pos = 0n, mask = 0n;\n  for (var i = 0; i < movesList.length; i++) {\n    var b = possible(mask) & COLMASK[movesList[i]];\n    var mask2 = mask | b;\n    pos = mask2 ^ (pos | b);   // pos is always the side to move\n    mask = mask2;\n  }\n  var remaining = 42 - pc(mask);\n  var t0 = Date.now();\n  deadline = t0 + budgetMs;\n  nodes = 0;\n\n  var poss = possible(mask);\n  var legal = [];\n  for (var c = 0; c < 7; c++) if (poss & COLMASK[c]) legal.push(c);\n\n  var depths = [];\n  var cap = Math.min(remaining, maxDepthCap || remaining);\n  for (var d = 2; d < cap; d += 2) depths.push(d);\n  if (depths[depths.length - 1] !== cap) depths.push(cap);\n  if (!depths.length) depths = [1];\n\n  var snap = null;\n  try {\n    for (var di = 0; di < depths.length; di++) {\n      var depth = depths[di];\n      var h0 = hzCount;\n      var cols = [];\n      var order = snap\n        ? snap.cols.slice().sort(function (a, b2) { return b2.s - a.s; }).map(function (x) { return x.col; })\n        : legal.slice().sort(function (a, b2) { return Math.abs(3 - a) - Math.abs(3 - b2); });\n      var alpha = -100000;\n      for (var k = 0; k < order.length; k++) {\n        var col = order[k];\n        var bbit = poss & COLMASK[col];\n        var s;\n        var mask3 = mask | bbit;\n        var pos3 = mask3 ^ (pos | bbit);\n        if (winSpots(pos, mask) & bbit) s = 999;\n        else {\n          s = -negamax(pos3, mask3, depth - 1, -100000, -alpha);\n          if (s > 900) s--; else if (s < -900) s++;\n        }\n        cols.push({ col: col, s: s });\n        if (s > alpha) alpha = s;\n      }\n      cols.sort(function (a, b2) { return b2.s - a.s; });\n      var horizon = hzCount > h0;\n      snap = { depth: depth, cols: cols, horizon: horizon };\n      if (!horizon) { snap.provenAll = true; break; }       // fully solved\n      if (cols[0].s > 900) break;                            // forced win found\n      if (Date.now() > deadline) break;\n    }\n  } catch (err) { if (err !== ABORT) throw err; }\n\n  if (!snap) snap = { depth: 0, cols: legal.map(function (c) { return { col: c, s: 0 }; }), horizon: true };\n\n  var best = snap.cols[0];\n  var solved = !!snap.provenAll || best.s > 900 || best.s < -900;\n  return {\n    cols: snap.cols, best: best, depth: snap.depth, solved: solved,\n    provenAll: !!snap.provenAll, remaining: remaining,\n    nodes: nodes, ms: Date.now() - t0\n  };\n}\n\n/* Threat map for the UI: winning spots for red / yellow on the current board. */\nfunction threats(movesList) {\n  var pos = 0n, mask = 0n;\n  for (var i = 0; i < movesList.length; i++) {\n    var b = possible(mask) & COLMASK[movesList[i]];\n    var mask2 = mask | b;\n    pos = mask2 ^ (pos | b);\n    mask = mask2;\n  }\n  var curIsRed = (movesList.length & 1) === 0;\n  var cur = pos, opp = pos ^ mask;\n  var red = curIsRed ? cur : opp, yel = curIsRed ? opp : cur;\n  return { red: winSpots(red, mask).toString(), yellow: winSpots(yel, mask).toString() };\n}\n\nif (typeof self !== \"undefined\" && typeof self.postMessage === \"function\" && typeof module === \"undefined\") {\n  self.onmessage = function (ev) {\n    var m = ev.data;\n    if (m.type === \"analyze\") {\n      var r = analyze(m.moves, m.budgetMs || 1200, m.maxDepth || 64, m.useTT);\n      r.id = m.id; r.type = \"analysis\";\n      // BigInt-free payload\n      r.cols = r.cols.map(function (x) { return { col: x.col, s: x.s }; });\n      r.best = { col: r.best.col, s: r.best.s };\n      self.postMessage(r);\n    } else if (m.type === \"threats\") {\n      var t = threats(m.moves);\n      self.postMessage({ id: m.id, type: \"threats\", red: t.red, yellow: t.yellow });\n    } else if (m.type === \"reset\") {\n      TT.clear();\n      self.postMessage({ id: m.id, type: \"reset\" });\n    }\n  };\n}\n\nif (typeof module !== \"undefined\") {\n  module.exports = { analyze: analyze, threats: threats, isWin: isWin, winSpots: winSpots, possible: possible, COLMASK: COLMASK, FULL: FULL, pc: pc, TT: TT };\n}\n";
+  var worker = new Worker(URL.createObjectURL(new Blob([ENGINE_SRC], { type: "application/javascript" })));
+  var callbacks = {}, reqId = 0;
+  worker.onmessage = function (ev) {
+    var cb = callbacks[ev.data.id];
+    if (cb) { delete callbacks[ev.data.id]; cb(ev.data); }
+  };
+  function ask(msg, cb) { msg.id = ++reqId; callbacks[msg.id] = cb; worker.postMessage(msg); return msg.id; }
 
-    // UI Elements
-    const boardElement = document.getElementById("game-board");
-    const evalBarFill = document.getElementById("eval-bar-fill");
-    const evalText = document.getElementById("eval-text");
-    const qualityText = document.getElementById("quality-text");
-    const goSecondCheck = document.getElementById("go-second-check");
-    const depthSelect = document.getElementById("depth-select");
-    const strategyModal = document.getElementById("strategy-modal");
-    const countFeedback = document.getElementById("count-feedback");
-
-    // --- BigInt Bitboard Logic ---
-
-    function makeMove(col) {
-      const move = 1n << BigInt(height[col]);
-      bitboard[turn] ^= move; 
-      moves.push(col);
-      height[col]++;
-      turn ^= 1;
-    }
-
-    function undoBitMove() {
-      if (moves.length === 0) return;
-      const col = moves.pop();
-      turn ^= 1;
-      height[col]--;
-      const move = 1n << BigInt(height[col]);
-      bitboard[turn] ^= move;
-    }
-
-    function canPlay(col) {
-      const top = (col + 1) * 7 - 1; 
-      return height[col] < top;
-    }
-
-    function isWin(pos) {
-      let m = pos & (pos >> 1n); 
-      if ((m & (m >> 2n)) !== 0n) return true;
-      m = pos & (pos >> 7n); 
-      if ((m & (m >> 14n)) !== 0n) return true;
-      m = pos & (pos >> 6n); 
-      if ((m & (m >> 12n)) !== 0n) return true;
-      m = pos & (pos >> 8n); 
-      if ((m & (m >> 16n)) !== 0n) return true;
-      return false;
-    }
-
-    // --- Solver ---
-
-    function solve(depth, alpha, beta) {
-      const prevTurn = turn ^ 1;
-      if (isWin(bitboard[prevTurn])) return -(100000 - moves.length); 
-      if (depth === 0 || moves.length === MAX_MOVES) return 0;
-
-      const colOrder = [3, 2, 4, 1, 5, 0, 6];
-      for (let i = 0; i < 7; i++) {
-        const col = colOrder[i];
-        if (canPlay(col)) {
-          makeMove(col);
-          let score = -solve(depth - 1, -beta, -alpha);
-          undoBitMove();
-          if (score >= beta) return score;
-          if (score > alpha) alpha = score;
+  // ---------- minimal bitboard helpers (main thread: rendering only) ----------
+  var BOT = (function () { var b = 0n; for (var c = 0; c < 7; c++) b |= 1n << BigInt(c * 7); return b; })();
+  var FULL = BOT * 63n;
+  var COLMASK = (function () { var a = []; for (var c = 0; c < 7; c++) a.push(63n << BigInt(c * 7)); return a; })();
+  function possibleM(mask) { return (mask + BOT) & FULL; }
+  function isWinM(pos) {
+    var m = pos & (pos >> 1n); if (m & (m >> 2n)) return true;
+    m = pos & (pos >> 7n); if (m & (m >> 14n)) return true;
+    m = pos & (pos >> 6n); if (m & (m >> 12n)) return true;
+    m = pos & (pos >> 8n); if (m & (m >> 16n)) return true;
+    return false;
+  }
+  var LINES = (function () {
+    var L = [], dirs = [[1, 0], [0, 1], [1, 1], [1, -1]]; // (dc,dr)
+    for (var c = 0; c < 7; c++) for (var r = 0; r < 6; r++)
+      dirs.forEach(function (d) {
+        var cells = [];
+        for (var k = 0; k < 4; k++) {
+          var cc = c + d[0] * k, rr = r + d[1] * k;
+          if (cc < 0 || cc > 6 || rr < 0 || rr > 5) return;
+          cells.push([rr, cc]);
         }
-      }
-      return alpha;
+        var m = 0n; cells.forEach(function (x) { m |= 1n << BigInt(x[1] * 7 + x[0]); });
+        L.push({ mask: m, cells: cells });
+      });
+    return L;
+  })();
+
+  // ---------- game state ----------
+  var moves = [], humanIsRed = true, gameActive = true, awaitingEngine = false;
+  var prevAnalysis = null;        // analysis of the position the human moves in
+  var curThreats = { red: 0n, yellow: 0n };
+  var hoverCol = -1, lastAnimated = -1;
+  var LEVELS = {
+    casual:  { depth: 4,  budget: 250,  p: 0.6 },
+    club:    { depth: 8,  budget: 350,  p: 0.9 },
+    master:  { depth: 14, budget: 700,  p: 1.0 },
+    perfect: { depth: 64, budget: 2200, p: 1.0 }
+  };
+  var STRONG_BUDGET = 1400;
+
+  var boardEl = document.getElementById("game-board");
+  var banner = document.getElementById("result-banner");
+  var verdictEl = document.getElementById("verdict");
+  var evalFill = document.getElementById("eval-bar-fill");
+  var evalText = document.getElementById("eval-text");
+  var qualityEl = document.getElementById("quality-text");
+  var statusEl = document.getElementById("engine-status");
+  var logEl = document.getElementById("move-log");
+  var levelSel = document.getElementById("depth-select");
+  var goSecond = document.getElementById("go-second-check");
+  var threatCheck = document.getElementById("threat-check");
+  var modal = document.getElementById("strategy-modal");
+
+  function boards() {
+    var pos = 0n, mask = 0n;
+    for (var i = 0; i < moves.length; i++) {
+      var b = possibleM(mask) & COLMASK[moves[i]];
+      var m2 = mask | b;
+      pos = m2 ^ (pos | b); mask = m2;
     }
+    var cur = pos, opp = pos ^ mask;
+    var red = (moves.length % 2 === 0) ? cur : opp;
+    return { red: red, yellow: red ^ mask, mask: mask };
+  }
+  function landingRow(col, mask) {
+    var b = possibleM(mask) & COLMASK[col];
+    if (!b) return -1;
+    var r = 0; while (!(b & (1n << BigInt(col * 7 + r)))) r++;
+    return r;
+  }
+  function mateMoves(s) { return Math.ceil((1000 - Math.abs(s)) / 2); }
+  function decayed(s) { if (s > 900) return s - 1; if (s < -900) return s + 1; return s; }
 
-    function getBestMove(depth) {
-      let bestScore = -Infinity;
-      let bestMove = -1;
-      const colOrder = [3, 2, 4, 1, 5, 0, 6];
-
-      for (let i = 0; i < 7; i++) {
-        const col = colOrder[i];
-        if (canPlay(col)) {
-          makeMove(col);
-          let score = -solve(depth - 1, -Infinity, Infinity);
-          undoBitMove();
-          
-          // Center Bias for tie-breaking
-          const positionalBias = (10 - Math.abs(3 - col)) / 1000;
-          
-          if (score + positionalBias > bestScore) {
-            bestScore = score + positionalBias;
-            bestMove = col;
+  // ---------- rendering ----------
+  function renderBoard(winMask) {
+    var B = boards();
+    boardEl.innerHTML = "";
+    var lastCol = moves.length ? moves[moves.length - 1] : -1;
+    var lastRow = -1;
+    if (lastCol >= 0) {
+      // row of the most recent disc in that column
+      for (var r = 5; r >= 0; r--) if ((B.mask & (1n << BigInt(lastCol * 7 + r)))) { lastRow = r; break; }
+    }
+    for (var r2 = 5; r2 >= 0; r2--) {
+      for (var c = 0; c < 7; c++) {
+        (function (r, c) {
+          var cell = document.createElement("div");
+          cell.className = "cell";
+          cell.id = "cell-" + r + "-" + c;
+          var bit = 1n << BigInt(c * 7 + r);
+          var disc = null;
+          if (B.red & bit) { disc = document.createElement("div"); disc.className = "disc red"; }
+          else if (B.yellow & bit) { disc = document.createElement("div"); disc.className = "disc yellow"; }
+          if (disc) {
+            if (c === lastCol && r === lastRow) {
+              cell.classList.add("last-move");
+              if (lastAnimated !== moves.length) {
+                disc.classList.add("drop");
+                disc.style.setProperty("--fall", (6 - r));
+              }
+            }
+            cell.appendChild(disc);
+          } else if (threatCheck.checked && !winMask) {
+            var isR = (curThreats.red & bit) !== 0n, isY = (curThreats.yellow & bit) !== 0n;
+            if (isR && isY) cell.classList.add("t-both");
+            else if (isR) { cell.classList.add("t-red"); if (r % 2 !== 0) cell.classList.add("t-off"); }
+            else if (isY) { cell.classList.add("t-yellow"); if (r % 2 !== 1) cell.classList.add("t-off"); }
           }
-        }
-      }
-      return { col: bestMove, score: bestScore };
-    }
-
-    // --- UI/Game Logic ---
-
-    function initGame() {
-      bitboard = [0n, 0n];
-      height = [0, 7, 14, 21, 28, 35, 42];
-      moves = [];
-      gameActive = true;
-      humanIsRed = !goSecondCheck.checked;
-      turn = 0; 
-
-      renderBoard();
-      updateEval(0);
-      qualityText.textContent = "";
-      countFeedback.style.display = "none";
-
-      if (!humanIsRed) {
-        setTimeout(() => {
-          const result = getBestMove(parseInt(depthSelect.value));
-          handleAiMove(result.col);
-        }, 500);
+          if (winMask && (winMask & bit)) cell.classList.add("win-cell");
+          cell.addEventListener("click", function () { handleHumanClick(c); });
+          cell.addEventListener("mouseenter", function () { setGhost(c); });
+          boardEl.appendChild(cell);
+        })(r2, c);
       }
     }
+    lastAnimated = moves.length;
+  }
+  boardEl.addEventListener("mouseleave", function () { setGhost(-1); });
 
-    function renderBoard() {
-      boardElement.innerHTML = "";
-      for (let r = ROWS - 1; r >= 0; r--) {
-        for (let c = 0; c < COLS; c++) {
-          const cell = document.createElement("div");
-          cell.classList.add("cell");
-          cell.id = `cell-${r}-${c}`;
-          
-          const idx = BigInt(c * 7 + r);
-          const mask = 1n << idx;
-          if ((bitboard[0] & mask) !== 0n) cell.classList.add("red");
-          else if ((bitboard[1] & mask) !== 0n) cell.classList.add("yellow");
-
-          cell.addEventListener("click", () => handleHumanClick(c));
-          boardElement.appendChild(cell);
-        }
-      }
+  function setGhost(col) {
+    if (hoverCol >= 0) {
+      var old = document.querySelector(".ghost");
+      if (old) old.remove();
     }
-
-    function handleHumanClick(col) {
-      if (!gameActive) return;
-      const humanPlayer = humanIsRed ? 0 : 1;
-      if (turn !== humanPlayer) return;
-      if (!canPlay(col)) return;
-
-      countFeedback.style.display = "none";
-
-      makeMove(col);
-      renderBoard();
-
-      if (isWin(bitboard[humanPlayer])) {
-        endGame("You Win!");
-        updateEval(100000); 
-        qualityText.textContent = "Winning Move!";
-        qualityText.style.color = "green";
-        return;
-      }
-      if (moves.length === 42) { endGame("Draw!"); return; }
-
-      // Post-Move Analysis (Using Depth 6 for Accuracy)
-      // Even if playing vs Greedy, we want accurate feedback.
-      const evalDepth = 6; 
-      const evalRes = getBestMove(evalDepth); 
-      const aiAdvantage = evalRes.score; 
-
-      let msg = "Neutral";
-      let color = "#555";
-      if (aiAdvantage > 90000) { msg = "Blunder (Forced Loss)"; color = "#d00"; }
-      else if (aiAdvantage > 200) { msg = "Mistake"; color = "orange"; }
-      else if (aiAdvantage < -90000) { msg = "Winning Move!"; color = "green"; }
-      else if (aiAdvantage < -200) { msg = "Strong Move"; color = "green"; }
-      else { msg = "Neutral / Even"; color = "#333"; }
-
-      qualityText.textContent = msg;
-      qualityText.style.color = color;
-      updateEval(-evalRes.score);
-
-      setTimeout(() => {
-        const depth = parseInt(depthSelect.value);
-        const result = getBestMove(depth);
-        handleAiMove(result.col);
-      }, 50);
+    hoverCol = col;
+    if (col < 0 || !gameActive || awaitingEngine) return;
+    var humanTurn = (moves.length % 2 === 0) === humanIsRed;
+    if (!humanTurn) return;
+    var B = boards();
+    var r = landingRow(col, B.mask);
+    if (r < 0) return;
+    var cell = document.getElementById("cell-" + r + "-" + col);
+    if (cell && !cell.querySelector(".disc")) {
+      var g = document.createElement("div");
+      g.className = "disc ghost " + (humanIsRed ? "red" : "yellow");
+      cell.appendChild(g);
     }
+  }
 
-    function handleAiMove(col) {
-      if (!gameActive) return;
-      const aiPlayer = humanIsRed ? 1 : 0;
-      makeMove(col);
-      renderBoard();
+  function refreshThreats(then) {
+    var snapshot = moves.slice();
+    ask({ type: "threats", moves: snapshot }, function (res) {
+      if (snapshot.length !== moves.length) return; // stale
+      curThreats = { red: BigInt(res.red), yellow: BigInt(res.yellow) };
+      renderBoard(null);
+      if (then) then();
+    });
+  }
 
-      if (isWin(bitboard[aiPlayer])) {
-        endGame("Engine Wins!");
-        updateEval(-100000); 
-      } else if (moves.length === 42) {
-        endGame("Draw!");
+  // ---------- verdict / eval display ----------
+  function showVerdict(a) {
+    // a: analysis of position where HUMAN is to move
+    var s = a.best.s;
+    verdictEl.className = "";
+    if (moves.length === 0) {
+      verdictEl.innerHTML = "<strong>Theory:</strong> first player (Red) wins with perfect play, and only by starting in the <strong>center</strong>.";
+      setEvalBar(60, "Red wins with perfect play");
+      return;
+    }
+    if (s > 900) {
+      verdictEl.className = "won";
+      verdictEl.innerHTML = "<strong>SOLVED:</strong> you have a <strong>forced win in " + mateMoves(s) + " move" + (mateMoves(s) > 1 ? "s" : "") + "</strong> with perfect play. Find it.";
+      setEvalBar(humanIsRed ? 97 : 3, (humanIsRed ? "Red" : "Yellow") + " mates in " + mateMoves(s));
+    } else if (s < -900) {
+      verdictEl.className = "lost";
+      verdictEl.innerHTML = "<strong>SOLVED:</strong> position is <strong>lost</strong> &mdash; engine can force mate in " + mateMoves(s) + ". Trainer mode: play the longest defense and punish any slip.";
+      setEvalBar(humanIsRed ? 3 : 97, (humanIsRed ? "Yellow" : "Red") + " mates in " + mateMoves(s));
+    } else if (a.provenAll && s === 0) {
+      verdictEl.className = "draw";
+      verdictEl.innerHTML = "<strong>SOLVED:</strong> draw with perfect play from here.";
+      setEvalBar(50, "Draw with perfect play");
+    } else {
+      var who = s > 60 ? "You are better" : (s < -60 ? "Engine is better" : "Roughly balanced");
+      verdictEl.innerHTML = "Not yet decided (searched depth " + a.depth + "). " + who + " (eval " + (s >= 0 ? "+" : "") + s + ").<br><span style='color:#666;font-size:0.85em'>An exact verdict usually appears by moves 12&ndash;16.</span>";
+      var sRed = humanIsRed ? s : -s;
+      setEvalBar(50 + Math.max(-850, Math.min(850, sRed)) / 20, sRed === 0 ? "Even" : ((sRed > 0 ? "Red +" : "Yellow +") + Math.abs(sRed)));
+    }
+  }
+  function setEvalBar(redPct, text) {
+    evalFill.style.width = Math.max(2, Math.min(98, redPct)) + "%";
+    evalText.textContent = text;
+  }
+
+  // ---------- move quality grading ----------
+  function gradeHumanMove(playedCol, afterA) {
+    var played = decayed(-afterA.best.s);            // value of the position you handed over, your perspective
+    var bestS = prevAnalysis ? Math.max(prevAnalysis.best.s, played) : played;
+    var bestCol = prevAnalysis ? prevAnalysis.best.col : playedCol;
+    var msg, color;
+    function colName(c) { return "column " + (c + 1); }
+
+    if (played > 900) {
+      if (bestS > played + 1) { msg = "Winning &mdash; but mate in " + mateMoves(bestS) + " via " + colName(bestCol) + " was faster."; color = "#1e8449"; }
+      else { msg = "Best: forced win in " + mateMoves(played) + "."; color = "green"; }
+    } else if (bestS > 900) {
+      msg = "<span style='color:#d00'>Blunder</span> &mdash; you had a forced win in " + mateMoves(bestS) + " (" + colName(bestCol) + ")" + (played < -900 ? ", and this move even loses by force." : ".");
+      color = "#d00";
+    } else if (played < -900) {
+      if (bestS < -900) { msg = "Every move was lost; this holds " + mateMoves(played) + " moves (longest defense: " + colName(bestCol) + ", " + mateMoves(bestS) + ")."; color = "#884400"; }
+      else { msg = "<span style='color:#d00'>Blunder</span> &mdash; this loses by force in " + mateMoves(played) + ". Better: " + colName(bestCol) + "."; color = "#d00"; }
+    } else {
+      var diff = bestS - played;
+      if (diff <= 25) { msg = "Best move."; color = "green"; }
+      else if (diff <= 60) { msg = "Good."; color = "#1e8449"; }
+      else if (diff <= 120) { msg = "Inaccuracy &mdash; " + colName(bestCol) + " was better."; color = "#b9770e"; }
+      else { msg = "Mistake &mdash; " + colName(bestCol) + " was better."; color = "#d35400"; }
+    }
+    qualityEl.innerHTML = msg;
+    qualityEl.style.color = color;
+    addLog(Math.ceil(moves.length / 2) + ". You: col " + (playedCol + 1) + " &mdash; " + msg);
+  }
+  function addLog(html) {
+    var d = document.createElement("div");
+    d.innerHTML = html;
+    logEl.insertBefore(d, logEl.firstChild);
+  }
+
+  // ---------- game flow ----------
+  function analyzeForHuman() {
+    // strong analysis of the position where the human is to move
+    var snapshot = moves.slice();
+    statusEl.textContent = "Analyzing\u2026";
+    ask({ type: "analyze", moves: snapshot, budgetMs: STRONG_BUDGET, maxDepth: 64 }, function (a) {
+      if (snapshot.length !== moves.length || !gameActive) return;
+      a.sideIsHuman = true;
+      prevAnalysis = a;
+      showVerdict(a);
+      statusEl.textContent = "depth " + a.depth + ", " + (a.nodes / 1000 | 0) + "k nodes, " + a.ms + "ms" + (a.solved ? " \u2014 exact" : "");
+      awaitingEngine = false;
+    });
+    refreshThreats();
+  }
+
+  function handleHumanClick(col) {
+    if (!gameActive || awaitingEngine) return;
+    if ((moves.length % 2 === 0) !== humanIsRed) return;
+    var B = boards();
+    if (landingRow(col, B.mask) < 0) return;
+
+    moves.push(col);
+    setGhost(-1);
+    var B2 = boards();
+    var myBoard = humanIsRed ? B2.red : B2.yellow;
+    if (isWinM(myBoard)) { renderBoard(null); return endGame("human"); }
+    if (moves.length === 42) { renderBoard(null); return endGame("draw"); }
+    renderBoard(null);
+    refreshThreats();
+
+    awaitingEngine = true;
+    statusEl.textContent = "Engine thinking\u2026";
+    var lvl = LEVELS[levelSel.value];
+    var snapshot = moves.slice();
+    // strong analysis of the post-move position (engine to move): used for grading + engine's perfect reply
+    ask({ type: "analyze", moves: snapshot, budgetMs: Math.max(STRONG_BUDGET, lvl.budget), maxDepth: 64 }, function (afterA) {
+      if (snapshot.length !== moves.length || !gameActive) return;
+      gradeHumanMove(col, afterA);
+      if (levelSel.value === "perfect") {
+        pickAndPlay(afterA, lvl);
       } else {
-        const evalRes = getBestMove(6); 
-        updateEval(evalRes.score);
+        // level-capped engines search shallow WITHOUT the deep cache (trap practice)
+        ask({ type: "analyze", moves: snapshot, budgetMs: lvl.budget, maxDepth: lvl.depth, useTT: false }, function (weakA) {
+          if (snapshot.length !== moves.length || !gameActive) return;
+          pickAndPlay(weakA, lvl);
+        });
       }
+    });
+  }
+
+  function pickAndPlay(a, lvl) {
+    var cols = a.cols;
+    var col;
+    var top = cols.filter(function (x) { return x.s === cols[0].s; });
+    col = top[Math.floor(Math.random() * top.length)].col;
+    if (Math.random() > lvl.p && cols.length > 1) {
+      var others = cols.slice(1);
+      col = others[Math.floor(Math.random() * others.length)].col;
     }
+    setTimeout(function () { playEngineMove(col); }, 150);
+  }
 
-    function undoMove() {
-      if (moves.length < 2 && humanIsRed) return;
-      if (moves.length < 1 && !humanIsRed) return;
+  function playEngineMove(col) {
+    moves.push(col);
+    var B = boards();
+    var engBoard = humanIsRed ? B.yellow : B.red;
+    if (isWinM(engBoard)) { renderBoard(null); return endGame("engine"); }
+    if (moves.length === 42) { renderBoard(null); return endGame("draw"); }
+    renderBoard(null);
+    analyzeForHuman();
+  }
 
-      undoBitMove(); 
-      if (moves.length > 0) undoBitMove(); 
-      else if (!humanIsRed) {
-         renderBoard();
-         updateEval(0);
-         qualityText.textContent = "";
-         setTimeout(() => {
-            const result = getBestMove(parseInt(depthSelect.value));
-            handleAiMove(result.col);
-         }, 500);
-         return;
-      }
-      gameActive = true;
-      renderBoard();
-      qualityText.textContent = ""; 
-      countFeedback.style.display = "none";
-      const evalRes = getBestMove(6);
-      updateEval(evalRes.score);
+  function endGame(result) {
+    gameActive = false; awaitingEngine = false;
+    statusEl.textContent = "";
+    var winMask = 0n;
+    if (result !== "draw") {
+      var B = boards();
+      var wb = result === "human" ? (humanIsRed ? B.red : B.yellow) : (humanIsRed ? B.yellow : B.red);
+      LINES.forEach(function (L) { if ((L.mask & wb) === L.mask) winMask |= L.mask; });
     }
-
-    function showHint() {
-      if (!gameActive) return;
-      const humanPlayer = humanIsRed ? 0 : 1;
-      if (turn !== humanPlayer) return;
-      const res = getBestMove(parseInt(depthSelect.value));
-      const col = res.col;
-      const row = height[col] % 7;
-      const cell = document.getElementById(`cell-${row}-${col}`);
-      if (cell) {
-        cell.classList.add("hint-anim");
-        setTimeout(() => cell.classList.remove("hint-anim"), 1000);
-      }
+    renderBoard(winMask || null);
+    if (result === "human") {
+      banner.textContent = "You win."; banner.style.color = "green";
+      verdictEl.className = "won"; verdictEl.textContent = "Game over: you won.";
+      setEvalBar(humanIsRed ? 100 : 0, "You win");
+    } else if (result === "engine") {
+      banner.textContent = "Engine wins."; banner.style.color = "#d00";
+      verdictEl.className = "lost"; verdictEl.textContent = "Game over: engine won. Check the log for where the verdict flipped, then Undo from there.";
+      setEvalBar(humanIsRed ? 0 : 100, "Engine wins");
+    } else {
+      banner.textContent = "Draw."; banner.style.color = "#555";
+      verdictEl.className = "draw"; verdictEl.textContent = "Game over: draw.";
+      setEvalBar(50, "Draw");
     }
+  }
 
-    function checkCountAdvice() {
-      const movesPlayed = moves.length;
-      const movesLeft = MAX_MOVES - movesPlayed;
-      
-      countFeedback.style.display = "block";
-      
-      if (movesLeft > 26) {
-        countFeedback.textContent = "NO. Still in Opening/Early Game. Focus on controlling the Center (Col 4) and building horizontal threats.";
-        countFeedback.style.backgroundColor = "#e2e3e5";
-        countFeedback.style.color = "#383d41";
-        countFeedback.style.borderColor = "#d6d8db";
-      } 
-      else if (movesLeft > 14) {
-        countFeedback.textContent = "NOT YET. Still Mid-Game. Watch for simple traps (The '7') and 2-move threats. Don't calculate full endgames yet.";
-        countFeedback.style.backgroundColor = "#fff3cd";
-        countFeedback.style.color = "#856404";
-        countFeedback.style.borderColor = "#ffeeba";
-      }
-      else {
-        countFeedback.innerHTML = `<strong>YES! ENDGAME REACHED.</strong><br>${movesLeft} spots left. The game is solvable.<br>1. Count Odd/Even Parity.<br>2. Check for Zugzwang.<br>3. Calculate every line to the end.`;
-        countFeedback.style.backgroundColor = "#f8d7da";
-        countFeedback.style.color = "#721c24";
-        countFeedback.style.borderColor = "#f5c6cb";
-      }
-    }
+  function undoMove() {
+    if (awaitingEngine) return;
+    if (!moves.length) return;
+    moves.pop();
+    while (moves.length && (moves.length % 2 === 0) !== humanIsRed) moves.pop();
+    gameActive = true;
+    banner.textContent = "";
+    qualityEl.textContent = "";
+    lastAnimated = moves.length; // no drop animation on undo
+    renderBoard(null);
+    if ((moves.length % 2 === 0) !== humanIsRed) { engineKick(); }
+    else { analyzeForHuman(); }
+  }
 
-    function toggleStrategy() {
-      strategyModal.style.display = (strategyModal.style.display === "block") ? "none" : "block";
-    }
+  function engineKick() {
+    awaitingEngine = true;
+    statusEl.textContent = "Engine thinking\u2026";
+    var lvl = LEVELS[levelSel.value];
+    var snapshot = moves.slice();
+    ask({ type: "analyze", moves: snapshot, budgetMs: lvl.budget, maxDepth: lvl.depth, useTT: false }, function (a) {
+      if (snapshot.length !== moves.length) return;
+      pickAndPlay(a, lvl);
+    });
+  }
 
-    function updateEval(score) {
-      let percent = 50;
-      let text = "Even";
-      if (score > 90000) { percent = 0; text = "You Win"; }
-      else if (score < -90000) { percent = 100; text = "Engine Wins"; }
-      else {
-        const clamped = Math.max(-1000, Math.min(1000, score));
-        if (humanIsRed) percent = 50 - (clamped / 20); 
-        else percent = 50 + (clamped / 20);
-        text = Math.abs(score).toFixed(0);
-      }
-      evalBarFill.style.width = percent + "%";
-      evalText.textContent = "Advantage: " + text;
-    }
+  function showHint() {
+    if (!gameActive || awaitingEngine || !prevAnalysis) return;
+    if ((moves.length % 2 === 0) !== humanIsRed) return;
+    var col = prevAnalysis.best.col;
+    var B = boards();
+    var r = landingRow(col, B.mask);
+    if (r < 0) return;
+    var cell = document.getElementById("cell-" + r + "-" + col);
+    if (cell) { cell.classList.add("hint-anim"); setTimeout(function () { cell.classList.remove("hint-anim"); }, 1200); }
+    var s = prevAnalysis.best.s;
+    var note = s > 900 ? " (wins in " + mateMoves(s) + ")" : (s < -900 ? " (longest defense)" : "");
+    addLog("Hint: column " + (col + 1) + note + ".");
+  }
 
-    function endGame(msg) { gameActive = false; }
-    function resetGame() { initGame(); }
+  function toggleStrategy() { modal.style.display = modal.style.display === "block" ? "none" : "block"; }
 
-    initGame();
+  function resetGame() {
+    moves = [];
+    gameActive = true; awaitingEngine = false;
+    humanIsRed = !goSecond.checked;
+    prevAnalysis = null;
+    curThreats = { red: 0n, yellow: 0n };
+    banner.textContent = ""; qualityEl.textContent = ""; logEl.innerHTML = ""; statusEl.textContent = "";
+    lastAnimated = 0;
+    ask({ type: "reset" }, function () {});
+    renderBoard(null);
+    if (!humanIsRed) { engineKick(); }
+    else { analyzeForHuman(); }
+  }
+
+  threatCheck.addEventListener("change", function () { renderBoard(null); });
+  goSecond.addEventListener("change", resetGame);
+  document.addEventListener("keydown", function (e) {
+    if (e.key >= "1" && e.key <= "7") handleHumanClick(parseInt(e.key, 10) - 1);
+    if (e.key === "u") undoMove();
+  });
+
+  resetGame();
   </script>
 </body>
 </html>
