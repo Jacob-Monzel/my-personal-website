@@ -44,22 +44,13 @@
     /* Quote styling */
     #quote {
       text-align: center;
-      font-size: clamp(0.95rem, 3.4vw, 1.3rem);
+      /* Sized to the exact width of the quote in this font (16.27em),
+         so it fills one line on any screen without wrapping or overflow */
+      font-size: clamp(0.95rem, calc((100vw - 3rem) / 16.8), 1.3rem);
       white-space: nowrap;
       margin: 0.4rem 0 0.4rem;
       color: #444;
       font-family: 'UnifrakturMaguntia', serif;
-    }
-
-    /* On mobile, stack the two sentences and size up */
-    @media (max-width: 600px) {
-      #quote {
-        white-space: normal;
-        font-size: 1.45rem;
-      }
-      #quote span {
-        display: block;
-      }
     }
 
     /* Subtle gradient divider under quote */
@@ -118,7 +109,7 @@
   </header>
 
   <!-- German quote -->
-  <div id="quote"><span>„Wir müssen wissen.</span> <span>Wir werden wissen.“</span></div>
+  <div id="quote">Wir müssen wissen. Wir werden wissen.</div>
   <div id="quote-divider"></div>
 
   <main>
