@@ -14,32 +14,26 @@
       margin: 0;
       padding: 20px;
     }
-
     nav {
       margin-bottom: 2rem;
       font-size: 1.1rem;
-      text-align: center; 
+      text-align: center;
       background-color: #f0f0f0;
       padding: 0.5rem;
       border: 1px solid #ccc;
     }
-
-    nav a {
-      margin: 0 1rem;
-      text-decoration: none;
-      color: #0000EE;
-    }
-
-    nav a:hover {
-      text-decoration: underline;
-    }
-
+    nav a { margin: 0 1rem; text-decoration: none; color: #0000EE; }
+    nav a:hover { text-decoration: underline; }
     h1 {
-      margin: 0 auto 1rem;
+      margin: 0 auto 0.5rem;
       font-size: 2.2rem;
       border-bottom: 2px solid #000;
       display: table;
       padding-bottom: 5px;
+    }
+    .subtitle {
+      color: #555; font-style: italic; font-size: 0.95rem;
+      max-width: 620px; margin: 0 auto 1.2rem;
     }
 
     #game {
@@ -48,147 +42,95 @@
       border: 1px solid #808080;
       display: inline-block;
       margin: 0 auto;
-      min-width: 600px;
+      min-width: 620px;
+      max-width: 760px;
     }
 
-    .hand-area {
-      margin-bottom: 20px;
-      border-bottom: 1px solid #e0e0e0;
-      padding-bottom: 10px;
+    /* --- Stats bar --- */
+    #stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #000;
+      padding-bottom: 12px;
+    }
+    .stat {
+      border: 1px solid #ddd; background: #fff; padding: 6px 4px; border-radius: 3px;
+    }
+    .stat .label { font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 0.04em; }
+    .stat .value { font-size: 1.25rem; font-weight: bold; }
+    .stat .sub { font-size: 0.75rem; color: #888; }
+    #reset-stats {
+      grid-column: 1 / -1; justify-self: center; margin-top: 2px;
+      background: none; border: none; color: #0000EE; cursor: pointer;
+      font-family: inherit; font-size: 0.8rem; text-decoration: underline; min-width: 0; padding: 0;
     }
 
-    .hand-title {
-      font-weight: bold;
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-      text-align: left;
-      padding-left: 10px;
-    }
+    .hand-area { margin-bottom: 16px; }
+    .hand-title { font-weight: bold; font-size: 1.15rem; margin-bottom: 8px; text-align: left; padding-left: 6px; }
 
-    .cards-container {
-      display: flex;
-      justify-content: center;
-      min-height: 100px;
-      gap: 10px;
+    #player-hands { display: flex; justify-content: center; flex-wrap: wrap; gap: 18px; }
+    .hand-block {
+      border: 1px solid transparent; border-radius: 6px; padding: 8px 10px 6px; min-width: 150px;
+      transition: border-color 0.2s, background-color 0.2s;
     }
+    .hand-block.active { border-color: #000; background: #fff; box-shadow: 0 0 0 2px rgba(0,0,0,0.06); }
+    .hand-label { font-size: 0.85rem; color: #555; margin-bottom: 4px; font-style: italic; }
 
-    /* --- 3D Card Flipping CSS --- */
-    .card-container {
-      width: 60px;
-      height: 90px;
-      perspective: 1000px;
-    }
+    .cards-container { display: flex; justify-content: center; min-height: 96px; gap: 8px; }
 
-    .card-inner {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      transition: transform 0.5s ease-in-out;
-      transform-style: preserve-3d;
-    }
-
-    .card-inner.face-down {
-      transform: rotateY(180deg);
-    }
-    
-    .card-inner.face-up {
-      transform: rotateY(0deg);
-    }
-
+    /* --- 3D Card Flip --- */
+    .card { width: 58px; height: 88px; perspective: 900px; }
+    .card-inner { width: 100%; height: 100%; position: relative; transition: transform 0.35s ease-in-out; transform-style: preserve-3d; }
+    .card-inner.face-down { transform: rotateY(180deg); }
+    .card-inner.face-up   { transform: rotateY(0deg); }
     .card-face {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border: 1px solid #000;
-      border-radius: 4px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      font-weight: bold;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+      border: 1px solid #000; border-radius: 4px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; font-size: 1.45rem; font-weight: bold;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1); background: #fff;
     }
+    .card-back { background: repeating-linear-gradient(45deg,#ddd,#ddd 5px,#fff 5px,#fff 10px); transform: rotateY(180deg); }
+    .red { color: #d00; } .black { color: #000; }
 
-    .card-front {
-      background-color: #fff;
-    }
+    .score-display { margin-top: 6px; font-style: italic; color: #444; font-size: 1.05rem; }
+    .hand-result { margin-top: 4px; font-weight: bold; font-size: 0.95rem; }
+    .hand-result.win { color: #256029; } .hand-result.lose { color: #a00; } .hand-result.push { color: #555; } .hand-result.surrender { color: #855; }
+    .hand-block.win  { background: #f2faf2; } .hand-block.lose { background: #fbf2f2; }
 
-    .card-back {
-      background: repeating-linear-gradient(45deg, #ddd, #ddd 5px, #fff 5px, #fff 10px);
-      transform: rotateY(180deg);
-    }
-
-    .red { color: #d00; }
-    .black { color: #000; }
-
-    .score-display {
-      margin-top: 5px;
-      font-style: italic;
-      color: #555;
-    }
-
-    #controls {
-      margin-top: 20px;
-      padding-top: 10px;
-      border-top: 1px solid #000;
-    }
-
+    #controls { margin-top: 18px; padding-top: 12px; border-top: 1px solid #000; }
     button {
-      font-family: "Times New Roman", Times, serif;
-      background-color: #f0f0f0;
-      color: #000;
-      border: 1px solid #808080;
-      padding: 8px 16px;
-      margin: 5px;
-      cursor: pointer;
-      font-size: 1.1rem;
-      min-width: 100px;
+      font-family: "Times New Roman", Times, serif; background-color: #f0f0f0; color: #000;
+      border: 1px solid #808080; padding: 8px 14px; margin: 4px; cursor: pointer; font-size: 1.05rem; min-width: 92px;
     }
+    button:hover:not(:disabled) { background-color: #e0e0e0; text-decoration: underline; }
+    button:disabled { color: #aaa; border-color: #ddd; cursor: not-allowed; background-color: #fff; text-decoration: none; }
+    .key { font-size: 0.7rem; color: #777; }
 
-    button:hover:not(:disabled) {
-      background-color: #e0e0e0;
-      text-decoration: underline;
+    #hint-box {
+      margin-top: 12px; padding: 8px 12px; border: 1px dashed #888; background: #f7f7f2;
+      display: none; font-size: 0.95rem;
     }
+    #hint-box b { font-style: normal; }
 
-    button:disabled {
-      color: #aaa;
-      border-color: #ddd;
-      cursor: not-allowed;
-      background-color: #fff;
-      text-decoration: none;
+    #strategy-box { margin-top: 12px; padding: 12px; border: 1px solid transparent; font-weight: bold; display: none; }
+    #message { margin-top: 14px; font-size: 1.2rem; font-weight: bold; min-height: 1.4em; }
+    #message.win { color: #256029; } #message.lose { color: #a00; } #message.push { color: #555; }
+    .muted { color: #777; font-weight: normal; font-size: 0.95rem; font-style: italic; }
+
+    #settings { margin-top: 14px; font-size: 0.9rem; color: #444; }
+    #settings label { cursor: pointer; }
+    #deal-next {
+      margin-top: 16px; display: none; width: 60%; font-weight: bold;
     }
+    .assumptions { margin-top: 16px; font-size: 0.78rem; color: #888; line-height: 1.5; }
 
-    #strategy-box {
-      margin-top: 15px;
-      padding: 15px;
-      border: 1px solid transparent;
-      font-weight: bold;
-      display: none; 
-      text-align: center;
-    }
-
-    #message {
-      margin-top: 15px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      min-height: 1.5em;
-    }
-
-    .win { color: green; }
-    .lose { color: #d00; }
-    .push { color: #555; }
-
-    #deal-next-hand {
-      margin-top: 20px;
-      display: none;
-      width: 100%;
-      font-weight: bold;
-    }
-
-    @media (max-width: 600px) {
-      #game { min-width: 90%; }
+    @media (max-width: 680px) {
+      #game { min-width: 0; width: 100%; box-sizing: border-box; }
+      #stats { grid-template-columns: repeat(2, 1fr); }
+      .card { width: 48px; height: 74px; }
+      button { min-width: 78px; padding: 8px 10px; font-size: 1rem; }
     }
   </style>
 </head>
@@ -200,501 +142,579 @@
   </nav>
 
   <h1>Blackjack Trainer</h1>
+  <div class="subtitle">Play it out and get graded against basic strategy on every decision. The dealer hits soft 17.</div>
 
   <div id="game">
+    <div id="stats">
+      <div class="stat"><div class="label">Accuracy</div><div class="value" id="s-acc">—</div><div class="sub" id="s-acc-sub">0 / 0</div></div>
+      <div class="stat"><div class="label">Streak</div><div class="value" id="s-streak">0</div><div class="sub" id="s-streak-sub">best 0</div></div>
+      <div class="stat"><div class="label">Net units</div><div class="value" id="s-net">0</div><div class="sub" id="s-net-sub">0 rounds</div></div>
+      <div class="stat"><div class="label">Per round</div><div class="value" id="s-avg">—</div><div class="sub">avg result</div></div>
+      <button id="reset-stats">reset stats</button>
+    </div>
+
     <div class="hand-area">
       <div class="hand-title">Dealer</div>
       <div id="dealer-cards" class="cards-container"></div>
       <div id="dealer-score" class="score-display"></div>
     </div>
 
-    <div class="hand-area" style="border-bottom: none;">
+    <div class="hand-area">
       <div class="hand-title">Player</div>
-      <div id="cards" class="cards-container"></div>
-      <div id="player-score" class="score-display"></div>
+      <div id="player-hands"></div>
     </div>
 
+    <div id="hint-box"></div>
     <div id="strategy-box"></div>
 
     <div id="controls">
-      <button id="hit">Hit</button>
-      <button id="stand">Stand</button>
-      <button id="double-down">Double</button>
-      <button id="split">Split</button>
-      <button id="surrender">Surrender</button>
+      <button id="hit">Hit <span class="key">(H)</span></button>
+      <button id="stand">Stand <span class="key">(S)</span></button>
+      <button id="double">Double <span class="key">(D)</span></button>
+      <button id="split">Split <span class="key">(P)</span></button>
+      <button id="surrender">Surrender <span class="key">(R)</span></button>
     </div>
 
     <div id="message"></div>
-    <button id="deal-next-hand">Deal Next Hand</button>
+    <button id="deal-next">Deal Next Hand <span class="key">(N)</span></button>
+
+    <div id="settings">
+      <label><input type="checkbox" id="hint-toggle"> Practice mode — show the recommended play before I act</label>
+    </div>
+
+    <div class="assumptions">
+      6-deck shoe · dealer hits soft 17 · blackjack pays 3:2 · double after split allowed · late surrender ·
+      dealer peeks for blackjack · no insurance (basic strategy is always to decline).
+    </div>
   </div>
 
   <script>
-    const dealerCardsElement = document.getElementById("dealer-cards");
-    const playerCardsElement = document.getElementById("cards");
-    const dealerScoreElement = document.getElementById("dealer-score");
-    const playerScoreElement = document.getElementById("player-score");
-    const hitButton = document.getElementById("hit");
-    const standButton = document.getElementById("stand");
-    const doubleDownButton = document.getElementById("double-down");
-    const splitButton = document.getElementById("split");
-    const surrenderButton = document.getElementById("surrender");
-    const messageElement = document.getElementById("message");
-    const strategyBox = document.getElementById("strategy-box");
-    const dealNextHandButton = document.getElementById("deal-next-hand");
+  (function () {
+    "use strict";
 
-    let deck = [];
-    let dealerCards = [];
-    let playerCards = [];
-    let gameStarted = false;
-    let dealerRevealed = false;
-    let turnOver = false;
-    let dealingInProgress = false; 
+    // ---- Elements ----
+    const $ = id => document.getElementById(id);
+    const dealerCardsEl = $("dealer-cards");
+    const dealerScoreEl = $("dealer-score");
+    const playerHandsEl = $("player-hands");
+    const hitBtn = $("hit"), standBtn = $("stand"), doubleBtn = $("double"),
+          splitBtn = $("split"), surrenderBtn = $("surrender");
+    const messageEl = $("message"), strategyBox = $("strategy-box"), hintBox = $("hint-box");
+    const nextBtn = $("deal-next"), hintToggle = $("hint-toggle");
 
-    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    // ---- Timing ----
+    const DEAL = 380, DRAW = 520, REVEAL = 560, RESULT = 950, SHORT = 500;
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-    function createDeck() {
+    // ---- State ----
+    const MAX_HANDS = 4;
+    let deck = [], dealerCards = [], hands = [], active = 0;
+    let dealerRevealed = false, dealing = false, roundOver = false, surrenderAvailable = false;
+    let hintMode = false, TESTMODE = false;
+    const shown = new Set();
+
+    // ---- Stats (persistent) ----
+    const STATS_KEY = "bj-trainer-stats-v1";
+    let stats = loadStats();
+    function loadStats() {
+      try {
+        const s = JSON.parse(localStorage.getItem(STATS_KEY));
+        if (s && typeof s.total === "number") return s;
+      } catch (e) {}
+      return { total: 0, correct: 0, streak: 0, bestStreak: 0, net: 0, rounds: 0 };
+    }
+    function saveStats() { try { localStorage.setItem(STATS_KEY, JSON.stringify(stats)); } catch (e) {} }
+
+    // ---- Cards ----
+    function createShoe() {
       const suits = ["♠", "♣", "♥", "♦"];
-      const values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
-      let d = [];
-      for (let i = 0; i < 6; i++) {
-          for (let suit of suits) {
-            for (let value of values) {
-              d.push({ suit, value });
-            }
-          }
-      }
-      return shuffle(d);
-    }
-
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
+      const values = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"];
+      const d = [];
+      for (let n = 0; n < 6; n++)
+        for (const s of suits) for (const v of values) d.push({ suit: s, value: v });
+      for (let i = d.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [d[i], d[j]] = [d[j], d[i]];
       }
-      return array;
+      return d;
+    }
+    const isTen = v => v === "10" || v === "J" || v === "Q" || v === "K";
+    function upValue(c) { return c.value === "A" ? 11 : isTen(c.value) ? 10 : parseInt(c.value); }
+
+    function handValue(cards) {
+      let score = 0, aces = 0;
+      for (const c of cards) {
+        if (c.value === "A") { aces++; score += 11; }
+        else if (isTen(c.value)) score += 10;
+        else score += parseInt(c.value);
+      }
+      while (score > 21 && aces > 0) { score -= 10; aces--; }
+      return { score, soft: aces > 0 && score <= 21 };
+    }
+    function isPair(cards) {
+      if (cards.length !== 2) return false;
+      if (cards[0].value === cards[1].value) return true;
+      return isTen(cards[0].value) && isTen(cards[1].value);
+    }
+    function pairRank(cards) {
+      const v = cards[0].value;
+      if (v === "A") return "A";
+      if (isTen(v)) return 10;
+      return parseInt(v);
     }
 
-    function getCardHTML(card, isHidden = true, id = "") {
-      const isRed = card && (card.suit === "♥" || card.suit === "♦");
-      const colorClass = isRed ? 'red' : 'black';
-      const startClass = isHidden ? 'face-down' : 'face-up';
-      const idAttr = id ? `id="${id}"` : "";
+    // ---- Basic strategy (H17, DAS, late surrender) ----
+    // Returns the ideal action assuming everything is allowed, a fallback chain,
+    // and a plain-language rule. `recommend()` then maps it to the best *available* action.
+    function chart(cards, up, canSurr) {
+      const { score, soft } = handValue(cards);
 
-      return `
-        <div class="card-container" ${idAttr}>
-          <div class="card-inner ${startClass}">
-            <div class="card-face card-front">
-              <div class="${colorClass}">${card.value}</div>
-              <div class="${colorClass}">${card.suit}</div>
-            </div>
-            <div class="card-face card-back"></div>
-          </div>
-        </div>
-      `;
-    }
-
-    function getHandDetails(hand) {
-      let score = 0;
-      let aces = 0;
-      for (let card of hand) {
-        if (card.value === "A") {
-          aces++;
-          score += 11;
-        } else if (["J", "Q", "K"].includes(card.value)) {
-          score += 10;
-        } else {
-          score += parseInt(card.value);
+      if (isPair(cards)) {
+        const pr = pairRank(cards);
+        if (pr === "A") return { ideal: "Split", fb: ["Hit"], rule: "Always split Aces — two fresh shots at 21." };
+        if (pr === 8) {
+          if (up === 11 && canSurr) return { ideal: "Surrender", fb: ["Split", "Hit"], rule: "8,8 vs Ace (H17): surrender if you can, otherwise split." };
+          return { ideal: "Split", fb: ["Hit"], rule: "Always split 8s — break up a terrible 16." };
         }
-      }
-      while (score > 21 && aces > 0) {
-        score -= 10;
-        aces--;
-      }
-      return { score, isSoft: aces > 0 && score <= 21 };
-    }
-
-    function initializeGame() {
-      if (deck.length < 30) deck = createDeck();
-      
-      dealerCards = [];
-      playerCards = [];
-      gameStarted = false;
-      dealerRevealed = false;
-      turnOver = false;
-      dealingInProgress = false;
-      messageElement.textContent = "";
-      strategyBox.style.display = "none";
-      
-      dealerCardsElement.innerHTML = "";
-      playerCardsElement.innerHTML = "";
-      dealNextHandButton.style.display = "none";
-    }
-
-    async function startHand() {
-      initializeGame();
-      gameStarted = true;
-      dealingInProgress = true;
-      updateUI(); 
-      
-      playerCards.push(deck.pop());
-      updateUI();
-      await sleep(400);
-
-      dealerCards.push(deck.pop());
-      updateUI();
-      await sleep(400);
-
-      playerCards.push(deck.pop());
-      updateUI();
-      await sleep(400);
-
-      dealerCards.push(deck.pop());
-      updateUI();
-      await sleep(400);
-
-      dealingInProgress = false;
-      checkBlackjack();
-      updateUI(); 
-    }
-
-    function updateUI() {
-      for (let i = dealerCardsElement.children.length; i < dealerCards.length; i++) {
-        const isHoleCard = (i === 1 && !dealerRevealed);
-        const id = isHoleCard ? "dealer-hole-card" : "";
-        
-        dealerCardsElement.insertAdjacentHTML('beforeend', getCardHTML(dealerCards[i], true, id));
-        
-        if (!isHoleCard) {
-          const newCardInner = dealerCardsElement.lastElementChild.querySelector('.card-inner');
-          setTimeout(() => newCardInner.classList.replace('face-down', 'face-up'), 50);
+        if (pr === 10) return { ideal: "Stand", fb: ["Stand"], rule: "Never split 10s — a 20 is a winning hand." };
+        if (pr === 9) {
+          if ([2,3,4,5,6,8,9].includes(up)) return { ideal: "Split", fb: ["Stand"], rule: "Split 9s vs 2–9, except stand on a 7." };
+          return { ideal: "Stand", fb: ["Stand"], rule: "Stand with 9,9 vs 7, 10, or Ace — 18 is good enough." };
+        }
+        if (pr === 7) {
+          if ([2,3,4,5,6,7].includes(up)) return { ideal: "Split", fb: ["Hit"], rule: "Split 7s vs 2–7." };
+          return { ideal: "Hit", fb: ["Hit"], rule: "Hit 7,7 vs 8 through Ace." };
+        }
+        if (pr === 6) {
+          if ([2,3,4,5,6].includes(up)) return { ideal: "Split", fb: ["Hit"], rule: "Split 6s vs 2–6 (double-after-split allowed)." };
+          return { ideal: "Hit", fb: ["Hit"], rule: "Hit 6,6 vs 7 through Ace." };
+        }
+        if (pr === 5) {
+          if (up <= 9) return { ideal: "Double", fb: ["Hit"], rule: "Never split 5s — it's a hard 10, so double vs 2–9." };
+          return { ideal: "Hit", fb: ["Hit"], rule: "Never split 5s — hit the hard 10 vs 10 or Ace." };
+        }
+        if (pr === 4) {
+          if ([5,6].includes(up)) return { ideal: "Split", fb: ["Hit"], rule: "Split 4s only vs 5 or 6 (DAS)." };
+          return { ideal: "Hit", fb: ["Hit"], rule: "Hit 4,4 vs anything but 5 or 6." };
+        }
+        if (pr === 2 || pr === 3) {
+          if ([2,3,4,5,6,7].includes(up)) return { ideal: "Split", fb: ["Hit"], rule: "Split " + pr + "s vs 2–7 (DAS)." };
+          return { ideal: "Hit", fb: ["Hit"], rule: "Hit " + pr + "s vs 8 through Ace." };
         }
       }
 
-      if (dealerRevealed) {
-        const holeCard = document.getElementById("dealer-hole-card");
-        if (holeCard) {
-          const inner = holeCard.querySelector('.card-inner');
-          inner.classList.replace('face-down', 'face-up');
-          holeCard.removeAttribute("id");
-        }
-        dealerScoreElement.textContent = getHandDetails(dealerCards).score;
-      } else if (dealerCards.length > 0) {
-        dealerScoreElement.textContent = getHandDetails([dealerCards[0]]).score;
-      }
-
-      for (let i = playerCardsElement.children.length; i < playerCards.length; i++) {
-        playerCardsElement.insertAdjacentHTML('beforeend', getCardHTML(playerCards[i], true));
-        const newCardInner = playerCardsElement.lastElementChild.querySelector('.card-inner');
-        setTimeout(() => newCardInner.classList.replace('face-down', 'face-up'), 50);
-      }
-      playerScoreElement.textContent = getHandDetails(playerCards).score;
-
-      if (turnOver || dealingInProgress) {
-        hitButton.disabled = true;
-        standButton.disabled = true;
-        doubleDownButton.disabled = true;
-        surrenderButton.disabled = true;
-        splitButton.disabled = true;
-      } else {
-        hitButton.disabled = false;
-        standButton.disabled = false;
-
-        if (playerCards.length > 2) {
-            doubleDownButton.disabled = true;
-            surrenderButton.disabled = true;
-        } else {
-            doubleDownButton.disabled = false;
-            surrenderButton.disabled = false;
-        }
-
-        const isPair = playerCards.length === 2 && (
-            playerCards[0].value === playerCards[1].value || 
-            (["10","J","Q","K"].includes(playerCards[0].value) && ["10","J","Q","K"].includes(playerCards[1].value))
-        );
-        splitButton.disabled = !isPair;
-      }
-    }
-
-    async function checkBlackjack() {
-      const pScore = getHandDetails(playerCards).score;
-      if (pScore === 21) {
-        turnOver = true;
-        updateUI();
-        await sleep(800); 
-        
-        dealerRevealed = true;
-        updateUI();
-        await sleep(600); 
-        
-        const dScore = getHandDetails(dealerCards).score;
-        if (dScore === 21) endGame("Push (Both Blackjack)", "push");
-        else endGame("Blackjack! You win.", "win");
-      }
-    }
-
-    function getAdvice() {
-      const { score: pScore, isSoft: soft } = getHandDetails(playerCards);
-      const dCardVal = dealerCards[0].value;
-      const dScore = (["J","Q","K"].includes(dCardVal)) ? 10 : (dCardVal === "A" ? 11 : parseInt(dCardVal));
-      const isPair = playerCards.length === 2 && playerCards[0].value === playerCards[1].value;
-      const canSurrender = playerCards.length === 2;
-
-      // Surrender Rules
-      if (canSurrender) {
-          if (pScore === 16 && [9, 10, 11].includes(dScore) && playerCards[0].value !== "8") {
-             return { action: "Surrender, else Hit", rule: "16 is the worst hand. Surrender against 9, 10, or Ace to save half your bet." };
-          }
-          if (pScore === 15 && dScore === 10) {
-             return { action: "Surrender, else Hit", rule: "15 vs a 10 is heavily skewed toward the dealer. Surrender." };
-          }
-      }
-
-      // Pair Rules
-      if (isPair) {
-        const val = playerCards[0].value;
-        if (val === "A") return { action: "Split", rule: "Always split Aces." };
-        if (val === "8") return { action: "Split", rule: "Always split 8s. Break up a terrible 16." };
-        if (["10", "J", "Q", "K"].includes(val)) return { action: "Stand", rule: "Never split 10s. A 20 is too strong." };
-        if (val === "5") return { action: "Double (if allowed), else Hit", rule: "Never split 5s. Treat them as a Hard 10." };
-        if (val === "9") {
-           if ([2,3,4,5,6,8,9].includes(dScore)) return { action: "Split", rule: "Split 9s against 2-9, EXCEPT a 7." };
-           return { action: "Stand", rule: "Stand with 9s against a 7 (18 beats 17), 10, or Ace." };
-        } 
-        if (val === "7") {
-           if ([2,3,4,5,6,7].includes(dScore)) return { action: "Split", rule: "Split 7s against dealer 2-7." };
-           return { action: "Hit", rule: "Hit 7s against dealer 8-A." };
-        } 
-        if (val === "6") {
-           if ([2,3,4,5,6].includes(dScore)) return { action: "Split", rule: "Split 6s against dealer 2-6." };
-           return { action: "Hit", rule: "Hit 6s against dealer 7-A." };
-        } 
-        if (val === "4") {
-           if ([5,6].includes(dScore)) return { action: "Split", rule: "Split 4s only against dealer 5 or 6." };
-           return { action: "Hit", rule: "Hit 4s against anything else." };
-        } 
-        if (val === "2" || val === "3") {
-           if ([2,3,4,5,6,7].includes(dScore)) return { action: "Split", rule: "Split 2s and 3s against dealer 2-7." };
-           return { action: "Hit", rule: "Hit 2s and 3s against dealer 8-A." };
-        }
-      }
-
-      // Soft Total Rules
       if (soft) {
-        if (pScore >= 20) return { action: "Stand", rule: "Stand on Soft 20 or 21." };
-        if (pScore === 19) {
-           if (dScore === 6) return { action: "Double (if allowed), else Stand", rule: "Soft 19: Double against a 6. Otherwise stand." };
-           return { action: "Stand", rule: "Stand on Soft 19." };
+        if (score >= 20) return { ideal: "Stand", fb: ["Stand"], rule: "Stand on soft 20 or 21." };
+        if (score === 19) {
+          if (up === 6) return { ideal: "Double", fb: ["Stand"], rule: "Soft 19: double vs 6 (H17), otherwise stand." };
+          return { ideal: "Stand", fb: ["Stand"], rule: "Stand on soft 19." };
         }
-        if (pScore === 18) {
-           if ([2,3,4,5,6].includes(dScore)) return { action: "Double (if allowed), else Stand", rule: "Soft 18: Double against weak dealer cards (2-6)." };
-           if ([9,10,11].includes(dScore)) return { action: "Hit", rule: "Soft 18: Hit against strong cards (9, 10, A)." };
-           return { action: "Stand", rule: "Soft 18: Stand against a 7 or 8." }; 
+        if (score === 18) {
+          if ([2,3,4,5,6].includes(up)) return { ideal: "Double", fb: ["Stand"], rule: "Soft 18: double vs 2–6; if you can't, stand." };
+          if ([7,8].includes(up)) return { ideal: "Stand", fb: ["Stand"], rule: "Soft 18: stand vs 7 or 8." };
+          return { ideal: "Hit", fb: ["Hit"], rule: "Soft 18: hit vs 9, 10, or Ace — 18 loses there." };
         }
-        if (pScore <= 17) {
-           if ([3,4,5,6].includes(dScore)) {
-               return { action: "Double (if allowed), else Hit", rule: "Soft 13-17: Double against dealer bust cards (usually 5-6). Otherwise hit." };
-           }
-           return { action: "Hit", rule: "Soft 17 or lower: Never stand. Hit to improve." };
+        if (score === 17) {
+          if ([2,3,4,5,6].includes(up)) return { ideal: "Double", fb: ["Hit"], rule: "Soft 17: double vs 2–6 (H17), otherwise hit. Never stand." };
+          return { ideal: "Hit", fb: ["Hit"], rule: "Soft 17: hit vs 7+. Never stand on soft 17." };
         }
+        if (score === 16 || score === 15) {
+          if ([4,5,6].includes(up)) return { ideal: "Double", fb: ["Hit"], rule: "Soft " + score + ": double vs 4–6, otherwise hit." };
+          return { ideal: "Hit", fb: ["Hit"], rule: "Soft " + score + ": hit unless you can double vs 4–6." };
+        }
+        if (score === 14 || score === 13) {
+          if ([5,6].includes(up)) return { ideal: "Double", fb: ["Hit"], rule: "Soft " + score + ": double vs 5–6, otherwise hit." };
+          return { ideal: "Hit", fb: ["Hit"], rule: "Soft " + score + ": hit unless you can double vs 5–6." };
+        }
+        return { ideal: "Hit", fb: ["Hit"], rule: "Hit to improve the soft hand." };
       }
 
-      // Hard Total Rules
-      if (pScore >= 17) return { action: "Stand", rule: "Always stand on Hard 17 or higher." };
-      
-      if (pScore >= 13 && pScore <= 16) {
-        if ([2,3,4,5,6].includes(dScore)) return { action: "Stand", rule: "Hard 13-16: Stand against a dealer's bust card (2-6)." };
-        return { action: "Hit", rule: "Hard 13-16: Hit against a dealer 7+. Assume they have a 10." };
+      // Hard totals
+      if (score >= 17) {
+        if (score === 17 && up === 11 && canSurr) return { ideal: "Surrender", fb: ["Stand"], rule: "Hard 17 vs Ace (H17): surrender if allowed, else stand." };
+        return { ideal: "Stand", fb: ["Stand"], rule: "Stand on hard 17 or higher." };
       }
-
-      if (pScore === 12) {
-        if ([4,5,6].includes(dScore)) return { action: "Stand", rule: "Hard 12: Stand against dealer 4-6." };
-        return { action: "Hit", rule: "Hard 12: Hit against 2, 3, or 7+." };
+      if (score === 16) {
+        if ([9,10,11].includes(up) && canSurr) return { ideal: "Surrender", fb: ["Hit"], rule: "Hard 16 vs 9, 10, or Ace: surrender if allowed, else hit." };
+        if ([2,3,4,5,6].includes(up)) return { ideal: "Stand", fb: ["Stand"], rule: "Hard 16: stand vs a dealer bust card (2–6)." };
+        return { ideal: "Hit", fb: ["Hit"], rule: "Hard 16: hit vs 7+ — assume a ten in the hole." };
       }
-      
-      if (pScore === 11) return { action: "Double (if allowed), else Hit", rule: "Always Double an 11." };
-      if (pScore === 10) {
-        if (dScore < 10) return { action: "Double (if allowed), else Hit", rule: "Double 10 against anything EXCEPT a dealer 10 or Ace." };
-        return { action: "Hit", rule: "Hit a 10 against a dealer 10 or Ace." };
+      if (score === 15) {
+        if ([10,11].includes(up) && canSurr) return { ideal: "Surrender", fb: ["Hit"], rule: "Hard 15 vs 10 or Ace (H17): surrender if allowed, else hit." };
+        if ([2,3,4,5,6].includes(up)) return { ideal: "Stand", fb: ["Stand"], rule: "Hard 15: stand vs 2–6." };
+        return { ideal: "Hit", fb: ["Hit"], rule: "Hard 15: hit vs 7+." };
       }
-      if (pScore === 9) {
-        if ([3,4,5,6].includes(dScore)) return { action: "Double (if allowed), else Hit", rule: "Double 9 against weak dealer cards (3-6)." };
-        return { action: "Hit", rule: "Hit 9 against a strong dealer card (2, or 7+)." };
+      if (score >= 13) {
+        if ([2,3,4,5,6].includes(up)) return { ideal: "Stand", fb: ["Stand"], rule: "Hard " + score + ": stand vs 2–6." };
+        return { ideal: "Hit", fb: ["Hit"], rule: "Hard " + score + ": hit vs 7+." };
       }
-
-      return { action: "Hit", rule: "Always hit an 8 or lower." }; 
+      if (score === 12) {
+        if ([4,5,6].includes(up)) return { ideal: "Stand", fb: ["Stand"], rule: "Hard 12: stand vs 4–6 only." };
+        return { ideal: "Hit", fb: ["Hit"], rule: "Hard 12: hit vs 2, 3, or 7+." };
+      }
+      if (score === 11) return { ideal: "Double", fb: ["Hit"], rule: "Always double 11 (H17 doubles vs Ace too)." };
+      if (score === 10) {
+        if (up <= 9) return { ideal: "Double", fb: ["Hit"], rule: "Double 10 vs 2–9." };
+        return { ideal: "Hit", fb: ["Hit"], rule: "Hit 10 vs 10 or Ace." };
+      }
+      if (score === 9) {
+        if ([3,4,5,6].includes(up)) return { ideal: "Double", fb: ["Hit"], rule: "Double 9 vs 3–6." };
+        return { ideal: "Hit", fb: ["Hit"], rule: "Hit 9 vs 2 or 7+." };
+      }
+      return { ideal: "Hit", fb: ["Hit"], rule: "Hit hard 8 or lower." };
     }
 
-    function evaluateMove(playerAction) {
-      const adviceObj = getAdvice();
-      const advice = adviceObj.action;
-      const rule = adviceObj.rule;
-      const canDbl = (playerCards.length === 2);
-      let isCorrect = false;
+    function context(hand) {
+      const two = hand.cards.length === 2;
+      return {
+        canDouble: two && !hand.fromSplitAce,
+        canSplit: two && isPair(hand.cards) && hands.length < MAX_HANDS && !hand.fromSplitAce,
+        canSurrender: surrenderAvailable
+      };
+    }
+    function recommend(hand, up, ctx) {
+      const c = chart(hand.cards, up, ctx.canSurrender);
+      const avail = a =>
+        a === "Hit" || a === "Stand" ? true :
+        a === "Double" ? ctx.canDouble :
+        a === "Split" ? ctx.canSplit :
+        a === "Surrender" ? ctx.canSurrender : false;
+      const chain = [c.ideal, ...c.fb, "Stand", "Hit"];
+      return { best: chain.find(avail), rule: c.rule };
+    }
 
-      if (playerAction === "Hit") {
-         if (advice === "Hit" || advice.includes("else Hit")) isCorrect = true;
-         if (advice.includes("Double") && advice.includes("else Hit") && !canDbl) isCorrect = true;
-      } else if (playerAction === "Stand") {
-         if (advice === "Stand" || advice.includes("else Stand")) isCorrect = true;
-         if (advice.includes("Double") && advice.includes("else Stand") && !canDbl) isCorrect = true;
-      } else if (playerAction === "Double") {
-         if (advice.includes("Double")) isCorrect = true;
-      } else if (playerAction === "Split") {
-         if (advice === "Split") isCorrect = true;
-      } else if (playerAction === "Surrender") {
-         if (advice.includes("Surrender")) isCorrect = true;
-      }
-      
+    // ---- Rendering ----
+    function cardHTML(card, faceUp) {
+      const red = card.suit === "♥" || card.suit === "♦";
+      return '<div class="card"><div class="card-inner ' + (faceUp ? "face-up" : "face-down") + '">' +
+             '<div class="card-face card-front"><span class="' + (red ? "red" : "black") + '">' + card.value + '</span>' +
+             '<span class="' + (red ? "red" : "black") + '">' + card.suit + '</span></div>' +
+             '<div class="card-face card-back"></div></div></div>';
+    }
+    function flipLater(el) {
+      const inner = el.querySelector(".card-inner");
+      requestAnimationFrame(() => requestAnimationFrame(() =>
+        inner.classList.replace("face-down", "face-up")));
+    }
+    function scoreText(cards, allowBJ) {
+      const v = handValue(cards);
+      if (v.score > 21) return "Bust (" + v.score + ")";
+      if (allowBJ && cards.length === 2 && v.score === 21) return "Blackjack";
+      return (v.soft ? "Soft " : "") + v.score;
+    }
+    function renderDealer() {
+      dealerCardsEl.innerHTML = "";
+      dealerCards.forEach((c, i) => {
+        const hole = i === 1 && !dealerRevealed;
+        const already = shown.has(c);
+        dealerCardsEl.insertAdjacentHTML("beforeend", cardHTML(c, hole ? false : already));
+        if (!hole && !already) { flipLater(dealerCardsEl.lastElementChild); shown.add(c); }
+      });
+      if (dealerRevealed) dealerScoreEl.textContent = scoreText(dealerCards, true);
+      else if (dealerCards.length) dealerScoreEl.textContent = "Showing " + upValue(dealerCards[0]);
+      else dealerScoreEl.textContent = "";
+    }
+    function renderPlayer() {
+      playerHandsEl.innerHTML = "";
+      hands.forEach((h, i) => {
+        const block = document.createElement("div");
+        let cls = "hand-block";
+        if (i === active && !roundOver && !h.done) cls += " active";
+        if (roundOver && h.result) cls += " " + h.result;
+        block.className = cls;
+        const allowBJ = hands.length === 1 && !h.fromSplit;
+        const label = hands.length > 1
+          ? '<div class="hand-label">Hand ' + (i + 1) + (h.doubled ? " · 2×" : "") + (h.fromSplitAce ? " · split ace" : "") + "</div>"
+          : "";
+        block.innerHTML = label + '<div class="cards-container"></div>' +
+          '<div class="score-display">' + scoreText(h.cards, allowBJ) + "</div>" +
+          (roundOver && h.result ? '<div class="hand-result ' + h.result + '">' + resultText(h) + "</div>" : "");
+        playerHandsEl.appendChild(block);
+        const cc = block.querySelector(".cards-container");
+        h.cards.forEach(c => {
+          const already = shown.has(c);
+          cc.insertAdjacentHTML("beforeend", cardHTML(c, already));
+          if (!already) { flipLater(cc.lastElementChild); shown.add(c); }
+        });
+      });
+    }
+    function renderControls() {
+      const actable = !roundOver && !dealing && hands[active] && !hands[active].done;
+      const ctx = actable ? context(hands[active]) : { canDouble: false, canSplit: false, canSurrender: false };
+      hitBtn.disabled = !actable;
+      standBtn.disabled = !actable;
+      doubleBtn.disabled = !(actable && ctx.canDouble);
+      splitBtn.disabled = !(actable && ctx.canSplit);
+      surrenderBtn.disabled = !(actable && ctx.canSurrender);
+    }
+    function render() { renderDealer(); renderPlayer(); renderControls(); }
+
+    function renderStats() {
+      const acc = stats.total ? Math.round((stats.correct / stats.total) * 100) : null;
+      $("s-acc").textContent = acc === null ? "—" : acc + "%";
+      $("s-acc-sub").textContent = stats.correct + " / " + stats.total;
+      $("s-streak").textContent = stats.streak;
+      $("s-streak-sub").textContent = "best " + stats.bestStreak;
+      $("s-net").textContent = fmt(stats.net);
+      $("s-net-sub").textContent = stats.rounds + (stats.rounds === 1 ? " round" : " rounds");
+      $("s-avg").textContent = stats.rounds ? fmt(stats.net / stats.rounds, 2) : "—";
+    }
+    function fmt(n, dp) {
+      const r = dp ? Number(n).toFixed(dp) : (Math.round(n * 100) / 100).toString();
+      return (n > 0 ? "+" : "") + r;
+    }
+    function resultText(h) {
+      if (h.result === "surrender") return "Surrender −0.5";
+      return ({ win: "Win", lose: "Lose", push: "Push" }[h.result]) + " " + fmt(h.net);
+    }
+
+    // ---- Feedback / hint ----
+    function grade(action) {
+      const h = hands[active];
+      const up = upValue(dealerCards[0]);
+      const { best, rule } = recommend(h, up, context(h));
+      const correct = action === best;
+      stats.total++;
+      if (correct) { stats.correct++; stats.streak++; if (stats.streak > stats.bestStreak) stats.bestStreak = stats.streak; }
+      else stats.streak = 0;
+      saveStats(); renderStats();
+
       strategyBox.style.display = "block";
-      
-      const visualDivider = `<hr style="border: 0; border-top: 1px dashed rgba(0,0,0,0.2); margin: 12px 0;">`;
-      const ruleHTML = `<span style="font-weight: normal; font-style: italic; font-size: 0.95rem;">Rule: ${rule}</span>`;
-
-      if (isCorrect) {
-        strategyBox.style.backgroundColor = "#dff0d8"; 
-        strategyBox.style.color = "#3c763d";
-        strategyBox.style.borderColor = "#d6e9c6";
-        strategyBox.innerHTML = `✅ Correct! Optimal strategy was: <em>${advice}</em> ${visualDivider} ${ruleHTML}`;
+      const divider = '<hr style="border:0;border-top:1px dashed rgba(0,0,0,0.2);margin:10px 0;">';
+      const ruleHTML = '<span style="font-weight:normal;font-style:italic;font-size:0.95rem;">' + rule + "</span>";
+      if (correct) {
+        strategyBox.style.background = "#dff0d8"; strategyBox.style.color = "#3c763d"; strategyBox.style.borderColor = "#c6e2b5";
+        strategyBox.innerHTML = "✓ Correct — basic strategy is <em>" + best + "</em>." + divider + ruleHTML;
       } else {
-        strategyBox.style.backgroundColor = "#f2dede"; 
-        strategyBox.style.color = "#a94442";
-        strategyBox.style.borderColor = "#ebccd1";
-        strategyBox.innerHTML = `❌ Mistake. You chose <strong>${playerAction}</strong>, but strategy said: <em>${advice}</em> ${visualDivider} ${ruleHTML}`;
+        strategyBox.style.background = "#f2dede"; strategyBox.style.color = "#a94442"; strategyBox.style.borderColor = "#e0b4b4";
+        strategyBox.innerHTML = "✗ You chose <strong>" + action + "</strong>, but basic strategy is <em>" + best + "</em>." + divider + ruleHTML;
       }
+      clearHint();
+    }
+    function showHint() {
+      if (!hintMode || roundOver || dealing || !hands[active] || hands[active].done) { clearHint(); return; }
+      const h = hands[active];
+      const { best, rule } = recommend(h, upValue(dealerCards[0]), context(h));
+      hintBox.style.display = "block";
+      hintBox.innerHTML = "Recommended: <b>" + best + "</b> — <span style='font-style:italic'>" + rule + "</span>";
+    }
+    function clearHint() { hintBox.style.display = "none"; hintBox.innerHTML = ""; }
+    function clearFeedback() { strategyBox.style.display = "none"; strategyBox.innerHTML = ""; clearHint(); messageEl.textContent = ""; messageEl.className = ""; }
+
+    // ---- Round flow ----
+    function newHand(props) {
+      return Object.assign({ cards: [], bet: 1, done: false, stood: false, doubled: false,
+        busted: false, surrendered: false, fromSplit: false, fromSplitAce: false, result: null, net: 0 }, props || {});
     }
 
-    hitButton.addEventListener("click", async () => {
-      evaluateMove("Hit"); 
-      dealingInProgress = true; 
-      updateUI(); 
-      
-      playerCards.push(deck.pop());
-      updateUI();
-      await sleep(600); 
-      
-      if (getHandDetails(playerCards).score > 21) {
-        turnOver = true;
-        updateUI();
-        await sleep(2500); 
-        
-        dealerRevealed = true; 
-        updateUI();
-        await sleep(600);
-        endGame("Bust! You lose.", "lose");
-      } else {
-        dealingInProgress = false;
-        updateUI(); 
+    async function startRound() {
+      if (!TESTMODE && deck.length < 52) { deck = createShoe(); shown.clear(); }
+      dealerCards = [];
+      hands = [newHand()];
+      active = 0; dealerRevealed = false; roundOver = false; surrenderAvailable = true; dealing = true;
+      clearFeedback();
+      nextBtn.style.display = "none";
+      render();
+
+      hands[0].cards.push(deck.pop()); render(); await sleep(DEAL);
+      dealerCards.push(deck.pop());   render(); await sleep(DEAL);
+      hands[0].cards.push(deck.pop()); render(); await sleep(DEAL);
+      dealerCards.push(deck.pop());   render(); await sleep(DEAL);
+      dealing = false;
+
+      const playerNatural = handValue(hands[0].cards).score === 21;
+      const up = dealerCards[0];
+
+      // Dealer peek on Ace or ten
+      if (up.value === "A" || isTen(up.value)) {
+        if (handValue(dealerCards).score === 21) {
+          dealerRevealed = true; render(); await sleep(REVEAL);
+          if (playerNatural) { hands[0].result = "push"; hands[0].net = 0; endRound("Push — both blackjack.", "push"); }
+          else { hands[0].result = "lose"; hands[0].net = -1; endRound("Dealer blackjack — you lose.", "lose"); }
+          bankAndFinish();
+          return;
+        }
       }
-    });
-
-    standButton.addEventListener("click", async () => {
-      evaluateMove("Stand");
-      turnOver = true;
-      updateUI();
-      await sleep(2500); 
-      dealerTurn();
-    });
-
-    doubleDownButton.addEventListener("click", async () => {
-      evaluateMove("Double");
-      turnOver = true;
-      dealingInProgress = true;
-      updateUI();
-      
-      playerCards.push(deck.pop());
-      updateUI();
-      await sleep(800);
-      
-      if (getHandDetails(playerCards).score > 21) {
-        await sleep(1500); 
-        dealerRevealed = true;
-        updateUI();
-        await sleep(600);
-        endGame("Bust! You lose.", "lose");
-      } else {
-        dealingInProgress = false;
-        await sleep(2000); 
-        dealerTurn();
+      if (playerNatural) {
+        dealerRevealed = true; render(); await sleep(REVEAL);
+        hands[0].result = "win"; hands[0].net = 1.5;
+        endRound('Blackjack! <span class="muted">Pays 3:2 (+1.5).</span>', "win");
+        bankAndFinish();
+        return;
       }
-    });
 
-    splitButton.addEventListener("click", async () => {
-      evaluateMove("Split");
-      turnOver = true;
-      updateUI();
-      await sleep(2500);
-      
-      dealerRevealed = true;
-      updateUI();
-      await sleep(600);
-      endGame("Hand graded. (Playing out split hands not simulated)", "push");
-    });
+      render(); showHint();
+    }
 
-    surrenderButton.addEventListener("click", async () => {
-      evaluateMove("Surrender");
-      turnOver = true;
-      updateUI();
-      await sleep(2500);
-      
-      dealerRevealed = true;
-      updateUI();
-      await sleep(600);
-      endGame("You surrendered.", "lose");
-    });
+    function canAct() { return !roundOver && !dealing && hands[active] && !hands[active].done; }
 
-    async function dealerTurn() {
-      dealerRevealed = true;
-      updateUI();
-      await sleep(600); 
+    async function nextHandOrDealer() {
+      const next = hands.findIndex(h => !h.done);
+      if (next === -1) { await finishPlayerTurns(); return; }
+      active = next;
+      // A freshly-available hand that is already 21 needs no decision.
+      if (handValue(hands[active].cards).score === 21) {
+        hands[active].stood = true; hands[active].done = true;
+        render(); await sleep(SHORT); return nextHandOrDealer();
+      }
+      render(); showHint();
+    }
 
-      let { score: dScore, isSoft } = getHandDetails(dealerCards);
-      
-      while (dScore < 17 || (dScore === 17 && isSoft)) {
-        await sleep(400); 
+    async function finishPlayerTurns() {
+      dealerRevealed = true; render(); await sleep(REVEAL);
+      if (hands.some(h => !h.busted && !h.surrendered)) await dealerPlay();
+      settle();
+    }
+    async function dealerPlay() {
+      let v = handValue(dealerCards);
+      while (v.score < 17 || (v.score === 17 && v.soft)) {
+        await sleep(DRAW);
         dealerCards.push(deck.pop());
-        updateUI();
-        await sleep(600); 
-        
-        const details = getHandDetails(dealerCards);
-        dScore = details.score;
-        isSoft = details.isSoft;
-      }
-      
-      determineWinner();
-    }
-
-    function determineWinner() {
-      const pScore = getHandDetails(playerCards).score;
-      const dScore = getHandDetails(dealerCards).score;
-
-      if (dScore > 21) {
-        endGame("Dealer Busts! You Win.", "win");
-      } else if (pScore > dScore) {
-        endGame("You Win!", "win");
-      } else if (dScore > pScore) {
-        endGame("Dealer Wins.", "lose");
-      } else {
-        endGame("Push (Tie).", "push");
+        render(); await sleep(DEAL);
+        v = handValue(dealerCards);
       }
     }
 
-    function endGame(text, cssClass) {
-      turnOver = true;
-      dealingInProgress = false;
-      updateUI();
-      messageElement.textContent = text;
-      messageElement.className = cssClass;
-      dealNextHandButton.style.display = "inline-block";
+    function settle() {
+      const d = handValue(dealerCards).score;
+      const dBust = d > 21;
+      for (const h of hands) {
+        if (h.surrendered) { h.net = -0.5 * h.bet; h.result = "surrender"; continue; }
+        if (h.busted) { h.net = -1 * h.bet; h.result = "lose"; continue; }
+        const p = handValue(h.cards).score;
+        if (dBust || p > d) { h.net = h.bet; h.result = "win"; }
+        else if (p < d) { h.net = -h.bet; h.result = "lose"; }
+        else { h.net = 0; h.result = "push"; }
+      }
+      endRound(roundSummary(), overallClass());
+      bankAndFinish();
     }
 
-    dealNextHandButton.addEventListener("click", () => {
-      startHand();
+    function roundSummary() {
+      const d = handValue(dealerCards);
+      const dtxt = d.score > 21 ? "dealer busts" : "dealer " + scoreText(dealerCards, true).toLowerCase();
+      if (hands.length === 1) {
+        const map = { win: "You win.", lose: "You lose.", push: "Push.", surrender: "You surrendered." };
+        return map[hands[0].result] + ' <span class="muted">(' + dtxt + ")</span>";
+      }
+      const parts = hands.map((h, i) => "H" + (i + 1) + " " + h.result).join(" · ");
+      const net = hands.reduce((a, h) => a + h.net, 0);
+      return parts + ' <span class="muted">(' + dtxt + ", net " + fmt(net) + ")</span>";
+    }
+    function overallClass() {
+      const net = hands.reduce((a, h) => a + h.net, 0);
+      return net > 0 ? "win" : net < 0 ? "lose" : "push";
+    }
+
+    function bankAndFinish() {
+      const net = hands.reduce((a, h) => a + h.net, 0);
+      stats.net += net; stats.rounds += 1; saveStats(); renderStats();
+    }
+    function endRound(message, cls) {
+      roundOver = true; dealing = false;
+      render();
+      messageEl.innerHTML = message; messageEl.className = cls;
+      nextBtn.style.display = "inline-block";
+      clearHint();
+    }
+
+    // ---- Player actions ----
+    async function doHit() {
+      if (!canAct()) return;
+      grade("Hit"); surrenderAvailable = false;
+      const h = hands[active];
+      dealing = true; render();
+      h.cards.push(deck.pop()); render(); await sleep(DEAL);
+      const v = handValue(h.cards);
+      if (v.score > 21) { h.busted = true; h.done = true; dealing = false; render(); await sleep(RESULT); await nextHandOrDealer(); }
+      else if (v.score === 21) { h.stood = true; h.done = true; dealing = false; render(); await sleep(SHORT); await nextHandOrDealer(); }
+      else { dealing = false; render(); showHint(); }
+    }
+    async function doStand() {
+      if (!canAct()) return;
+      grade("Stand"); surrenderAvailable = false;
+      const h = hands[active]; h.stood = true; h.done = true;
+      render(); await sleep(SHORT); await nextHandOrDealer();
+    }
+    async function doDouble() {
+      if (!canAct() || !context(hands[active]).canDouble) return;
+      grade("Double"); surrenderAvailable = false;
+      const h = hands[active]; h.bet = 2; h.doubled = true;
+      dealing = true; render();
+      h.cards.push(deck.pop()); render(); await sleep(DEAL);
+      if (handValue(h.cards).score > 21) h.busted = true;
+      h.done = true; dealing = false; render(); await sleep(RESULT);
+      await nextHandOrDealer();
+    }
+    async function doSplit() {
+      if (!canAct() || !context(hands[active]).canSplit) return;
+      grade("Split"); surrenderAvailable = false;
+      const h = hands[active];
+      const isAce = h.cards[0].value === "A";
+      const moved = h.cards.pop();
+      h.fromSplit = true; if (isAce) h.fromSplitAce = true;
+      const nh = newHand({ cards: [moved], fromSplit: true, fromSplitAce: isAce });
+      hands.splice(active + 1, 0, nh);
+      dealing = true; render();
+      h.cards.push(deck.pop()); render(); await sleep(DEAL);
+      nh.cards.push(deck.pop()); render(); await sleep(DEAL);
+      dealing = false;
+      if (isAce) { // split aces: one card each, both stand
+        h.stood = h.done = true; nh.stood = nh.done = true;
+        render(); await sleep(SHORT); return nextHandOrDealer();
+      }
+      if (handValue(h.cards).score === 21) { h.stood = h.done = true; render(); await sleep(SHORT); return nextHandOrDealer(); }
+      render(); showHint();
+    }
+    async function doSurrender() {
+      if (!canAct() || !surrenderAvailable) return;
+      grade("Surrender");
+      const h = hands[active]; h.surrendered = true; h.done = true; surrenderAvailable = false;
+      render(); await sleep(SHORT);
+      dealerRevealed = true; render(); await sleep(REVEAL);
+      settle();
+    }
+
+    // ---- Wiring ----
+    hitBtn.addEventListener("click", doHit);
+    standBtn.addEventListener("click", doStand);
+    doubleBtn.addEventListener("click", doDouble);
+    splitBtn.addEventListener("click", doSplit);
+    surrenderBtn.addEventListener("click", doSurrender);
+    nextBtn.addEventListener("click", () => startRound());
+
+    hintToggle.addEventListener("change", e => { hintMode = e.target.checked; showHint(); });
+
+    $("reset-stats").addEventListener("click", () => {
+      stats = { total: 0, correct: 0, streak: 0, bestStreak: 0, net: 0, rounds: 0 };
+      saveStats(); renderStats();
     });
 
-    // Start
-    deck = createDeck();
-    startHand();
+    document.addEventListener("keydown", e => {
+      const k = e.key.toLowerCase();
+      if (roundOver && (k === "n" || k === "enter")) { e.preventDefault(); startRound(); return; }
+      if (!canAct()) return;
+      if (k === "h") { e.preventDefault(); doHit(); }
+      else if (k === "s") { e.preventDefault(); doStand(); }
+      else if (k === "d" && !doubleBtn.disabled) { e.preventDefault(); doDouble(); }
+      else if (k === "p" && !splitBtn.disabled) { e.preventDefault(); doSplit(); }
+      else if (k === "r" && !surrenderBtn.disabled) { e.preventDefault(); doSurrender(); }
+    });
 
+    // ---- Test hook (deterministic dealing) ----
+    window.__bj = {
+      stack(order) { TESTMODE = true; shown.clear(); deck = order.slice().reverse(); },
+      testMode(b) { TESTMODE = b; },
+      state() { return { hands, dealerCards, active, roundOver, dealing, stats,
+        pScores: hands.map(h => handValue(h.cards).score), dScore: handValue(dealerCards).score }; },
+      start: startRound
+    };
+
+    // ---- Go ----
+    renderStats();
+    deck = createShoe();
+    startRound();
+  })();
   </script>
 </body>
 </html>
