@@ -44,9 +44,9 @@
     /* Quote styling */
     #quote {
       text-align: center;
-      /* Sized to the exact width of the quote in this font (16.27em),
-         so it fills one line on any screen without wrapping or overflow */
-      font-size: clamp(0.95rem, calc((100vw - 3rem) / 16.8), 1.3rem);
+      /* Quote is 16.27em wide in this font; 4.61vw makes its rendered
+         width ~75vw, matching the photo width on mobile */
+      font-size: clamp(0.95rem, 4.61vw, 1.3rem);
       white-space: nowrap;
       margin: 0.4rem 0 0.4rem;
       color: #444;
