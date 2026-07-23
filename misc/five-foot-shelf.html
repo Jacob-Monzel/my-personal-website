@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>The Five-Foot Shelf Hunt – Jacob Monzel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: "Times New Roman", Times, serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      color: #000;
+      background-color: #fff;
+      line-height: 1.5;
+    }
+
+    nav {
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+    }
+    nav a { margin: 0 1rem; text-decoration: none; color: #0000EE; }
+    nav a:hover { text-decoration: underline; }
+
+    h1 {
+      text-align: center;
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      border-bottom: 2px solid #000;
+      padding-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-style: italic;
+      color: #444;
+      margin-bottom: 2rem;
+    }
+
+    .info-section { border: 1px solid #808080; margin-bottom: 2rem; }
+    .section-header {
+      background-color: #fff;
+      border-bottom: 1px solid #808080;
+      padding: 8px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      letter-spacing: 0.5px;
+    }
+    .section-body { padding: 15px; }
+
+    .rules ul { margin: 0; padding-left: 1.4rem; }
+
+    /* ---- Progress ---- */
+    .progress-line { margin-bottom: 0.6rem; }
+    .progress-label { font-weight: bold; }
+    .bar {
+      border: 1px solid #808080;
+      height: 16px;
+      background: #f4f4f4;
+      margin-top: 3px;
+    }
+    .bar-fill {
+      height: 100%;
+      background: #2f4b8f;
+      width: 0%;
+    }
+    .stats-line {
+      margin-top: 0.8rem;
+      font-size: 0.95rem;
+      color: #444;
+      text-align: center;
+    }
+
+    /* ---- Shelf ---- */
+    .shelf-row {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 3px;
+      padding: 6px 4px 0 4px;
+      border-bottom: 4px solid #5a4632; /* the shelf itself */
+      margin-bottom: 14px;
+    }
+    .shelf-row:last-child { margin-bottom: 4px; }
+
+    .spine {
+      width: clamp(13px, 3.6vw, 24px);
+      height: 92px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      cursor: pointer;
+      border: 1px solid #999;
+      background: #eee;
+      color: #999;
+      font-size: 0.65rem;
+      padding-top: 6px;
+      box-sizing: border-box;
+    }
+    .spine.owned {
+      border: 1px solid #1d3260;
+      color: #d9b64a;
+      background:
+        linear-gradient(#c8a23c, #c8a23c) 0 6px / 100% 1px no-repeat,
+        linear-gradient(#c8a23c, #c8a23c) 0 calc(100% - 7px) / 100% 1px no-repeat,
+        #2f4b8f;
+      font-weight: bold;
+    }
+    .spine.owned.read { box-shadow: inset 0 0 0 1px #c8a23c; }
+    .spine .num { margin-top: 6px; }
+    .spine:hover { outline: 2px solid #0000EE; }
+
+    /* ---- Table ---- */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f0f0f0; }
+    td.vol { text-align: center; white-space: nowrap; width: 2.5rem; }
+    td.read-col { text-align: center; white-space: nowrap; width: 3.5rem; }
+    tr.owned-row td.vol { font-weight: bold; }
+    tr.flash { background: #fdf3d1; }
+    .found-details { color: #333; }
+    .not-found { color: #999; }
+
+    @media (max-width: 600px) {
+      body { padding: 1rem; }
+      table { font-size: 0.85rem; }
+      th, td { padding: 4px 5px; }
+      .spine { height: 74px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/">Home</a>
+    <a href="/misc/">Back to Misc</a>
+  </nav>
+
+  <h1>The Five-Foot Shelf Hunt</h1>
+  <div class="subtitle">Assembling Dr. Eliot&rsquo;s Harvard Classics &mdash; the blue Collier Deluxe printing &mdash; one bookstore at a time.</div>
+
+  <div class="info-section">
+    <div class="section-header">The Quest</div>
+    <div class="section-body rules">
+      <p>
+        In 1909, Charles W. Eliot, president of Harvard, claimed a liberal education could be had by reading
+        fifteen minutes a day from a shelf of books five feet long &mdash; then published that shelf: the 51-volume
+        <em>Harvard Classics</em>. Collier reprinted them for decades in several bindings. I am collecting the blue
+        &ldquo;Deluxe&rdquo; printing (gilt spine, blind-stamped Veritas shield on the cover), plus its rarer
+        20-volume companion, the <em>Shelf of Fiction</em>.
+      </p>
+      <p><strong>Rules of the hunt:</strong></p>
+      <ul>
+        <li>Physical stores only. No online orders, ever.</li>
+        <li>Any blue Collier Deluxe printing counts &mdash; printing years don&rsquo;t have to match. If it looks right on the shelf, it&rsquo;s right.</li>
+        <li>No time limit. This may legitimately take decades. That is the point.</li>
+      </ul>
+      <p style="margin-bottom:0;">The hunt began in July 2026.</p>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="section-header">Progress</div>
+    <div class="section-body">
+      <div class="progress-line">
+        <span class="progress-label">Harvard Classics:</span> <span id="core-count"></span>
+        <div class="bar"><div class="bar-fill" id="core-bar"></div></div>
+      </div>
+      <div class="progress-line">
+        <span class="progress-label">Shelf of Fiction:</span> <span id="fic-count"></span>
+        <div class="bar"><div class="bar-fill" id="fic-bar"></div></div>
+      </div>
+      <div class="stats-line" id="stats-line"></div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="section-header">The Shelf</div>
+    <div class="section-body">
+      <div id="core-shelf"></div>
+      <div style="text-align:center; font-style:italic; color:#444; margin:10px 0 6px;">Shelf of Fiction</div>
+      <div id="fic-shelf"></div>
+      <div class="stats-line">Blue spines are found; gold-outlined spines are found <em>and</em> read. Click a spine for details.</div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="section-header">Harvard Classics &mdash; Volumes 1&ndash;51</div>
+    <div class="section-body" style="overflow-x:auto;">
+      <table id="core-table">
+        <thead><tr><th>Vol</th><th>Contents</th><th>Found</th><th>Read</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p class="stats-line" style="text-align:left;">
+        Note: numbering of the last two volumes (Reader&rsquo;s Guide, Lectures) varies between Collier printings;
+        I&rsquo;ll reconcile against my own set as it materializes.
+      </p>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="section-header">Shelf of Fiction &mdash; Volumes 1&ndash;20</div>
+    <div class="section-body" style="overflow-x:auto;">
+      <table id="fic-table">
+        <thead><tr><th>Vol</th><th>Contents</th><th>Found</th><th>Read</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    /* =====================================================================
+       MAINTENANCE HAPPENS HERE AND ONLY HERE.
+       When you find a volume, add ONE line to FINDS. Keys:
+         "HC-13" = Harvard Classics vol 13,  "SF-4" = Shelf of Fiction vol 4.
+       Fields (all optional except store): store, city, date, price,
+       printing, read (false | "reading" | true), note.
+       Example:
+       "HC-13": { store: "Ohio Book Store", city: "Cincinnati, OH",
+                  date: "Aug 2026", price: "$6", printing: "1938",
+                  read: false, note: "First blood." },
+       ===================================================================== */
+    const FINDS = {
+    };
+
+    /* ---- Static volume lists (never need editing) ---- */
+    const CORE = [
+      [1, "Franklin: Autobiography \u00b7 Woolman: Journal \u00b7 Penn: Fruits of Solitude"],
+      [2, "Plato: Apology, Crito, Phaedo \u00b7 Epictetus \u00b7 Marcus Aurelius"],
+      [3, "Bacon: Essays &c. \u00b7 Milton: Prose \u00b7 Browne: Religio Medici"],
+      [4, "Milton: Complete Poems in English"],
+      [5, "Emerson: Essays &amp; English Traits"],
+      [6, "Burns: Poems &amp; Songs"],
+      [7, "Augustine: Confessions \u00b7 \u00e0 Kempis: Imitation of Christ"],
+      [8, "Nine Greek Dramas (Aeschylus, Sophocles, Euripides, Aristophanes)"],
+      [9, "Cicero: Letters &amp; Treatises \u00b7 Pliny: Letters"],
+      [10, "Adam Smith: The Wealth of Nations"],
+      [11, "Darwin: The Origin of Species"],
+      [12, "Plutarch: Lives"],
+      [13, "Virgil: The Aeneid"],
+      [14, "Cervantes: Don Quixote, Part I"],
+      [15, "Bunyan: Pilgrim's Progress \u00b7 Donne &amp; Herbert: Poems \u00b7 Walton: Lives"],
+      [16, "The Thousand and One Nights"],
+      [17, "Folklore &amp; Fable: \u00c6sop \u00b7 Grimm \u00b7 Andersen"],
+      [18, "Modern English Drama (Dryden, Sheridan, Goldsmith, Byron &c.)"],
+      [19, "Goethe: Faust &amp; Egmont \u00b7 Marlowe: Doctor Faustus"],
+      [20, "Dante: The Divine Comedy"],
+      [21, "Manzoni: I Promessi Sposi"],
+      [22, "Homer: The Odyssey"],
+      [23, "Dana: Two Years Before the Mast"],
+      [24, "Burke: On the Sublime \u00b7 French Revolution &c."],
+      [25, "Mill: Autobiography &amp; On Liberty \u00b7 Carlyle: Essays"],
+      [26, "Continental Drama (Calder\u00f3n, Corneille, Racine, Moli\u00e8re, Schiller &c.)"],
+      [27, "English Essays: Sidney to Macaulay"],
+      [28, "Essays: English &amp; American"],
+      [29, "Darwin: The Voyage of the Beagle"],
+      [30, "Scientific Papers (Faraday, Helmholtz, Kelvin &c.)"],
+      [31, "Cellini: Autobiography"],
+      [32, "Literary &amp; Philosophical Essays (Montaigne, Kant &c.)"],
+      [33, "Voyages &amp; Travels (Herodotus, Tacitus, Drake, Raleigh)"],
+      [34, "French &amp; English Philosophers (Descartes, Rousseau, Hobbes &c.)"],
+      [35, "Chronicle &amp; Romance (Froissart, Malory, Holinshed)"],
+      [36, "Machiavelli: The Prince \u00b7 More: Utopia \u00b7 Luther"],
+      [37, "Locke \u00b7 Berkeley \u00b7 Hume"],
+      [38, "Harvey \u00b7 Jenner \u00b7 Lister \u00b7 Pasteur (Scientific Papers)"],
+      [39, "Famous Prefaces"],
+      [40, "English Poetry I: Chaucer to Gray"],
+      [41, "English Poetry II: Collins to Fitzgerald"],
+      [42, "English Poetry III: Tennyson to Whitman"],
+      [43, "American Historical Documents, 1000\u20131904"],
+      [44, "Sacred Writings I: Confucian \u00b7 Hebrew \u00b7 Christian"],
+      [45, "Sacred Writings II: Christian \u00b7 Buddhist \u00b7 Hindu \u00b7 Mohammedan"],
+      [46, "Elizabethan Drama I: Marlowe \u00b7 Shakespeare"],
+      [47, "Elizabethan Drama II: Dekker \u00b7 Jonson \u00b7 Webster &c."],
+      [48, "Pascal: Thoughts, Letters &amp; Minor Works"],
+      [49, "Epic &amp; Saga: Beowulf \u00b7 Song of Roland \u00b7 Volsunga Saga &c."],
+      [50, "The Reader's Guide (Eliot's Introduction, Reading Courses, Index)"],
+      [51, "Lectures on the Harvard Classics"]
+    ];
+
+    const FICTION = [
+      [1, "Fielding: The History of Tom Jones, I"],
+      [2, "Fielding: The History of Tom Jones, II"],
+      [3, "Sterne: A Sentimental Journey \u00b7 Austen: Pride and Prejudice"],
+      [4, "Scott: Guy Mannering"],
+      [5, "Thackeray: Vanity Fair, I"],
+      [6, "Thackeray: Vanity Fair, II"],
+      [7, "Dickens: David Copperfield, I"],
+      [8, "Dickens: David Copperfield, II"],
+      [9, "George Eliot: The Mill on the Floss"],
+      [10, "American Fiction: Hawthorne \u00b7 Irving \u00b7 Poe \u00b7 Harte \u00b7 Twain \u00b7 Hale"],
+      [11, "Henry James: The Portrait of a Lady"],
+      [12, "Hugo: Notre Dame de Paris"],
+      [13, "French Fiction: Balzac \u00b7 Sand \u00b7 de Musset \u00b7 Daudet \u00b7 Maupassant"],
+      [14, "Goethe: Wilhelm Meister's Apprenticeship"],
+      [15, "German Fiction: Goethe (Werther) \u00b7 Keller \u00b7 Storm \u00b7 Fontane"],
+      [16, "Tolstoy: Anna Karenina, I"],
+      [17, "Tolstoy: Anna Karenina, II \u00b7 Ivan the Fool"],
+      [18, "Dostoevsky: Crime and Punishment"],
+      [19, "Turgenev: A House of Gentlefolk \u00b7 Fathers and Children"],
+      [20, "Valera: Pepita Jimenez \u00b7 Bj\u00f8rnson: A Happy Boy \u00b7 Kielland: Skipper Worse"]
+    ];
+
+    /* ---- Rendering (never needs editing) ---- */
+    function findFor(prefix, vol) { return FINDS[prefix + "-" + vol]; }
+
+    function readLabel(f) {
+      if (!f || f.read === undefined || f.read === false) return "\u2014";
+      if (f.read === "reading") return "in progress";
+      return "\u2713";
+    }
+
+    function foundCell(f) {
+      if (!f) return '<span class="not-found">\u2014 still out there</span>';
+      const bits = [];
+      if (f.store) bits.push("<strong>" + f.store + "</strong>" + (f.city ? " \u2014 " + f.city : ""));
+      const meta = [];
+      if (f.date) meta.push(f.date);
+      if (f.price) meta.push(f.price);
+      if (f.printing) meta.push(f.printing + " printing");
+      if (meta.length) bits.push(meta.join(" \u00b7 "));
+      if (f.note) bits.push("<em>" + f.note + "</em>");
+      return '<span class="found-details">' + bits.join("<br>") + "</span>";
+    }
+
+    function buildTable(tableId, prefix, vols) {
+      const tbody = document.querySelector("#" + tableId + " tbody");
+      vols.forEach(([vol, title]) => {
+        const f = findFor(prefix, vol);
+        const tr = document.createElement("tr");
+        tr.id = "row-" + prefix + "-" + vol;
+        if (f) tr.className = "owned-row";
+        tr.innerHTML =
+          '<td class="vol">' + vol + "</td>" +
+          "<td>" + title + "</td>" +
+          "<td>" + foundCell(f) + "</td>" +
+          '<td class="read-col">' + readLabel(f) + "</td>";
+        tbody.appendChild(tr);
+      });
+    }
+
+    function buildShelf(containerId, prefix, vols, perRow) {
+      const container = document.getElementById(containerId);
+      for (let i = 0; i < vols.length; i += perRow) {
+        const row = document.createElement("div");
+        row.className = "shelf-row";
+        vols.slice(i, i + perRow).forEach(([vol, title]) => {
+          const f = findFor(prefix, vol);
+          const s = document.createElement("div");
+          s.className = "spine" + (f ? " owned" : "") + (f && f.read === true ? " read" : "");
+          s.title = "Vol. " + vol + ": " + title.replace(/&amp;/g, "&");
+          s.innerHTML = '<span class="num">' + vol + "</span>";
+          s.onclick = () => {
+            const target = document.getElementById("row-" + prefix + "-" + vol);
+            target.scrollIntoView({ behavior: "smooth", block: "center" });
+            target.classList.add("flash");
+            setTimeout(() => target.classList.remove("flash"), 1600);
+          };
+          row.appendChild(s);
+        });
+        container.appendChild(row);
+      }
+    }
+
+    function updateProgress() {
+      const coreFound = CORE.filter(([v]) => findFor("HC", v)).length;
+      const ficFound = FICTION.filter(([v]) => findFor("SF", v)).length;
+      document.getElementById("core-count").textContent = coreFound + " / " + CORE.length + " found";
+      document.getElementById("fic-count").textContent = ficFound + " / " + FICTION.length + " found";
+      document.getElementById("core-bar").style.width = (100 * coreFound / CORE.length) + "%";
+      document.getElementById("fic-bar").style.width = (100 * ficFound / FICTION.length) + "%";
+
+      const all = Object.values(FINDS);
+      const cities = new Set(all.map(f => f.city).filter(Boolean));
+      const stores = new Set(all.map(f => f.store).filter(Boolean));
+      const readCount = all.filter(f => f.read === true).length;
+      const parts = [];
+      if (all.length === 0) {
+        parts.push("The shelf is empty. The hunt begins.");
+      } else {
+        parts.push(stores.size + " store" + (stores.size === 1 ? "" : "s"));
+        parts.push(cities.size + " cit" + (cities.size === 1 ? "y" : "ies"));
+        parts.push(readCount + " read");
+      }
+      document.getElementById("stats-line").textContent = parts.join(" \u00b7 ");
+    }
+
+    buildTable("core-table", "HC", CORE);
+    buildTable("fic-table", "SF", FICTION);
+    buildShelf("core-shelf", "HC", CORE, 17);
+    buildShelf("fic-shelf", "SF", FICTION, 10);
+    updateProgress();
+  </script>
+
+</body>
+</html>
