@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Daily Games — Jacob Monzel</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Instrument+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* ---------------------------------------------------------------
+   Palette is lifted from the Wordle tile set, so colour is never
+   decoration here: green means solved, yellow means partial,
+   grey means untouched. Everything else stays out of the way.
+   --------------------------------------------------------------- */
+:root {
+  --void:    #14161a;
+  --panel:   #1c1f25;
+  --panel-2: #22262d;
+  --line:    #2c313a;
+  --ink:     #e6e8ec;
+  --mute:    #767e8b;
+  --correct: #538d4e;
+  --present: #b59f3b;
+  --absent:  #3a3a3c;
+  --focus:   #c9b458;
+  --danger:  #b4544a;
+
+  --display: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
+  --body:    'Instrument Sans', system-ui, -apple-system, sans-serif;
+  --mono:    'Space Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --r: 10px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--body);
+  background: var(--void);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 44px 18px calc(64px + env(safe-area-inset-bottom));
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { width: 100%; max-width: 520px; }
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- header ---------- */
+
+.title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(2.1rem, 9vw, 2.9rem);
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+}
+
+.meta {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--mute);
+  margin-top: 8px;
+  letter-spacing: 0.01em;
+}
+.meta .dot { opacity: 0.4; padding: 0 6px; }
+
+/* ---------- signature: today's board ---------- */
+
+/* The board always spans the column: tracks size themselves to the
+   number of games, and wrap once there are too many to fit. */
+.board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(26px, 1fr));
+  gap: 6px;
+  margin: 26px 0 12px;
+}
+
+.tile {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  border-radius: 4px;
+  border: 2px solid var(--absent);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+  transition: background-color 0.18s, border-color 0.18s;
+}
+.tile[data-done="1"] {
+  background: var(--correct);
+  border-color: var(--correct);
+}
+.tile:hover { border-color: var(--focus); }
+
+@keyframes drop {
+  from { opacity: 0; transform: translateY(-6px) scale(0.86); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes flip {
+  0%   { transform: rotateX(0deg); }
+  50%  { transform: rotateX(90deg); }
+  100% { transform: rotateX(0deg); }
+}
+.tile.enter { animation: drop 0.26s ease-out backwards; }
+.tile.flip  { animation: flip 0.34s ease-in-out; }
+
+.scoreline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--mute);
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+.scoreline b {
+  color: var(--ink);
+  font-weight: 700;
+}
+.scoreline .streak b { color: var(--present); }
+
+/* ---------- controls ---------- */
+
+.controls {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0 14px;
+}
+
+.search {
+  flex: 1;
+  min-width: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 9px 12px;
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 0.88rem;
+}
+.search::placeholder { color: var(--mute); }
+.search:focus { outline: none; border-color: var(--focus); }
+
+.toggle {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  color: var(--mute);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  padding: 0 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.toggle[aria-pressed="true"] {
+  color: var(--void);
+  background: var(--present);
+  border-color: var(--present);
+}
+
+/* ---------- game list ---------- */
+
+.list { display: flex; flex-direction: column; gap: 7px; }
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 12px 13px;
+  transition: border-color 0.15s, background-color 0.15s, opacity 0.15s;
+}
+.row.sel { border-color: var(--focus); }
+.row[data-done="1"] { opacity: 0.42; }
+.row[data-done="1"] .name { text-decoration: line-through; text-decoration-thickness: 1px; }
+
+.check {
+  width: 22px; height: 22px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  border: 2px solid var(--absent);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  color: transparent;
+  font-size: 0.72rem;
+  font-weight: 700;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.check[aria-checked="true"] {
+  background: var(--correct);
+  border-color: var(--correct);
+  color: #fff;
+}
+
+.icon {
+  width: 36px; height: 36px;
+  border-radius: 7px;
+  display: grid; place-items: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.body { flex: 1; min-width: 0; }
+
+.open {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.name {
+  font-weight: 600;
+  font-size: 0.93rem;
+  letter-spacing: -0.01em;
+}
+.desc {
+  font-size: 0.76rem;
+  color: var(--mute);
+  margin-top: 1px;
+  line-height: 1.32;
+}
+.stat {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--mute);
+  margin-top: 4px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.stat .hot { color: var(--present); }
+.stat .sc  { color: var(--correct); }
+
+.arrow { color: var(--mute); flex-shrink: 0; }
+.open:hover .name { color: var(--focus); }
+
+.empty {
+  border: 1px dashed var(--line);
+  border-radius: var(--r);
+  padding: 26px 18px;
+  text-align: center;
+  color: var(--mute);
+  font-size: 0.84rem;
+}
+
+/* ---------- edit affordances ---------- */
+
+.tools { display: none; gap: 4px; flex-shrink: 0; }
+body.editing .tools { display: flex; }
+body.editing .check { display: none; }
+body.editing .arrow { display: none; }
+
+.tool {
+  width: 26px; height: 26px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--mute);
+  cursor: pointer;
+  font-size: 0.72rem;
+  display: grid; place-items: center;
+  padding: 0;
+}
+.tool:hover { color: var(--ink); border-color: var(--focus); }
+.tool.del:hover { color: var(--danger); border-color: var(--danger); }
+
+/* ---------- footer actions ---------- */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.btn {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  color: var(--mute);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.btn:hover { color: var(--ink); border-color: var(--focus); }
+.btn.on { color: var(--void); background: var(--present); border-color: var(--present); }
+.btn.go { color: var(--void); background: var(--correct); border-color: var(--correct); font-weight: 700; }
+.btn.go:hover { color: var(--void); filter: brightness(1.12); }
+
+/* ---------- panels ---------- */
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 16px;
+  margin-top: 12px;
+}
+.panel[hidden] { display: none; }
+
+.panel h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 0.98rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 3px;
+}
+.panel .hint {
+  font-size: 0.76rem;
+  color: var(--mute);
+  margin-bottom: 13px;
+  line-height: 1.4;
+}
+
+.field { margin-bottom: 9px; }
+.field label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  color: var(--mute);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 4px;
+}
+.field input[type=text],
+.field input[type=url],
+.field select,
+.panel textarea {
+  width: 100%;
+  background: var(--void);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 8px 10px;
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 0.86rem;
+}
+.panel textarea {
+  min-height: 92px;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  resize: vertical;
+}
+.field input:focus, .field select:focus, .panel textarea:focus {
+  outline: none; border-color: var(--focus);
+}
+.field input[type=color] {
+  width: 46px; height: 34px;
+  background: var(--void);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 2px;
+  cursor: pointer;
+}
+.pair { display: flex; gap: 9px; }
+.pair .field { flex: 1; }
+.pair .field.narrow { flex: 0 0 78px; }
+
+.result {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  margin-top: 10px;
+  min-height: 1.2em;
+}
+.result.ok   { color: var(--correct); }
+.result.warn { color: var(--present); }
+
+.foot {
+  margin-top: 26px;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  color: var(--mute);
+  opacity: 0.65;
+  line-height: 1.6;
+}
+.foot a { color: inherit; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1 class="title">Daily</h1>
+    <p class="meta">
+      <span id="date"></span><span class="dot">·</span><span id="countdown"></span>
+    </p>
+  </header>
+
+  <div class="board" id="board" role="group" aria-label="Today's board"></div>
+
+  <p class="scoreline">
+    <span id="progress"></span>
+    <span class="streak" id="streak"></span>
+  </p>
+
+  <div class="controls">
+    <input class="search" id="search" type="text" placeholder="Search — try “map”, “word”, “sports”" aria-label="Search games">
+    <button class="toggle" id="hideDone" aria-pressed="false">hide done</button>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <div class="actions">
+    <button class="btn" id="btnAdd">+ add game</button>
+    <button class="btn" id="btnEdit" aria-pressed="false">edit</button>
+    <button class="btn" id="btnLog">log a result</button>
+    <button class="btn" id="btnData">backup</button>
+  </div>
+
+  <!-- add / edit game -->
+  <section class="panel" id="formPanel" hidden>
+    <h2 id="formTitle">Add a game</h2>
+    <p class="hint">Only the name and link are required.</p>
+    <div class="field">
+      <label for="fName">Name</label>
+      <input type="text" id="fName" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="fUrl">Link</label>
+      <input type="url" id="fUrl" placeholder="https://" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="fDesc">What it is</label>
+      <input type="text" id="fDesc" autocomplete="off">
+    </div>
+    <div class="pair">
+      <div class="field">
+        <label for="fCat">Kind</label>
+        <select id="fCat">
+          <option value="word">word</option>
+          <option value="geo">geography</option>
+          <option value="sports">sports</option>
+          <option value="numbers">numbers</option>
+          <option value="trivia">trivia</option>
+          <option value="other">other</option>
+        </select>
+      </div>
+      <div class="field narrow">
+        <label for="fIcon">Emoji</label>
+        <input type="text" id="fIcon" maxlength="4" autocomplete="off">
+      </div>
+      <div class="field narrow">
+        <label for="fColor">Tile</label>
+        <input type="color" id="fColor" value="#538d4e">
+      </div>
+    </div>
+    <div class="actions" style="margin-top:14px;padding-top:0;border:0;">
+      <button class="btn go" id="fSave">save</button>
+      <button class="btn" id="fCancel">cancel</button>
+    </div>
+    <p class="result" id="fResult"></p>
+  </section>
+
+  <!-- paste-to-log -->
+  <section class="panel" id="logPanel" hidden>
+    <h2>Log a result</h2>
+    <p class="hint">
+      Paste the share text a game gives you and it will find the game and pull out the score.
+      Nothing is read automatically — these sites are on other domains, so the text has to come from you.
+    </p>
+    <textarea id="logText" placeholder="Wordle 1,482 4/6&#10;&#10;⬛🟨⬛⬛⬛&#10;⬛🟩⬛⬛🟨&#10;…" aria-label="Paste share text"></textarea>
+    <div class="actions" style="margin-top:12px;padding-top:0;border:0;">
+      <button class="btn go" id="logRead">read it</button>
+      <button class="btn" id="logClose">close</button>
+    </div>
+    <p class="result" id="logResult"></p>
+  </section>
+
+  <!-- backup -->
+  <section class="panel" id="dataPanel" hidden>
+    <h2>Backup</h2>
+    <p class="hint">
+      Your list and history live in this browser only. Copy this out somewhere safe, or paste an
+      earlier copy back in to restore.
+    </p>
+    <textarea id="dataText" aria-label="Backup data"></textarea>
+    <div class="actions" style="margin-top:12px;padding-top:0;border:0;">
+      <button class="btn go" id="dataImport">restore from text</button>
+      <button class="btn" id="dataDefaults">reset list to defaults</button>
+      <button class="btn" id="dataClose">close</button>
+    </div>
+    <p class="result" id="dataResult"></p>
+  </section>
+
+  <p class="foot">
+    j / k to move · enter to open · space to tick · / to search · e to edit<br>
+    Opening a game ticks it off. Everything resets at local midnight.
+  </p>
+
+</div>
+
+<script>
+"use strict";
+
+/* =====================================================================
+   Defaults
+   ===================================================================== */
+
+const DEFAULT_GAMES = [
+  { id:'wordle',      name:'Wordle',            url:'https://www.nytimes.com/games/wordle/index.html', desc:'Guess a five-letter word in six tries.',                   cat:'word',    icon:'🟩', color:'#538d4e' },
+  { id:'connections', name:'Connections',       url:'https://www.nytimes.com/games/connections',       desc:'Sort sixteen words into four hidden groups.',              cat:'word',    icon:'🟪', color:'#7b5ea7' },
+  { id:'timeline',    name:'Timeline',          url:'https://timeline.fromthethink.com',               desc:'Place a historical event on the calendar. Closer scores higher.', cat:'trivia', icon:'⏳', color:'#c47b2a' },
+  { id:'gridmlb',     name:'Immaculate Grid — Baseball', url:'https://www.sports-reference.com/immaculate-grid/',        desc:'Fill a 3×3 grid with players matching each row and column.', cat:'sports', icon:'⚾', color:'#2a7ac4' },
+  { id:'gridnfl',     name:'Immaculate Grid — Football', url:'https://www.sports-reference.com/immaculate-grid/football', desc:'The same grid, NFL players.',                              cat:'sports', icon:'🏈', color:'#2a7ac4' },
+  { id:'nflperry',    name:'NFL Perry',         url:'https://www.nflperry.com/daily-game',             desc:'Pick the best fantasy season on each team.',               cat:'sports',  icon:'🏟️', color:'#3d8c5c' },
+  { id:'maptap',      name:'MapTap',            url:'https://maptap.gg',                               desc:'Tap five locations on a 3D globe. Closer taps score higher.', cat:'geo',  icon:'📍', color:'#c44a3f' },
+  { id:'zpordle',     name:'Zpordle',           url:'https://mabotkin.github.io/zpordle/',             desc:'Guess a number from 0 to 1000. Hints are p-adic distances.', cat:'numbers', icon:'🔢', color:'#4a7a9b' },
+  { id:'travle',      name:'Travle',            url:'https://travle.earth',                            desc:'Name countries to build a land route between two of them.', cat:'geo',    icon:'✈️', color:'#2b8a6e' },
+  { id:'globle',      name:'Globle',            url:'https://globle-game.com/game',                    desc:'Guess the country. The globe runs hotter as you close in.', cat:'geo',    icon:'🌍', color:'#d4763c' },
+  { id:'costcodle',   name:'Costcodle',         url:'https://costcodle.com',                           desc:'Guess the price of a Costco item in six tries.',           cat:'numbers', icon:'🛒', color:'#e21836' }
+];
+
+const K_GAMES = 'dg.games';
+const K_LOG   = 'dg.log';
+
+/* =====================================================================
+   Storage
+   ===================================================================== */
+
+function read(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw === null) return fallback;
+    const val = JSON.parse(raw);
+    return (val === null || val === undefined) ? fallback : val;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function write(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); }
+  catch (e) { /* private mode or quota — page still works, just forgets */ }
+}
+
+let GAMES = read(K_GAMES, null);
+if (!Array.isArray(GAMES) || GAMES.length === 0) GAMES = DEFAULT_GAMES.map(g => ({ ...g }));
+
+let LOG = read(K_LOG, null);
+if (!LOG || typeof LOG !== 'object' || Array.isArray(LOG)) LOG = {};
+
+const saveGames = () => write(K_GAMES, GAMES);
+const saveLog   = () => write(K_LOG, LOG);
+
+/* =====================================================================
+   Days, streaks, countdown
+   ===================================================================== */
+
+function keyOf(d) {
+  const p = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
+
+function dayBack(n) {
+  const d = new Date();
+  d.setHours(12, 0, 0, 0);          // midday avoids DST edges
+  d.setDate(d.getDate() - n);
+  return keyOf(d);
+}
+
+const today = () => dayBack(0);
+
+function isDone(id, day) {
+  const bucket = LOG[day || today()];
+  return !!(bucket && bucket[id] && bucket[id].done);
+}
+
+function scoreOf(id, day) {
+  const bucket = LOG[day || today()];
+  return (bucket && bucket[id] && bucket[id].score) || '';
+}
+
+function setDone(id, done, score) {
+  const day = today();
+  if (!LOG[day]) LOG[day] = {};
+  if (!done) {
+    delete LOG[day][id];
+    if (Object.keys(LOG[day]).length === 0) delete LOG[day];
+  } else {
+    LOG[day][id] = { done: true, at: Date.now() };
+    if (score) LOG[day][id].score = score;
+  }
+  saveLog();
+}
+
+// Streak walks back from today. If today is not ticked yet the streak is
+// still alive as long as yesterday was — that grace is what makes the
+// number readable first thing in the morning.
+function streakFor(hit) {
+  let start = 0;
+  if (!hit(dayBack(0))) {
+    if (!hit(dayBack(1))) return 0;
+    start = 1;
+  }
+  let n = 0;
+  for (let i = start; i < 4000; i++) {
+    if (hit(dayBack(i))) n++; else break;
+  }
+  return n;
+}
+
+const gameStreak = id => streakFor(day => isDone(id, day));
+
+function anyDone(day) {
+  const bucket = LOG[day];
+  if (!bucket) return false;
+  for (const k in bucket) if (bucket[k].done) return true;
+  return false;
+}
+
+const overallStreak = () => streakFor(anyDone);
+
+function msToMidnight() {
+  const now = new Date();
+  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
+  return next.getTime() - now.getTime();
+}
+
+function humanDuration(ms) {
+  const mins = Math.max(0, Math.floor(ms / 60000));
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return h > 0 ? h + 'h ' + m + 'm' : m + 'm';
+}
+
+/* =====================================================================
+   Rendering
+   ===================================================================== */
+
+const $ = sel => document.querySelector(sel);
+const listEl  = $('#list');
+const boardEl = $('#board');
+
+let selected = -1;
+let firstPaint = true;
+
+function visibleGames() {
+  const q = $('#search').value.trim().toLowerCase();
+  const hide = $('#hideDone').getAttribute('aria-pressed') === 'true';
+  return GAMES.filter(g => {
+    if (hide && !document.body.classList.contains('editing') && isDone(g.id)) return false;
+    if (!q) return true;
+    return (g.name + ' ' + (g.desc || '') + ' ' + (g.cat || '')).toLowerCase().includes(q);
+  });
+}
+
+function renderBoard() {
+  boardEl.textContent = '';
+  GAMES.forEach((g, i) => {
+    const t = document.createElement('button');
+    t.className = 'tile' + (firstPaint ? ' enter' : '');
+    t.dataset.id = g.id;
+    t.dataset.done = isDone(g.id) ? '1' : '0';
+    if (firstPaint) t.style.animationDelay = (i * 32) + 'ms';
+    t.title = g.name + (isDone(g.id) ? ' — done' : '');
+    t.setAttribute('aria-label', g.name + (isDone(g.id) ? ', done' : ', not done'));
+    t.addEventListener('click', () => {
+      toggle(g.id);
+      const fresh = boardEl.querySelector('[data-id="' + cssEscape(g.id) + '"]');
+      if (fresh) { fresh.classList.add('flip'); setTimeout(() => fresh.classList.remove('flip'), 360); }
+    });
+    boardEl.appendChild(t);
+  });
+}
+
+function cssEscape(s) {
+  return String(s).replace(/["\\]/g, '\\$&');
+}
+
+function renderStats() {
+  const done = GAMES.filter(g => isDone(g.id)).length;
+  const total = GAMES.length;
+  $('#progress').innerHTML = '<b>' + done + '</b> of ' + total + ' today';
+
+  const s = overallStreak();
+  $('#streak').innerHTML = s > 0
+    ? 'streak <b>' + s + '</b> day' + (s === 1 ? '' : 's')
+    : 'no streak yet';
+}
+
+function arrowSVG() {
+  return '<svg class="arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" ' +
+         'stroke="currentColor" stroke-width="2.5" stroke-linecap="round" ' +
+         'stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
+}
+
+function renderList() {
+  const games = visibleGames();
+  listEl.textContent = '';
+
+  if (games.length === 0) {
+    const e = document.createElement('div');
+    e.className = 'empty';
+    e.textContent = $('#search').value.trim()
+      ? 'No game matches that.'
+      : 'Everything is ticked off. Come back tomorrow.';
+    listEl.appendChild(e);
+    return;
+  }
+
+  games.forEach(g => {
+    const idx = GAMES.indexOf(g);
+    const done = isDone(g.id);
+    const st = gameStreak(g.id);
+    const sc = scoreOf(g.id);
+
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.dataset.id = g.id;
+    row.dataset.done = done ? '1' : '0';
+
+    // tick box
+    const check = document.createElement('button');
+    check.className = 'check';
+    check.setAttribute('role', 'checkbox');
+    check.setAttribute('aria-checked', done ? 'true' : 'false');
+    check.setAttribute('aria-label', 'Mark ' + g.name + (done ? ' not done' : ' done'));
+    check.textContent = '✓';
+    check.addEventListener('click', () => toggle(g.id));
+    row.appendChild(check);
+
+    // icon tile
+    const icon = document.createElement('div');
+    icon.className = 'icon';
+    icon.style.background = g.color || '#3a3a3c';
+    icon.textContent = g.icon || '•';
+    icon.setAttribute('aria-hidden', 'true');
+    row.appendChild(icon);
+
+    // name / description / stats
+    const body = document.createElement('div');
+    body.className = 'body';
+
+    const link = document.createElement('a');
+    link.className = 'open';
+    link.href = g.url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.addEventListener('click', () => { if (!isDone(g.id)) toggle(g.id); });
+
+    const name = document.createElement('div');
+    name.className = 'name';
+    name.textContent = g.name;
+    link.appendChild(name);
+
+    if (g.desc) {
+      const desc = document.createElement('div');
+      desc.className = 'desc';
+      desc.textContent = g.desc;
+      link.appendChild(desc);
+    }
+    body.appendChild(link);
+
+    if (st > 0 || sc) {
+      const stat = document.createElement('div');
+      stat.className = 'stat';
+      if (st > 0) {
+        const a = document.createElement('span');
+        a.className = 'hot';
+        a.textContent = st + 'd streak';
+        stat.appendChild(a);
+      }
+      if (sc) {
+        const b = document.createElement('span');
+        b.className = 'sc';
+        b.textContent = sc;
+        stat.appendChild(b);
+      }
+      body.appendChild(stat);
+    }
+    row.appendChild(body);
+
+    // edit tools
+    const tools = document.createElement('div');
+    tools.className = 'tools';
+    tools.appendChild(toolBtn('↑', 'Move ' + g.name + ' up',    () => move(idx, -1)));
+    tools.appendChild(toolBtn('↓', 'Move ' + g.name + ' down',  () => move(idx, +1)));
+    tools.appendChild(toolBtn('✎', 'Edit ' + g.name,            () => openForm(idx)));
+    const del = toolBtn('✕', 'Delete ' + g.name, () => remove(idx));
+    del.classList.add('del');
+    tools.appendChild(del);
+    row.appendChild(tools);
+
+    row.insertAdjacentHTML('beforeend', arrowSVG());
+    listEl.appendChild(row);
+  });
+
+  paintSelection();
+}
+
+function toolBtn(label, aria, fn) {
+  const b = document.createElement('button');
+  b.className = 'tool';
+  b.textContent = label;
+  b.setAttribute('aria-label', aria);
+  b.addEventListener('click', fn);
+  return b;
+}
+
+function render() {
+  renderBoard();
+  renderStats();
+  renderList();
+  firstPaint = false;
+}
+
+/* =====================================================================
+   Actions
+   ===================================================================== */
+
+function toggle(id, score) {
+  setDone(id, !isDone(id), score);
+  render();
+}
+
+function move(i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= GAMES.length) return;
+  const tmp = GAMES[i];
+  GAMES[i] = GAMES[j];
+  GAMES[j] = tmp;
+  saveGames();
+  render();
+}
+
+function remove(i) {
+  const g = GAMES[i];
+  if (!g) return;
+  if (!window.confirm('Remove ' + g.name + ' from the list?')) return;
+  GAMES.splice(i, 1);
+  saveGames();
+  render();
+}
+
+function slug(name) {
+  const base = name.toLowerCase().replace(/[^a-z0-9]+/g, '').slice(0, 20) || 'game';
+  let id = base, n = 2;
+  while (GAMES.some(g => g.id === id)) id = base + n++;
+  return id;
+}
+
+/* ---- add / edit form ---- */
+
+let editingIndex = -1;
+
+function openForm(i) {
+  editingIndex = (typeof i === 'number') ? i : -1;
+  const g = editingIndex >= 0 ? GAMES[editingIndex] : null;
+  $('#formTitle').textContent = g ? 'Edit game' : 'Add a game';
+  $('#fName').value  = g ? g.name : '';
+  $('#fUrl').value   = g ? g.url : '';
+  $('#fDesc').value  = g ? (g.desc || '') : '';
+  $('#fCat').value   = g ? (g.cat || 'other') : 'other';
+  $('#fIcon').value  = g ? (g.icon || '') : '';
+  $('#fColor').value = (g && /^#[0-9a-f]{6}$/i.test(g.color || '')) ? g.color : '#538d4e';
+  $('#fResult').textContent = '';
+  showOnly('#formPanel');
+  $('#fName').focus();
+}
+
+function saveForm() {
+  const name = $('#fName').value.trim();
+  let url = $('#fUrl').value.trim();
+  const out = $('#fResult');
+
+  if (!name) { out.className = 'result warn'; out.textContent = 'Give it a name.'; return; }
+  if (!url)  { out.className = 'result warn'; out.textContent = 'Give it a link.'; return; }
+  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+  const data = {
+    name: name,
+    url: url,
+    desc: $('#fDesc').value.trim(),
+    cat: $('#fCat').value,
+    icon: $('#fIcon').value.trim() || '🎲',
+    color: $('#fColor').value
+  };
+
+  if (editingIndex >= 0) {
+    GAMES[editingIndex] = Object.assign({}, GAMES[editingIndex], data);
+  } else {
+    GAMES.push(Object.assign({ id: slug(name) }, data));
+  }
+  saveGames();
+  hidePanels();
+  render();
+}
+
+/* ---- paste-to-log ---- */
+
+// Each entry returns a score string, or '' for "recognised but no score".
+const PARSERS = [
+  {
+    id: 'wordle',
+    match: t => {
+      const m = t.match(/wordle\s+[\d,\s]*([\dX])\s*\/\s*6/i);
+      return m ? m[1] + '/6' : null;
+    }
+  },
+  {
+    id: 'connections',
+    match: t => {
+      if (!/connections/i.test(t)) return null;
+      const rows = t.split(/\r?\n/).map(l => Array.from(l.trim()))
+        .filter(cs => cs.length === 4 && cs.every(c => '🟨🟩🟦🟪'.includes(c)));
+      if (rows.length === 0) return '';
+      const solved = rows.filter(cs => cs.every(c => c === cs[0])).length;
+      const misses = rows.length - solved;
+      return solved + '/4, ' + misses + ' miss' + (misses === 1 ? '' : 'es');
+    }
+  },
+  {
+    id: 'globle',
+    match: t => {
+      if (!/globle/i.test(t)) return null;
+      const m = t.match(/(\d+)\s+(?:tries|guesses)/i);
+      return m ? m[1] + ' tries' : '';
+    }
+  },
+  {
+    id: 'travle',
+    match: t => {
+      if (!/travle/i.test(t)) return null;
+      const m = t.match(/\+\s*(\d+)/);
+      return m ? '+' + m[1] : '';
+    }
+  },
+  {
+    id: 'costcodle',
+    match: t => {
+      if (!/costcodle/i.test(t)) return null;
+      const m = t.match(/([\dX])\s*\/\s*6/i);
+      return m ? m[1] + '/6' : '';
+    }
+  },
+  {
+    id: 'zpordle',
+    match: t => {
+      if (!/zpordle/i.test(t)) return null;
+      const m = t.match(/([\dX])\s*\/\s*(\d+)/i);
+      return m ? m[1] + '/' + m[2] : '';
+    }
+  },
+  {
+    // Immaculate Grid ships one format for both sports; the sport name
+    // in the text is what tells the two rows apart.
+    id: t => /football|nfl/i.test(t) ? 'gridnfl' : 'gridmlb',
+    match: t => {
+      if (!/immaculate\s*grid/i.test(t)) return null;
+      const m = t.match(/(\d)\s*\/\s*9/);
+      return m ? m[1] + '/9' : '';
+    }
+  }
+];
+
+function identify(text) {
+  const t = String(text || '');
+  if (!t.trim()) return null;
+
+  for (const p of PARSERS) {
+    const score = p.match(t);
+    if (score === null) continue;
+    const id = typeof p.id === 'function' ? p.id(t) : p.id;
+    if (GAMES.some(g => g.id === id)) return { id: id, score: score };
+  }
+
+  // Fall back to a plain name match, so a game with no known share
+  // format still gets ticked off.
+  const lower = t.toLowerCase();
+  const hit = GAMES
+    .filter(g => g.name && lower.includes(g.name.toLowerCase().split(' — ')[0].toLowerCase()))
+    .sort((a, b) => b.name.length - a.name.length)[0];
+  return hit ? { id: hit.id, score: '' } : null;
+}
+
+function runLog() {
+  const out = $('#logResult');
+  const found = identify($('#logText').value);
+
+  if (!found) {
+    out.className = 'result warn';
+    out.textContent = 'No game found in that text. Tick it off by hand instead.';
+    return;
+  }
+
+  const game = GAMES.find(g => g.id === found.id);
+  setDone(found.id, true, found.score);
+  render();
+
+  out.className = 'result ok';
+  out.textContent = 'Logged ' + game.name + (found.score ? ' — ' + found.score : '') + '.';
+  $('#logText').value = '';
+}
+
+/* ---- backup ---- */
+
+function openData() {
+  $('#dataText').value = JSON.stringify({ games: GAMES, log: LOG }, null, 2);
+  $('#dataResult').textContent = '';
+  showOnly('#dataPanel');
+}
+
+function importData() {
+  const out = $('#dataResult');
+  try {
+    const parsed = JSON.parse($('#dataText').value);
+    if (!Array.isArray(parsed.games)) throw new Error('no games');
+    GAMES = parsed.games;
+    LOG = (parsed.log && typeof parsed.log === 'object' && !Array.isArray(parsed.log)) ? parsed.log : {};
+    saveGames(); saveLog();
+    render();
+    out.className = 'result ok';
+    out.textContent = 'Restored ' + GAMES.length + ' games.';
+  } catch (e) {
+    out.className = 'result warn';
+    out.textContent = 'That is not a valid backup. Paste the whole block, braces included.';
+  }
+}
+
+function restoreDefaults() {
+  if (!window.confirm('Replace your list with the original eleven games? Your history is kept.')) return;
+  GAMES = DEFAULT_GAMES.map(g => ({ ...g }));
+  saveGames();
+  render();
+  $('#dataText').value = JSON.stringify({ games: GAMES, log: LOG }, null, 2);
+  $('#dataResult').className = 'result ok';
+  $('#dataResult').textContent = 'List reset.';
+}
+
+/* =====================================================================
+   Panels, keyboard, clock
+   ===================================================================== */
+
+const PANELS = ['#formPanel', '#logPanel', '#dataPanel'];
+
+function hidePanels() {
+  PANELS.forEach(p => { $(p).hidden = true; });
+}
+
+// Guarded: a missing scrollIntoView must never take the rest of a
+// handler down with it.
+function bringIntoView(el, smooth) {
+  if (el && typeof el.scrollIntoView === 'function') {
+    el.scrollIntoView(smooth ? { behavior: 'smooth', block: 'nearest' } : { block: 'nearest' });
+  }
+}
+
+function showOnly(sel) {
+  hidePanels();
+  $(sel).hidden = false;
+  bringIntoView($(sel), true);
+}
+
+function paintSelection() {
+  const rows = Array.from(listEl.querySelectorAll('.row'));
+  rows.forEach((r, i) => r.classList.toggle('sel', i === selected));
+  if (selected >= 0 && rows[selected]) bringIntoView(rows[selected], false);
+}
+
+function moveSelection(delta) {
+  const rows = listEl.querySelectorAll('.row');
+  if (rows.length === 0) return;
+  selected = selected < 0
+    ? (delta > 0 ? 0 : rows.length - 1)
+    : Math.max(0, Math.min(rows.length - 1, selected + delta));
+  paintSelection();
+}
+
+function selectedGame() {
+  const rows = listEl.querySelectorAll('.row');
+  const row = rows[selected];
+  return row ? GAMES.find(g => g.id === row.dataset.id) : null;
+}
+
+document.addEventListener('keydown', e => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  const typing = tag === 'input' || tag === 'textarea' || tag === 'select';
+
+  if (e.key === 'Escape') {
+    if (typing) { e.target.blur(); }
+    hidePanels();
+    selected = -1;
+    paintSelection();
+    return;
+  }
+  if (typing || e.metaKey || e.ctrlKey || e.altKey) return;
+
+  if (e.key === '/') { e.preventDefault(); $('#search').focus(); return; }
+  if (e.key === 'j') { e.preventDefault(); moveSelection(1); return; }
+  if (e.key === 'k') { e.preventDefault(); moveSelection(-1); return; }
+  if (e.key === 'e') { e.preventDefault(); $('#btnEdit').click(); return; }
+
+  if (e.key === 'Enter') {
+    const g = selectedGame();
+    if (g) {
+      e.preventDefault();
+      if (!isDone(g.id)) toggle(g.id);
+      window.open(g.url, '_blank', 'noopener');
+    }
+    return;
+  }
+  if (e.key === ' ') {
+    const g = selectedGame();
+    if (g) { e.preventDefault(); toggle(g.id); }
+  }
+});
+
+let clockDay = today();
+
+function tick() {
+  const now = new Date();
+  $('#date').textContent = now.toLocaleDateString(undefined, {
+    weekday: 'long', month: 'long', day: 'numeric'
+  }).toLowerCase();
+  $('#countdown').textContent = 'resets in ' + humanDuration(msToMidnight());
+
+  if (today() !== clockDay) {   // rolled past midnight with the tab open
+    clockDay = today();
+    render();
+  }
+}
+
+/* ---- wiring ---- */
+
+$('#search').addEventListener('input', () => { selected = -1; renderList(); });
+
+$('#hideDone').addEventListener('click', e => {
+  const on = e.currentTarget.getAttribute('aria-pressed') === 'true';
+  e.currentTarget.setAttribute('aria-pressed', on ? 'false' : 'true');
+  selected = -1;
+  renderList();
+});
+
+$('#btnAdd').addEventListener('click', () => openForm(-1));
+
+$('#btnEdit').addEventListener('click', () => {
+  const on = document.body.classList.toggle('editing');
+  $('#btnEdit').setAttribute('aria-pressed', on ? 'true' : 'false');
+  $('#btnEdit').classList.toggle('on', on);
+  $('#btnEdit').textContent = on ? 'done editing' : 'edit';
+  renderList();
+});
+
+$('#btnLog').addEventListener('click', () => {
+  showOnly('#logPanel');
+  $('#logText').focus();
+});
+
+$('#btnData').addEventListener('click', openData);
+
+$('#fSave').addEventListener('click', saveForm);
+$('#fCancel').addEventListener('click', hidePanels);
+$('#logRead').addEventListener('click', runLog);
+$('#logClose').addEventListener('click', hidePanels);
+$('#dataImport').addEventListener('click', importData);
+$('#dataDefaults').addEventListener('click', restoreDefaults);
+$('#dataClose').addEventListener('click', hidePanels);
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && today() !== clockDay) { clockDay = today(); render(); }
+});
+
+render();
+tick();
+setInterval(tick, 30000);
+
+// Small hook so the logic can be exercised without a browser.
+window.__dg = {
+  identify: identify,
+  gameStreak: gameStreak,
+  overallStreak: overallStreak,
+  setDone: setDone,
+  isDone: isDone,
+  humanDuration: humanDuration,
+  dayBack: dayBack,
+  get games() { return GAMES; },
+  get log() { return LOG; }
+};
+</script>
+</body>
+</html>
