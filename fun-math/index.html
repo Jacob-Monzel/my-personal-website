@@ -206,34 +206,50 @@
        composites the glow additively over the deep field */
     .blend { mix-blend-mode: screen; }
 
-    /* the whole solar system, scattered: alternating rails, staggered
-       heights, varied insets so nothing reads as a row or column */
-    #deco-saturn    { top: 100px; left: 4vw;   width: 200px; }
-    #deco-sun       { top: 34vh;  right: 18vw; width: 112px; }
-    #deco-quasar    { top: 44vh;  left: 3vw;   width: 92px; }
-    #deco-v838      { top: 24vh;  left: 5vw;   width: 96px; }
-    #deco-galaxy    { top: 85vh;  right: 21vw; width: 170px; }
-    #deco-astro     { top: 20vh;  left: 18vw;  width: 78px; }
-    #deco-venus     { top: 38vh;  left: 10vw;  width: 62px; }
-    #deco-saucer    { top: 50vh;  left: 16vw;  width: 122px; }
-    #deco-jupiter   { top: 66vh;  left: 8vw;   width: 104px; }
-    #deco-uranus    { top: 85vh;  left: 14vw;  width: 64px; }
+    /* from-scratch layout: two zigzag rails around a protected center
+       corridor. nothing enters the content column, title through back-link.
+       items alternate outboard (3-8vw) / inboard (12-17vw) so neither rail
+       reads as a straight column. */
 
-    #deco-neptune   { top: 11vh;  right: 12vw; width: 74px; }
-    #deco-earth     { top: 26vh;  right: 7vw;  width: 84px; }
-    #deco-robot     { top: 82vh;  right: 15vw; width: 66px; }
-    #deco-mars      { top: 48vh;  right: 8vw;  width: 58px; }
-    #deco-mercury   { top: 68vh;  right: 12vw; width: 52px; }
-    #deco-deathstar { top: 78vh;  right: 5vw;  width: 130px; }
-    #deco-pluto     { top: 94vh;  right: 35vw; width: 26px; }
+    /* left rail, top to bottom */
+    #deco-saturn    { top: 100px; left: 3vw;   width: 200px; }
+    #deco-v838      { top: 26vh;  left: 6vw;   width: 96px; }
+    #deco-venus     { top: 40vh;  left: 15vw;  width: 60px; }
+    #deco-pluto     { top: 47vh;  left: 22vw;  width: 26px; }
+    #deco-quasar    { top: 52vh;  left: 3vw;   width: 92px; }
+    #deco-saucer    { top: 68vh;  left: 13vw;  width: 120px; }
+    #deco-jupiter   { top: 80vh;  left: 4vw;   width: 104px; }
+    #deco-uranus    { top: 92vh;  left: 16vw;  width: 58px; }
 
-    .desktop-note {
-      display: none;
-      font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Marker Felt", cursive;
-      font-size: 0.8rem;
-      color: #9a9aca;
-      margin: 1.2rem 0 0.4rem;
-      text-shadow: 1px 1px 0 #000;
+    /* right rail, top to bottom */
+    #deco-galaxy    { top: 80px;  right: 3vw;  width: 150px; }
+    #deco-neptune   { top: 20vh;  right: 16vw; width: 72px; }
+    #deco-earth     { top: 30vh;  right: 5vw;  width: 84px; }
+    #deco-sun       { top: 43vh;  right: 13vw; width: 110px; }
+    #deco-mars      { top: 56vh;  right: 4vw;  width: 58px; }
+    #deco-astro     { top: 64vh;  right: 15vw; width: 76px; }
+    #deco-mercury   { top: 74vh;  right: 7vw;  width: 52px; }
+    #deco-deathstar { top: 84vh;  right: 12vw; width: 128px; }
+    #deco-robot     { top: 93vh;  right: 5vw;  width: 64px; }
+
+    /* compact desktops (761-1150px): pull inboard items back toward the
+       edges and shrink the big pieces so the corridor survives the squeeze */
+    @media (max-width: 1150px) {
+      #deco-saturn    { width: 160px; }
+      #deco-v838      { left: 4vw; width: 84px; }
+      #deco-venus     { left: 8vw; }
+      #deco-pluto     { left: 9vw; }
+      #deco-quasar    { width: 80px; }
+      #deco-saucer    { left: 6vw; width: 100px; }
+      #deco-jupiter   { width: 90px; }
+      #deco-uranus    { left: 8vw; }
+      #deco-galaxy    { width: 120px; }
+      #deco-neptune   { right: 8vw; }
+      #deco-sun       { right: 6vw; width: 96px; }
+      #deco-astro     { right: 7vw; }
+      #deco-mercury   { right: 8vw; }
+      #deco-deathstar { right: 4vw; width: 104px; }
+      #deco-robot     { right: 16vw; top: 95vh; }
     }
 
     /* mobile: just the deep field and the essentials — the full collage
