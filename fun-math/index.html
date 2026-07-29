@@ -265,9 +265,8 @@
 
   <!-- yes, a real marquee tag. it still works. -->
   <marquee id="marquee" class="banner" scrollamount="5">
-    ★ ☆ ★ WELCOME, TRAVELER, TO JACOB'S FUN MATH ZONE ★ ☆ ★ NO GRADES ★ NO DEADLINES
-    ★ NO SCHEMES (YET) ★ JUST MATHEMATICS FOR ITS OWN SAKE ★ ☆ ★ SIGN OF QUALITY:
-    THIS PAGE IS BEST VIEWED AT 800×600 ★ ☆ ★
+    ★ ☆ ★ WELCOME, TRAVELER, TO JACOB'S FUN MATH PAGE ★ ☆ ★ SIGN OF QUALITY:
+    THIS PAGE IS BEST VIEWED AT 800×600 ★ ☆ ★<span id="daily-history"></span>
   </marquee>
 
   <!-- floating space clutter: the whole solar system, scattered -->
@@ -318,6 +317,7 @@
     <a class="home-link" href="/">← back to the rest of the site</a>
   </main>
 
+  <script src="assets/events.js"></script>
   <script>
     // Odometer gag: a fresh, confidently wrong number on every refresh.
     // Anywhere from 1 to 9 digits — sometimes you're visitor 3, sometimes 814627950.
@@ -328,6 +328,19 @@
       if (len === 1 && Math.random() < 0.3) n = "0";
       document.getElementById("odometer").textContent = n;
     })();
+
+    // Historical event of the day, from the local bank in assets/events.js
+    try {
+      var now = new Date();
+      var key = String(now.getMonth() + 1).padStart(2, "0") + "-" +
+                String(now.getDate()).padStart(2, "0");
+      var ev = (typeof FUNMATH_EVENTS !== "undefined") && FUNMATH_EVENTS[key];
+      if (ev) {
+        document.getElementById("daily-history").textContent =
+          " WITH INTRODUCTIONS OUT OF THE WAY, YOUR HISTORICAL EVENT OF THE DAY ▸ " +
+          ev + " ★ ☆ ★";
+      }
+    } catch (e) { /* the banner survives without history */ }
 
     // Sparkle cursor trail (mouse only, skipped for reduced motion)
     (function () {
