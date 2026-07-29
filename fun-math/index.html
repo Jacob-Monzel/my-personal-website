@@ -101,7 +101,7 @@
     }
 
     .tagline {
-      font-family: "Comic Sans MS", "Comic Sans", cursive;
+      font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Marker Felt", cursive;
       color: #ffe94a;
       font-size: 1.05rem;
       margin: 0 0 1rem;
@@ -222,21 +222,22 @@
     #deco-deathstar { top: 78vh;  right: 5vw;  width: 130px; }
     #deco-pluto     { top: 93vh;  right: 24vw; width: 26px; }
 
-    /* mobile: just the deep field and the essentials — the full collage
-       is a desktop experience */
-    @media (max-width: 760px) {
-      .banner, .deco, .divider { display: none; }
-      main { padding-top: 2.4rem; }
-      .desktop-note { display: block; }
-    }
-
     .desktop-note {
       display: none;
-      font-family: "Comic Sans MS", "Comic Sans", cursive;
+      font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Marker Felt", cursive;
       font-size: 0.8rem;
       color: #9a9aca;
       margin: 1.2rem 0 0.4rem;
       text-shadow: 1px 1px 0 #000;
+    }
+
+    /* mobile: just the deep field and the essentials — the full collage
+       is a desktop experience. (this block must come after .desktop-note's
+       base rule: equal specificity, so source order decides the winner) */
+    @media (max-width: 760px) {
+      .banner, .deco, .divider { display: none; }
+      main { padding-top: 2.4rem; }
+      .desktop-note { display: block; }
     }
 
     /* ---------- sparkle cursor trail ---------- */
