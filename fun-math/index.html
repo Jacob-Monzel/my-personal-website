@@ -5,6 +5,10 @@
   <title>Jacob's Fun Math Zone</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- start fetching the heavy background before CSS parsing discovers it -->
+  <link rel="preload" as="image" href="assets/hudf-2400.jpg" media="(min-width: 761px)">
+  <link rel="preload" as="image" href="assets/hudf-1200.jpg" media="(max-width: 760px)">
+
   <!-- Chunky pixel display font for the title & buttons -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
@@ -34,16 +38,16 @@
       background: #000006 url("assets/hudf-2400.jpg") center / cover no-repeat;
     }
 
-    /* The old twinkling-star tile, screen-blended over the real deep field:
-       its black background disappears, only the twinkle survives. */
+    /* Twinkling stars over the deep field. The tile has a transparent
+       background, so no blend mode is needed (mix-blend-mode on fixed
+       pseudo-elements is unreliable in Safari). */
     body::after {
       content: "";
       position: fixed;
       inset: 0;
       z-index: -1;
-      background: url("assets/stars.gif") repeat;
-      mix-blend-mode: screen;
-      opacity: 0.5;
+      background: url("assets/stars-overlay.gif") repeat;
+      opacity: 0.8;
       pointer-events: none;
     }
 
@@ -153,7 +157,7 @@
 
     @keyframes blink { to { visibility: hidden; } }
 
-    /* ---------- counter & badges footer ---------- */
+    /* ---------- counter footer ---------- */
     .counter {
       font-size: 0.85rem;
       color: #b8b8d8;
@@ -168,35 +172,6 @@
       border: 3px inset #666;
       padding: 2px 6px;
       letter-spacing: 3px;
-    }
-
-    .fineprint {
-      font-size: 0.7rem;
-      color: #7a7a9a;
-      margin: 0.3rem 0 1.4rem;
-      font-style: italic;
-    }
-
-    .badges img { margin: 3px; image-rendering: pixelated; }
-
-    /* ---------- solar system lineup ---------- */
-    .solar-system { margin: 0.2rem 0 1.8rem; }
-
-    .ss-title {
-      font-family: "Comic Sans MS", "Comic Sans", cursive;
-      color: #7fd0ff;
-      font-size: 0.95rem;
-      margin: 0 0 0.3rem;
-      text-shadow: 1px 1px 0 #000;
-    }
-
-    .ss-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin: 0 0 0.2rem;
     }
 
     .home-link {
@@ -227,22 +202,33 @@
       50%      { transform: translateY(-14px); }
     }
 
-    #deco-saturn  { top: 96px;  left: 2vw;  width: 210px; }
-    #deco-jupiter { top: 60vh;  left: 7vw;  width: 96px; }
-    #deco-earth   { top: 24vh;  right: 5vw; width: 84px; }
-    #deco-mercury { top: 70vh;  right: 10vw; width: 58px; }
-    #deco-ufo1    { top: 42vh;  left: 14vw; width: 92px; }
-    #deco-ufo2    { top: 14vh;  right: 20vw; width: 60px; }
-    #deco-shoot   { top: 84px;  right: 32vw; width: 110px; }
-    #deco-star1   { top: 52vh;  right: 18vw; width: 40px; }
-    #deco-star2   { top: 80vh;  left: 24vw; width: 28px; }
+    /* the whole solar system, scattered: alternating rails, staggered
+       heights, varied insets so nothing reads as a row or column */
+    #deco-saturn  { top: 96px;  left: 2vw;   width: 210px; }
+    #deco-venus   { top: 34vh;  left: 12vw;  width: 62px; }
+    #deco-ufo1    { top: 48vh;  left: 6vw;   width: 92px; }
+    #deco-jupiter { top: 64vh;  left: 13vw;  width: 104px; }
+    #deco-uranus  { top: 86vh;  left: 5vw;   width: 64px; }
+    #deco-star2   { top: 97vh;  left: 22vw;  width: 28px; }
+
+    #deco-shoot   { top: 84px;  right: 30vw; width: 110px; }
+    #deco-ufo2    { top: 13vh;  right: 18vw; width: 60px; }
+    #deco-earth   { top: 24vh;  right: 5vw;  width: 84px; }
+    #deco-mars    { top: 40vh;  right: 14vw; width: 58px; }
+    #deco-star1   { top: 55vh;  right: 8vw;  width: 40px; }
+    #deco-mercury { top: 66vh;  right: 16vw; width: 52px; }
+    #deco-neptune { top: 80vh;  right: 6vw;  width: 74px; }
+    #deco-pluto   { top: 94vh;  right: 20vw; width: 26px; }
 
     /* keep the clutter out of the way on small screens */
     @media (max-width: 760px) {
       #deco-saturn { width: 128px; top: 64px; left: 1vw; }
-      #deco-jupiter, #deco-ufo1, #deco-star1 { display: none; }
-      #deco-earth  { width: 60px; top: 16vh; right: 2vw; }
-      #deco-mercury { top: 82vh; right: 4vw; }
+      #deco-venus, #deco-mars, #deco-jupiter, #deco-uranus,
+      #deco-ufo1, #deco-star1 { display: none; }
+      #deco-earth   { width: 60px; top: 16vh; right: 2vw; }
+      #deco-mercury { top: 58vh; right: 4vw; width: 40px; }
+      #deco-neptune { top: 84vh; right: 6vw; width: 54px; }
+      #deco-pluto   { top: 95vh; right: 24vw; width: 20px; }
       main { padding-top: 3.2rem; }
     }
 
@@ -276,11 +262,16 @@
     THIS PAGE IS BEST VIEWED AT 800×600 ★ ☆ ★
   </marquee>
 
-  <!-- floating space clutter (spinning planets stay smooth; pixel art stays crunchy) -->
+  <!-- floating space clutter: the whole solar system, scattered -->
   <img class="deco smooth float-b" id="deco-saturn"  src="assets/saturn.gif"  alt="">
   <img class="deco smooth float-a" id="deco-jupiter" src="assets/jupiter.gif" alt="">
   <img class="deco smooth float-b" id="deco-earth"   src="assets/earth.gif"   alt="">
   <img class="deco smooth float-a" id="deco-mercury" src="assets/mercury.gif" alt="">
+  <img class="deco smooth float-b" id="deco-venus"   src="assets/venus.gif"   alt="">
+  <img class="deco smooth float-a" id="deco-mars"    src="assets/mars.gif"    alt="">
+  <img class="deco smooth float-b" id="deco-uranus"  src="assets/uranus.gif"  alt="">
+  <img class="deco smooth float-a" id="deco-neptune" src="assets/neptune.gif" alt="">
+  <img class="deco smooth float-b" id="deco-pluto"   src="assets/pluto.gif"   alt="">
   <img class="deco float-a" id="deco-ufo1"  src="assets/ufo.gif"            alt="">
   <img class="deco float-b" id="deco-ufo2"  src="assets/ufo.gif"            alt="">
   <img class="deco"         id="deco-shoot" src="assets/shooting-star.gif"  alt="">
@@ -307,35 +298,21 @@
 
     <img class="divider" src="assets/divider.png" alt="">
 
-    <div class="solar-system">
-      <p class="ss-title">★ THE SOLAR SYSTEM ★</p>
-      <p class="ss-row">
-        <img class="smooth" src="assets/mercury.gif" width="26" alt="Mercury"><img class="smooth" src="assets/venus.gif" width="34" alt="Venus"><img class="smooth" src="assets/earth.gif" width="36" alt="Earth"><img class="smooth" src="assets/mars.gif" width="30" alt="Mars"><img class="smooth" src="assets/jupiter.gif" width="74" alt="Jupiter"><img class="smooth" src="assets/saturn.gif" width="120" alt="Saturn"><img class="smooth" src="assets/uranus.gif" width="46" alt="Uranus"><img class="smooth" src="assets/neptune.gif" width="44" alt="Neptune"><img class="smooth" src="assets/pluto.gif" width="20" alt="Pluto">
-      </p>
-      <p class="fineprint">all nine planets. this is a 90s website — pluto counts.</p>
-    </div>
-
     <p class="counter">You are visitor <span class="digits" id="odometer">000042</span></p>
-    <p class="fineprint">(counter proudly miscounting since 1996)</p>
 
-    <p class="badges">
-      <img src="assets/badge-funmath.png"  width="88" height="31" alt="Jacob's Fun Math badge">
-      <img src="assets/badge-netscape.png" width="88" height="31" alt="Best viewed in Netscape badge">
-      <img src="assets/badge-qed.png"      width="88" height="31" alt="100% rigor, 0% schemes badge">
-      <img src="assets/badge-latex.png"    width="88" height="31" alt="Powered by coffee and LaTeX badge">
-    </p>
-
-    <a class="home-link" href="/">← back to the boring professional site</a>
-    <p class="fineprint">background: Hubble Ultra Deep Field &middot; NASA, ESA, S. Beckwith (STScI) &amp; the HUDF Team</p>
+    <a class="home-link" href="/">← back to the rest of the site</a>
   </main>
 
   <script>
-    // Odometer gag: counts your own visits, and only yours, locally.
-    try {
-      var n = (parseInt(localStorage.getItem("funmath-hits") || "41", 10) + 1) % 1000000;
-      localStorage.setItem("funmath-hits", String(n));
-      document.getElementById("odometer").textContent = String(n).padStart(6, "0");
-    } catch (e) { /* the counter was never load-bearing */ }
+    // Odometer gag: a fresh, confidently wrong number on every refresh.
+    // Anywhere from 1 to 9 digits — sometimes you're visitor 3, sometimes 814627950.
+    (function () {
+      var len = 1 + Math.floor(Math.random() * 9);
+      var n = String(1 + Math.floor(Math.random() * 9));
+      for (var i = 1; i < len; i++) n += Math.floor(Math.random() * 10);
+      if (len === 1 && Math.random() < 0.3) n = "0";
+      document.getElementById("odometer").textContent = n;
+    })();
 
     // Sparkle cursor trail (mouse only, skipped for reduced motion)
     (function () {
