@@ -205,30 +205,32 @@
     /* the whole solar system, scattered: alternating rails, staggered
        heights, varied insets so nothing reads as a row or column */
     #deco-saturn  { top: 96px;  left: 2vw;   width: 210px; }
+    #deco-astro   { top: 18vh;  left: 16vw;  width: 78px; }
     #deco-venus   { top: 34vh;  left: 12vw;  width: 62px; }
-    #deco-ufo1    { top: 48vh;  left: 6vw;   width: 92px; }
+    #deco-saucer  { top: 48vh;  left: 6vw;   width: 122px; }
     #deco-jupiter { top: 64vh;  left: 13vw;  width: 104px; }
     #deco-uranus  { top: 86vh;  left: 5vw;   width: 64px; }
     #deco-star2   { top: 97vh;  left: 22vw;  width: 28px; }
 
     #deco-shoot   { top: 84px;  right: 30vw; width: 110px; }
-    #deco-ufo2    { top: 13vh;  right: 18vw; width: 60px; }
+    #deco-neptune { top: 12vh;  right: 18vw; width: 74px; }
     #deco-earth   { top: 24vh;  right: 5vw;  width: 84px; }
     #deco-mars    { top: 40vh;  right: 14vw; width: 58px; }
     #deco-star1   { top: 55vh;  right: 8vw;  width: 40px; }
     #deco-mercury { top: 66vh;  right: 16vw; width: 52px; }
-    #deco-neptune { top: 80vh;  right: 6vw;  width: 74px; }
-    #deco-pluto   { top: 94vh;  right: 20vw; width: 26px; }
+    #deco-abduct  { top: 76vh;  right: 3vw;  width: 150px; }
+    #deco-pluto   { top: 94vh;  right: 22vw; width: 26px; }
 
     /* keep the clutter out of the way on small screens */
     @media (max-width: 760px) {
       #deco-saturn { width: 128px; top: 64px; left: 1vw; }
       #deco-venus, #deco-mars, #deco-jupiter, #deco-uranus,
-      #deco-ufo1, #deco-star1 { display: none; }
+      #deco-saucer, #deco-astro, #deco-star1 { display: none; }
       #deco-earth   { width: 60px; top: 16vh; right: 2vw; }
+      #deco-neptune { top: 10vh; right: 24vw; width: 50px; }
       #deco-mercury { top: 58vh; right: 4vw; width: 40px; }
-      #deco-neptune { top: 84vh; right: 6vw; width: 54px; }
-      #deco-pluto   { top: 95vh; right: 24vw; width: 20px; }
+      #deco-abduct  { top: 78vh; right: 2vw; width: 104px; }
+      #deco-pluto   { top: 95vh; right: 30vw; width: 20px; }
       main { padding-top: 3.2rem; }
     }
 
@@ -272,8 +274,9 @@
   <img class="deco smooth float-b" id="deco-uranus"  src="assets/uranus.gif"  alt="">
   <img class="deco smooth float-a" id="deco-neptune" src="assets/neptune.gif" alt="">
   <img class="deco smooth float-b" id="deco-pluto"   src="assets/pluto.gif"   alt="">
-  <img class="deco float-a" id="deco-ufo1"  src="assets/ufo.gif"            alt="">
-  <img class="deco float-b" id="deco-ufo2"  src="assets/ufo.gif"            alt="">
+  <img class="deco smooth float-a" id="deco-saucer"  src="assets/saucer.gif"  alt="">
+  <img class="deco smooth"         id="deco-abduct"  src="assets/abduct.gif"  alt="">
+  <img class="deco smooth float-b" id="deco-astro"   src="assets/astronaut.gif" alt="">
   <img class="deco"         id="deco-shoot" src="assets/shooting-star.gif"  alt="">
   <img class="deco"         id="deco-star1" src="assets/star-spin.gif"      alt="">
   <img class="deco"         id="deco-star2" src="assets/star-spin.gif"      alt="">
@@ -293,6 +296,7 @@
 
     <div class="construction">
       <img src="assets/stripes.gif" alt=""><br>
+      <img class="smooth" src="assets/robot.gif" width="72" alt="" style="margin-top: 0.4rem;"><br>
       <span class="blink">MORE ZONES UNDER CONSTRUCTION</span>
     </div>
 
