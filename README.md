@@ -14,7 +14,7 @@ auto-deployed from the `main` branch of this repository.
 ├── papers/             Papers & preprints (index.html + PDFs)
 ├── notes/              Expository notes (index.html + PDFs)
 ├── teaching/           Courses & seminars (index.html + one folder per course)
-├── problems/           Quick math problems
+├── fun-math/           Fun Math zone (Proofs from My Book, etc.)
 └── misc/               Games, lists, personal pages
 ```
 

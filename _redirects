@@ -8,7 +8,7 @@
 /Papers.html              /papers/    301
 /ExpoNotes.html           /notes/     301
 /CourseList.html          /teaching/  301
-/MathProblemsList.html    /problems/  301
+/MathProblemsList.html    /fun-math/  301
 /MiscStuff.html           /misc/      301
 
 # Old image folder
@@ -33,3 +33,6 @@
 /Misc/Misc/DinoGameRipOff.html       /misc/dino-game.html             301
 /Misc/Misc/HardPuzzle.html           /misc/hard-puzzle.html           301
 /Misc/Misc/PizzaPlaces.html          /misc/pizza-places.html          301
+
+# 2026-07: /problems/ (Quick Math Problems) retired, section rebuilt as Fun Math
+/problems/*   /fun-math/   301
