@@ -202,9 +202,17 @@
       50%      { transform: translateY(-14px); }
     }
 
+    /* glow-on-black art: screen blending erases the black box and
+       composites the glow additively over the deep field */
+    .blend { mix-blend-mode: screen; }
+
     /* the whole solar system, scattered: alternating rails, staggered
        heights, varied insets so nothing reads as a row or column */
     #deco-saturn    { top: 100px; left: 4vw;   width: 200px; }
+    #deco-sun       { top: 90px;  right: 30vw; width: 112px; }
+    #deco-quasar    { top: 24vh;  left: 2vw;   width: 92px; }
+    #deco-v838      { top: 72vh;  left: 26vw;  width: 116px; }
+    #deco-galaxy    { top: 88vh;  right: 27vw; width: 170px; }
     #deco-astro     { top: 20vh;  left: 18vw;  width: 78px; }
     #deco-venus     { top: 36vh;  left: 10vw;  width: 62px; }
     #deco-saucer    { top: 50vh;  left: 16vw;  width: 122px; }
@@ -280,6 +288,10 @@
   <img class="deco smooth" id="deco-deathstar" src="assets/deathstar.gif" alt="" loading="lazy" decoding="async">
   <img class="deco smooth float-b" id="deco-astro"   src="assets/astronaut.gif" alt="" loading="lazy" decoding="async">
   <img class="deco smooth float-a" id="deco-robot"   src="assets/robot.gif"   alt="" loading="lazy" decoding="async">
+  <img class="deco smooth" id="deco-sun"    src="assets/sun.png"    alt="" loading="lazy" decoding="async">
+  <img class="deco smooth" id="deco-quasar" src="assets/quasar.png" alt="" loading="lazy" decoding="async">
+  <img class="deco smooth blend" id="deco-v838"   src="assets/v838.gif"   alt="" loading="lazy" decoding="async">
+  <img class="deco smooth blend" id="deco-galaxy" src="assets/galaxy.gif" alt="" loading="lazy" decoding="async">
 
   <main>
     <h1>FUN&nbsp;MATH</h1>
