@@ -17,11 +17,42 @@
     }
 
     body {
-      background: #000006 url("assets/stars.gif");
+      background: #000006;
       color: #e8e8ff;
       font-family: Verdana, Geneva, sans-serif;
       overflow-x: hidden;
       text-align: center;
+    }
+
+    /* Hubble Ultra Deep Field backdrop (NASA/ESA/STScI, public domain).
+       Fixed layer instead of background-attachment:fixed, which iOS ignores. */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: #000006 url("assets/hudf-2400.jpg") center / cover no-repeat;
+    }
+
+    /* The old twinkling-star tile, screen-blended over the real deep field:
+       its black background disappears, only the twinkle survives. */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: url("assets/stars.gif") repeat;
+      mix-blend-mode: screen;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    @media (max-width: 760px) {
+      body::before { background-image: url("assets/hudf-1200.jpg"); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body::after { display: none; }
     }
 
     /* ---------- scrolling marquee banner ---------- */
@@ -264,6 +295,7 @@
     </p>
 
     <a class="home-link" href="/">← back to the boring professional site</a>
+    <p class="fineprint">background: Hubble Ultra Deep Field &middot; NASA, ESA, S. Beckwith (STScI) &amp; the HUDF Team</p>
   </main>
 
   <script>
