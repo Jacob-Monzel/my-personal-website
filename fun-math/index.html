@@ -179,6 +179,26 @@
 
     .badges img { margin: 3px; image-rendering: pixelated; }
 
+    /* ---------- solar system lineup ---------- */
+    .solar-system { margin: 0.2rem 0 1.8rem; }
+
+    .ss-title {
+      font-family: "Comic Sans MS", "Comic Sans", cursive;
+      color: #7fd0ff;
+      font-size: 0.95rem;
+      margin: 0 0 0.3rem;
+      text-shadow: 1px 1px 0 #000;
+    }
+
+    .ss-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 0.2rem;
+    }
+
     .home-link {
       display: inline-block;
       margin-top: 1.6rem;
@@ -196,6 +216,9 @@
       pointer-events: none;
     }
 
+    /* the NASA-era planet gifs are dithered photos, not pixel art */
+    .smooth { image-rendering: auto; }
+
     .float-a { animation: bob 5s ease-in-out infinite; }
     .float-b { animation: bob 7s ease-in-out infinite reverse; }
 
@@ -204,22 +227,22 @@
       50%      { transform: translateY(-14px); }
     }
 
-    #deco-ring   { top: 110px; left: 4vw;  width: 174px; }
-    #deco-lava   { top: 62vh;  left: 8vw;  width: 100px; }
-    #deco-blue   { top: 24vh;  right: 5vw; width: 110px; }
-    #deco-moon   { top: 70vh;  right: 10vw; width: 70px; }
-    #deco-ufo1   { top: 40vh;  left: 13vw; width: 92px; }
-    #deco-ufo2   { top: 15vh;  right: 20vw; width: 60px; }
-    #deco-shoot  { top: 88px;  right: 32vw; width: 110px; }
-    #deco-star1  { top: 52vh;  right: 18vw; width: 40px; }
-    #deco-star2  { top: 78vh;  left: 24vw; width: 28px; }
+    #deco-saturn  { top: 96px;  left: 2vw;  width: 210px; }
+    #deco-jupiter { top: 60vh;  left: 7vw;  width: 96px; }
+    #deco-earth   { top: 24vh;  right: 5vw; width: 84px; }
+    #deco-mercury { top: 70vh;  right: 10vw; width: 58px; }
+    #deco-ufo1    { top: 42vh;  left: 14vw; width: 92px; }
+    #deco-ufo2    { top: 14vh;  right: 20vw; width: 60px; }
+    #deco-shoot   { top: 84px;  right: 32vw; width: 110px; }
+    #deco-star1   { top: 52vh;  right: 18vw; width: 40px; }
+    #deco-star2   { top: 80vh;  left: 24vw; width: 28px; }
 
     /* keep the clutter out of the way on small screens */
     @media (max-width: 760px) {
-      #deco-ring  { width: 110px; top: 70px; left: 1vw; }
-      #deco-lava, #deco-ufo1, #deco-star1 { display: none; }
-      #deco-blue  { width: 74px; top: 16vh; right: 2vw; }
-      #deco-moon  { top: 82vh; right: 4vw; }
+      #deco-saturn { width: 128px; top: 64px; left: 1vw; }
+      #deco-jupiter, #deco-ufo1, #deco-star1 { display: none; }
+      #deco-earth  { width: 60px; top: 16vh; right: 2vw; }
+      #deco-mercury { top: 82vh; right: 4vw; }
       main { padding-top: 3.2rem; }
     }
 
@@ -253,11 +276,11 @@
     THIS PAGE IS BEST VIEWED AT 800×600 ★ ☆ ★
   </marquee>
 
-  <!-- floating space clutter -->
-  <img class="deco float-b" id="deco-ring"  src="assets/planet-ring.png"    alt="">
-  <img class="deco float-a" id="deco-lava"  src="assets/planet-lava.png"    alt="">
-  <img class="deco float-b" id="deco-blue"  src="assets/planet-blue.png"    alt="">
-  <img class="deco float-a" id="deco-moon"  src="assets/moon.png"           alt="">
+  <!-- floating space clutter (spinning planets stay smooth; pixel art stays crunchy) -->
+  <img class="deco smooth float-b" id="deco-saturn"  src="assets/saturn.gif"  alt="">
+  <img class="deco smooth float-a" id="deco-jupiter" src="assets/jupiter.gif" alt="">
+  <img class="deco smooth float-b" id="deco-earth"   src="assets/earth.gif"   alt="">
+  <img class="deco smooth float-a" id="deco-mercury" src="assets/mercury.gif" alt="">
   <img class="deco float-a" id="deco-ufo1"  src="assets/ufo.gif"            alt="">
   <img class="deco float-b" id="deco-ufo2"  src="assets/ufo.gif"            alt="">
   <img class="deco"         id="deco-shoot" src="assets/shooting-star.gif"  alt="">
@@ -283,6 +306,14 @@
     </div>
 
     <img class="divider" src="assets/divider.png" alt="">
+
+    <div class="solar-system">
+      <p class="ss-title">★ THE SOLAR SYSTEM ★</p>
+      <p class="ss-row">
+        <img class="smooth" src="assets/mercury.gif" width="26" alt="Mercury"><img class="smooth" src="assets/venus.gif" width="34" alt="Venus"><img class="smooth" src="assets/earth.gif" width="36" alt="Earth"><img class="smooth" src="assets/mars.gif" width="30" alt="Mars"><img class="smooth" src="assets/jupiter.gif" width="74" alt="Jupiter"><img class="smooth" src="assets/saturn.gif" width="120" alt="Saturn"><img class="smooth" src="assets/uranus.gif" width="46" alt="Uranus"><img class="smooth" src="assets/neptune.gif" width="44" alt="Neptune"><img class="smooth" src="assets/pluto.gif" width="20" alt="Pluto">
+      </p>
+      <p class="fineprint">all nine planets. this is a 90s website — pluto counts.</p>
+    </div>
 
     <p class="counter">You are visitor <span class="digits" id="odometer">000042</span></p>
     <p class="fineprint">(counter proudly miscounting since 1996)</p>
