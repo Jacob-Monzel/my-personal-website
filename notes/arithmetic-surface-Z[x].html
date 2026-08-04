@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>The Arithmetic Surface Spec ℤ[x] – Jacob Monzel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive walk through Mumford's picture of Spec Z[x]: the classification of its primes, the fibration over Spec Z, and the geometry of splitting and ramification.">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    :root {
+      --ink:        #16130f;
+      --ink-soft:   #4a453e;
+      --rule:       #b9b3a8;
+      --rule-firm:  #6e6961;
+      --paper:      #ffffff;
+      --panel:      #fbfaf6;
+      --link:       #0000ee;
+      --link-seen:  #551a8b;
+      --fiber:      #3d3a35;
+      --c0: #a4243b;
+      --c1: #1d5b79;
+      --c2: #4a7c2f;
+      --c3: #8a5a00;
+      --c4: #6b3fa0;
+    }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      max-width: 44em;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 5rem;
+      line-height: 1.66;
+      font-size: 1.06rem;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    a { color: var(--link); }
+    a:visited { color: var(--link-seen); }
+
+    .nav { font-size: 0.92rem; margin: 0 0 1.75rem; }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: normal;
+      margin: 0 0 0.3rem;
+      line-height: 1.25;
+    }
+    /* KaTeX renders in Computer Modern, which has a smaller x-height than
+       Georgia; a small bump keeps the title optically level. */
+    h1 .katex { font-size: 1.06em; }
+    h2 .katex, h3 .katex { font-size: 1.02em; }
+    .dateline {
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+      margin: 0.35rem 0 1.6rem;
+    }
+
+    h2 {
+      font-size: 1.16rem;
+      font-weight: normal;
+      margin: 3rem 0 0.9rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    h2 .secnum {
+      font-variant-numeric: tabular-nums;
+      color: var(--ink-soft);
+      margin-right: 0.6em;
+    }
+    h3 {
+      font-size: 1.02rem;
+      font-weight: bold;
+      margin: 2rem 0 0.6rem;
+    }
+
+    p { margin: 0 0 1.05rem; }
+
+    hr.rule {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 1.4rem 0;
+    }
+
+    /* ---- theorem environments ---- */
+    .thm, .defn, .lem, .cor, .prop, .rmk, .ex {
+      margin: 1.4rem 0;
+      padding-left: 0.95rem;
+      border-left: 2px solid var(--rule-firm);
+    }
+    .rmk, .ex { border-left-style: dotted; }
+    .thm .head, .defn .head, .lem .head, .cor .head,
+    .prop .head, .rmk .head, .ex .head {
+      font-variant: small-caps;
+      letter-spacing: 0.05em;
+      font-weight: bold;
+    }
+    .thm .body, .lem .body, .cor .body, .prop .body { font-style: italic; }
+    .proof { margin: 1.05rem 0; }
+    .proof .head { font-style: italic; }
+    .proof::after {
+      content: "\25A1";
+      display: inline-block;
+      margin-left: 0.35em;
+    }
+
+    ul, ol { padding-left: 1.5rem; }
+    li { margin: 0.4rem 0; }
+
+    .caption {
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+      line-height: 1.55;
+      margin: 0.8rem 0 0;
+    }
+
+    /* ---- the figure breaks the measure ---- */
+    .figure {
+      margin: 2rem 0 2.5rem;
+      width: min(94vw, 62em);
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .plate {
+      border: 1px solid var(--rule-firm);
+      background: var(--panel);
+      padding: 0.9rem 0.9rem 0.4rem;
+    }
+    .scroller { overflow-x: auto; }
+    .scroller svg { display: block; min-width: 660px; width: 100%; height: auto; }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.1rem;
+      align-items: baseline;
+      padding: 0 0.15rem 0.75rem;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 0.6rem;
+      font-size: 0.9rem;
+    }
+    .controls .grouplabel {
+      font-variant: small-caps;
+      letter-spacing: 0.06em;
+      color: var(--ink-soft);
+    }
+    .curvetoggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35em;
+      cursor: pointer;
+      user-select: none;
+      padding: 0.1em 0.15em;
+    }
+    .curvetoggle input { margin: 0; accent-color: var(--ink); }
+    .swatch {
+      display: inline-block;
+      width: 1.6em;
+      height: 0.28em;
+      border-radius: 1px;
+      vertical-align: middle;
+    }
+    .controls .katex { font-size: 1em; }
+
+    /* ---- inspector ---- */
+    .inspector {
+      border-top: 1px solid var(--rule-firm);
+      margin-top: 0.4rem;
+      padding: 0.85rem 0.15rem 0.5rem;
+      min-height: 9.5em;
+      font-size: 0.95rem;
+    }
+    .inspector .kicker {
+      font-variant: small-caps;
+      letter-spacing: 0.07em;
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      display: block;
+      margin-bottom: 0.15rem;
+    }
+    .inspector h4 {
+      margin: 0 0 0.55rem;
+      font-size: 1.12rem;
+      font-weight: normal;
+    }
+    .inspector .idle { color: var(--ink-soft); font-style: italic; }
+    .facts {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 0.28rem 1.1rem;
+      margin: 0 0 0.7rem;
+      align-items: baseline;
+    }
+    .facts dt {
+      font-variant: small-caps;
+      letter-spacing: 0.05em;
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      white-space: nowrap;
+    }
+    .facts dd { margin: 0; }
+    .inspector .gloss { margin: 0.55rem 0 0; line-height: 1.6; }
+    .inspector .flag {
+      margin-top: 0.6rem;
+      padding: 0.45rem 0.7rem;
+      border-left: 2px solid var(--c3);
+      background: #fdf8ee;
+      font-size: 0.92rem;
+    }
+
+    /* ---- svg pieces ---- */
+    .hit { cursor: pointer; }
+    .hit:focus { outline: 2px solid var(--link); outline-offset: 2px; }
+    svg text { font-family: Georgia, "Times New Roman", serif; }
+    /* Labels naming ideals are mathematics, so they are set in KaTeX's own faces
+       rather than the body serif. KaTeX_AMS is where \mathbb lives: the plain
+       letter Z in that font IS the double-struck glyph, which is exactly how
+       KaTeX itself renders \mathbb{Z}. The stylesheet is already loaded. */
+    .lbl { font-size: 13px; fill: var(--ink); font-family: KaTeX_Main, Georgia, serif; }
+    .lbl-small { font-size: 11px; fill: var(--ink-soft); font-family: Georgia, serif; }
+    .op { font-style: normal; }
+    .bb { font-family: KaTeX_AMS, "Cambria Math", "STIX Two Math", serif; font-style: normal; }
+
+    .fiberline { stroke: var(--fiber); stroke-width: 1.6; fill: none; stroke-linecap: round; }
+    .fiberline.sel { stroke-width: 3.2; }
+    .baseline { stroke: var(--fiber); stroke-width: 1.6; fill: none; }
+    .ptdot { fill: var(--fiber); }
+    .ptdot.hollow { fill: var(--panel); stroke: var(--fiber); stroke-width: 1.4; }
+    .strand { fill: none; stroke-width: 1.9; stroke-linecap: round; }
+    .strand.sel { stroke-width: 3.4; }
+    .selring { fill: none; stroke: var(--link); stroke-width: 2; }
+
+    kbd {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.85em;
+      border: 1px solid var(--rule);
+      border-bottom-width: 2px;
+      border-radius: 3px;
+      padding: 0.05em 0.35em;
+      background: var(--panel);
+    }
+
+    .refs { font-size: 0.95rem; }
+    .refs li { margin: 0.5rem 0; }
+
+    footer {
+      margin-top: 3.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--rule);
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+    }
+    footer p { margin: 0 0 0.5rem; }
+    footer .colophon { font-style: italic; margin-bottom: 0; }
+
+    @media (max-width: 640px) {
+      body { font-size: 1.02rem; padding: 1.75rem 1rem 4rem; }
+      .figure { width: 100vw; }
+      .plate { border-left: none; border-right: none; }
+      .facts { grid-template-columns: 1fr; gap: 0.1rem; }
+      .facts dd { margin-bottom: 0.35rem; }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .strand, .fiberline { transition: stroke-width 120ms ease; }
+    }
+
+    @media print {
+      .controls, .inspector { display: none; }
+      .figure { width: 100%; left: 0; transform: none; }
+      .plate { border: 1px solid #000; background: #fff; }
+    }
+  </style>
+</head>
+<body>
+
+<p class="nav"><a href="/notes/">&larr; Expository Notes</a></p>
+
+<h1>The Arithmetic Surface \(\operatorname{Spec}\mathbb{Z}[x]\)</h1>
+<p class="dateline">Last edited August 2026</p>
+
+<p>
+Below we will look at Mumford's drawing of \(\operatorname{Spec}\mathbb{Z}[x]\) as a surface fibered over
+\(\operatorname{Spec}\mathbb{Z}\). This note classifies the primes of \(\mathbb{Z}[x]\) with proof,
+identifies that fibration, and then reads the splitting, inertia, and ramification of primes in
+number fields off the resulting geometry.
+</p>
+
+<p>
+In the figure below, vertical lines are the fibers \(\mathbb{A}^1_{\mathbb{F}_p}\), the dashed line at the
+right is the generic fiber \(\mathbb{A}^1_{\mathbb{Q}}\), and the horizontal line at the bottom is
+the base \(\operatorname{Spec}\mathbb{Z}\). On a fiber, small dots are the
+\(\mathbb{F}_p\)-rational points \((p, x-a)\), hollow dots are closed points whose residue field is
+larger than \(\mathbb{F}_p\), and the smudge at the top is the fiber's generic point.
+</p>
+
+<p>A horizontal curve \(V(f)\) is drawn as \(\deg f\) strands, one for each sheet of the covering
+\(V(f) \to \operatorname{Spec}\mathbb{Z}\). They land on separate points where \(p\) splits, merge
+into a single hollow dot where \(p\) is inert, and touch where \(p\) ramifies, converging at the
+right to the one point of \(\mathbb{A}^1_{\mathbb{Q}}\) the curve came from. Every line, dot,
+strand, and smudge is a prime ideal of \(\mathbb{Z}[x]\); clicking one gives its generators, height,
+residue field, and local ring. The next section explains why a single prime is drawn as a whole line
+or curve rather than a dot.
+</p>
+
+<div class="figure">
+  <div class="plate">
+    <div class="controls" id="controls"></div>
+    <div class="scroller">
+      <svg id="plot" viewBox="0 0 900 540" role="img"
+           aria-label="Interactive diagram of Spec Z[x] as a fibration over Spec Z"></svg>
+    </div>
+    <div class="inspector" id="inspector"></div>
+  </div>
+  <p class="caption">
+    <strong>Figure.</strong> <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Spec</mi><mo>⁡</mo><mi mathvariant="double-struck">Z</mi><mo stretchy="false">[</mo><mi>x</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\operatorname{Spec}\mathbb{Z}[x]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mop"><span class="mord mathrm">Spec</span></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathbb">Z</span><span class="mopen">[</span><span class="mord mathnormal">x</span><span class="mclose">]</span></span></span></span></span>, after Mumford. Click any line,
+    dot, strand, or smudge to see the prime ideal it denotes. A hollow dot is a closed point with
+    residue field larger than <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="double-struck">F</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">\mathbb{F}_p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.975em; vertical-align: -0.2861em;"></span><span class="mord"><span class="mord mathbb">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.1514em;"><span class="" style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2861em;"><span class=""></span></span></span></span></span></span></span></span></span></span>; a shaded halo is multiplicity, i.e. ramification.
+    The primes are spaced evenly rather than to scale. The height of an <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="double-struck">F</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">\mathbb{F}_p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.975em; vertical-align: -0.2861em;"></span><span class="mord"><span class="mord mathbb">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.1514em;"><span class="" style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2861em;"><span class=""></span></span></span></span></span></span></span></span></span></span>-rational
+    point <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>p</mi><mo separator="true">,</mo><mi>x</mi><mo>−</mo><mi>a</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(p, x-a)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">p</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal">a</span><span class="mclose">)</span></span></span></span></span> is <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mi mathvariant="normal">/</mi><mi>p</mi></mrow><annotation encoding="application/x-tex">a/p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal">a</span><span class="mord">/</span><span class="mord mathnormal">p</span></span></span></span></span>, which is a real invariant of the point and not decoration —
+    it is why <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo stretchy="false">(</mo><mn>2</mn><mi>x</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">V(2x-1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.2222em;">V</span><span class="mopen">(</span><span class="mord">2</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span></span> settles toward the middle of the plate, since its root mod <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.625em; vertical-align: -0.1944em;"></span><span class="mord mathnormal">p</span></span></span></span></span> is
+    <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>p</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mi mathvariant="normal">/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">(p+1)/2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">p</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord">1</span><span class="mclose">)</span><span class="mord">/2</span></span></span></span></span> and the curve is tracking the rational number <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow><annotation encoding="application/x-tex">\tfrac12</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1.1901em; vertical-align: -0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.8451em;"><span class="" style="top: -2.655em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">2</span></span></span></span><span class="" style="top: -3.23em;"><span class="pstrut" style="height: 3em;"></span><span class="frac-line" style="border-bottom-width: 0.04em;"></span></span><span class="" style="top: -3.394em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.345em;"><span class=""></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>. Heights of
+    higher-degree points are arbitrary, though consistent across curves, since such a point has no
+    natural coordinate. All incidence data such as &nbsp;which curve meets which point, with what <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi></mrow><annotation encoding="application/x-tex">e</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal">e</span></span></span></span></span>,
+    <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi></mrow><annotation encoding="application/x-tex">f</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8889em; vertical-align: -0.1944em;"></span><span class="mord mathnormal" style="margin-right: 0.1076em;">f</span></span></span></span></span>, and residue field is computed rather than drawn by hand.
+  </p>
+</div>
+
+<h2><span class="secnum">1</span>Points and their closures</h2>
+
+<p>
+Fix a commutative ring <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span></span></span></span></span>. The points of <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Spec</mi><mo>⁡</mo><mi>R</mi></mrow><annotation encoding="application/x-tex">\operatorname{Spec} R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8778em; vertical-align: -0.1944em;"></span><span class="mop"><span class="mord mathrm">Spec</span></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span></span></span></span></span> are the prime ideals of <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span></span></span></span></span>,
+and the closed sets are exactly the sets
+<span><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>V</mi><mo stretchy="false">(</mo><mi>I</mi><mo stretchy="false">)</mo>  <mo>=</mo>  <mo stretchy="false">{</mo> <mi mathvariant="fraktur">p</mi><mo>∈</mo><mi mathvariant="normal">Spec</mi><mo>⁡</mo><mi>R</mi>  <mo>:</mo>  <mi>I</mi><mo>⊆</mo><mi mathvariant="fraktur">p</mi> <mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">
+  V(I) \;=\; \{\,\mathfrak{p} \in \operatorname{Spec} R \;:\; I \subseteq \mathfrak{p}\,\}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.2222em;">V</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right: 0.0785em;">I</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">{</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathfrak">p</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8778em; vertical-align: -0.1944em;"></span><span class="mop"><span class="mord mathrm">Spec</span></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8193em; vertical-align: -0.136em;"></span><span class="mord mathnormal" style="margin-right: 0.0785em;">I</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">⊆</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathfrak">p</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mclose">}</span></span></span></span></span></span>
+for ideals <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mo>⊆</mo><mi>R</mi></mrow><annotation encoding="application/x-tex">I \subseteq R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8193em; vertical-align: -0.136em;"></span><span class="mord mathnormal" style="margin-right: 0.0785em;">I</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">⊆</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span></span></span></span></span>; for a subset <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mo>⊆</mo><mi mathvariant="normal">Spec</mi><mo>⁡</mo><mi>R</mi></mrow><annotation encoding="application/x-tex">Z \subseteq \operatorname{Spec} R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8193em; vertical-align: -0.136em;"></span><span class="mord mathnormal" style="margin-right: 0.0715em;">Z</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">⊆</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8778em; vertical-align: -0.1944em;"></span><span class="mop"><span class="mord mathrm">Spec</span></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span></span></span></span></span> write
+<span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mo stretchy="false">(</mo><mi>Z</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mo>⋂</mo><mrow><mi mathvariant="fraktur">p</mi><mo>∈</mo><mi>Z</mi></mrow></msub><mi mathvariant="fraktur">p</mi></mrow><annotation encoding="application/x-tex">I(Z) = \bigcap_{\mathfrak{p} \in Z} \mathfrak{p}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.0785em;">I</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right: 0.0715em;">Z</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.1821em; vertical-align: -0.4321em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position: relative; top: 0em;">⋂</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.1786em;"><span class="" style="top: -2.4003em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathfrak mtight">p</span><span class="mrel mtight">∈</span><span class="mord mathnormal mtight" style="margin-right: 0.0715em;">Z</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.4321em;"><span class=""></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathfrak">p</span></span></span></span></span>. The <em>residue field</em> at <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="fraktur">p</mi></mrow><annotation encoding="application/x-tex">\mathfrak{p}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.713em; vertical-align: -0.1891em;"></span><span class="mord mathfrak">p</span></span></span></span></span>
+is <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>κ</mi><mo stretchy="false">(</mo><mi mathvariant="fraktur">p</mi><mo stretchy="false">)</mo><mo>=</mo><mi mathvariant="normal">Frac</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>R</mi><mi mathvariant="normal">/</mi><mi mathvariant="fraktur">p</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\kappa(\mathfrak{p}) = \operatorname{Frac}(R/\mathfrak{p})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal">κ</span><span class="mopen">(</span><span class="mord mathfrak">p</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mop"><span class="mord mathrm">Frac</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span><span class="mord">/</span><span class="mord mathfrak">p</span><span class="mclose">)</span></span></span></span></span>, and we write
+<span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi mathvariant="double-struck">A</mi><mi>R</mi><mn>1</mn></msubsup><mo>=</mo><mi mathvariant="normal">Spec</mi><mo>⁡</mo><mi>R</mi><mo stretchy="false">[</mo><mi>x</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\mathbb{A}^1_R = \operatorname{Spec} R[x]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1.0894em; vertical-align: -0.2753em;"></span><span class="mord"><span class="mord mathbb">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.8141em;"><span class="" style="top: -2.4247em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right: 0.0077em;">R</span></span></span><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2753em;"><span class=""></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mop"><span class="mord mathrm">Spec</span></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span><span class="mopen">[</span><span class="mord mathnormal">x</span><span class="mclose">]</span></span></span></span></span> for the affine line over <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal" style="margin-right: 0.0077em;">R</span></span></span></span></span>. We say a nonempty closed
+set is&nbsp;<em>irreducible</em>
+if it is not the union of two strictly smaller closed subsets. Points of this space may not be closed, and the two results below say what a point morally is: it is a closed set, and exactly an
+irreducible one. That is why a single prime ideal appears in the drawing as a line or a curve rather
+than as a dot.
+</p>
+
+<div class="lem">
+  <span class="head">Lemma (closure of a point).</span>
+  <div class="body">
+  For every \(\mathfrak{p} \in \operatorname{Spec} R\) we have
+  \(\overline{\{\mathfrak{p}\}} = V(\mathfrak{p})\). Hence
+  \(\mathfrak{q} \in \overline{\{\mathfrak{p}\}}\) if and only if
+  \(\mathfrak{p} \subseteq \mathfrak{q}\), and \(\{\mathfrak{p}\}\) is closed if and only if
+  \(\mathfrak{p}\) is maximal.
+  </div>
+</div>
+
+<div class="proof">
+  <span class="head">Proof.</span>
+  <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo stretchy="false">(</mo><mi mathvariant="fraktur">p</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">V(\mathfrak{p})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.2222em;">V</span><span class="mopen">(</span><span class="mord mathfrak">p</span><span class="mclose">)</span></span></span></span></span> is closed and contains <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="fraktur">p</mi></mrow><annotation encoding="application/x-tex">\mathfrak{p}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.713em; vertical-align: -0.1891em;"></span><span class="mord mathfrak">p</span></span></span></span></span>, because
+  <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="fraktur">p</mi><mo>⊆</mo><mi mathvariant="fraktur">p</mi></mrow><annotation encoding="application/x-tex">\mathfrak{p} \subseteq \mathfrak{p}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.825em; vertical-align: -0.1891em;"></span><span class="mord mathfrak">p</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">⊆</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.713em; vertical-align: -0.1891em;"></span><span class="mord mathfrak">p</span></span></span></span></span>. It is the smallest such set: if <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo stretchy="false">(</mo><mi>I</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">V(I)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.2222em;">V</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right: 0.0785em;">I</span><span class="mclose">)</span></span></span></span></span> is any closed set
+  containing <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="fraktur">p</mi></mrow><annotation encoding="application/x-tex">\mathfrak{p}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.713em; vertical-align: -0.1891em;"></span><span class="mord mathfrak">p</span></span></span></span></span>, then <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mo>⊆</mo><mi mathvariant="fraktur">p</mi></mrow><annotation encoding="application/x-tex">I \subseteq \mathfrak{p}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8193em; vertical-align: -0.136em;"></span><span class="mord mathnormal" style="margin-right: 0.0785em;">I</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">⊆</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.713em; vertical-align: -0.1891em;"></span><span class="mord mathfrak">p</span></span></span></span></span>, so every
+  <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="fraktur">q</mi><mo>∈</mo><mi>V</mi><mo stretchy="false">(</mo><mi mathvariant="fraktur">p</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathfrak{q} \in V(\mathfrak{p})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7282em; vertical-align: -0.1891em;"></span><span class="mord mathfrak">q</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.2222em;">V</span><span class="mopen">(</span><span class="mord mathfrak">p</span><span class="mclose">)</span></span></span></span></span> satisfies <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mo>⊆</mo><mi mathvariant="fraktur">p</mi><mo>⊆</mo><mi mathvariant="fraktur">q</mi></mrow><annotation encoding="application/x-tex">I \subseteq \mathfrak{p} \subseteq \mathfrak{q}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8193em; vertical-align: -0.136em;"></span><span class="mord mathnormal" style="margin-right: 0.0785em;">I</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">⊆</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.825em; vertical-align: -0.1891em;"></span><span class="mord mathfrak">p</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">⊆</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6644em; vertical-align: -0.1891em;"></span><span class="mord mathfrak">q</span></span></span></span></span>
+  and therefore lies in <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo stretchy="false">(</mo><mi>I</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">V(I)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.2222em;">V</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right: 0.0785em;">I</span><span class="mclose">)</span></span></span></span></span>; that is, <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo stretchy="false">(</mo><mi mathvariant="fraktur">p</mi><mo stretchy="false">)</mo><mo>⊆</mo><mi>V</mi><mo stretchy="false">(</mo><mi>I</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">V(\mathfrak{p}) \subseteq V(I)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.2222em;">V</span><span class="mopen">(</span><span class="mord mathfrak">p</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">⊆</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.2222em;">V</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right: 0.0785em;">I</span><span class="mclose">)</span></span></span></span></span>. Since the closure is
+  the smallest closed set containing the point, <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mrow><mo stretchy="false">{</mo><mi mathvariant="fraktur">p</mi><mo stretchy="false">}</mo></mrow><mo stretchy="true">‾</mo></mover><mo>=</mo><mi>V</mi><mo stretchy="false">(</mo><mi mathvariant="fraktur">p</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\overline{\{\mathfrak{p}\}} = V(\mathfrak{p})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1.2em; vertical-align: -0.25em;"></span><span class="mord overline"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.95em;"><span class="" style="top: -3em;"><span class="pstrut" style="height: 3em;"></span><span class="mord"><span class="mopen">{</span><span class="mord mathfrak">p</span><span class="mclose">}</span></span></span><span class="" style="top: -3.87em;"><span class="pstrut" style="height: 3em;"></span><span class="overline-line" style="border-bottom-width: 0.04em;"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.25em;"><span class=""></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.2222em;">V</span><span class="mopen">(</span><span class="mord mathfrak">p</span><span class="mclose">)</span></span></span></span></span>.
+  The first consequence is juat the definition of <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo stretchy="false">(</mo><mi mathvariant="fraktur">p</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">V(\mathfrak{p})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.2222em;">V</span><span class="mopen">(</span><span class="mord mathfrak">p</span><span class="mclose">)</span></span></span></span></span>. For the second,
+  <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo stretchy="false">(</mo><mi mathvariant="fraktur">p</mi><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">{</mo><mi mathvariant="fraktur">p</mi><mo stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">V(\mathfrak{p}) = \{\mathfrak{p}\}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.2222em;">V</span><span class="mopen">(</span><span class="mord mathfrak">p</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">{</span><span class="mord mathfrak">p</span><span class="mclose">}</span></span></span></span></span> says exactly that no prime strictly contains
+  <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="fraktur">p</mi></mrow><annotation encoding="application/x-tex">\mathfrak{p}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.713em; vertical-align: -0.1891em;"></span><span class="mord mathfrak">p</span></span></span></span></span>, and since every proper ideal lies in a maximal one, that is maximality.
+</div>
+
+<div class="thm">
+  <span class="head">Theorem.</span>
+  <div class="body">
+  The assignment \(\mathfrak{p} \mapsto V(\mathfrak{p})\) is a bijection
+  \[
+    \{\text{primes of } R\}
+      \;\xrightarrow{\ \sim\ }\;
+    \{\text{irreducible closed subsets of } \operatorname{Spec} R\},
+  \]
+  with inverse \(Z \mapsto I(Z)\). It reverses inclusions: \(\mathfrak{p} \subseteq \mathfrak{q}\) if
+  and only if \(V(\mathfrak{q}) \subseteq V(\mathfrak{p})\). Moreover \(\mathfrak{p}\) is the unique
+  point of \(V(\mathfrak{p})\) whose closure is all of \(V(\mathfrak{p})\), i.e.&nbsp;it a the
+  <em>generic point</em>.
+  </div>
+</div>
+
+<div class="proof">
+  <span class="head">Proof.</span>
+  <p><em>\(V(\mathfrak{p})\) is irreducible.</em> By the lemma it is
+  \(\overline{\{\mathfrak{p}\}}\), and the closure of a point is always irreducible: it is nonempty,
+  and if \(\overline{\{\mathfrak{p}\}} = Z_1 \cup Z_2\) with \(Z_i\) closed, then \(\mathfrak{p}\)
+  lies in one of them, say \(Z_1\), and \(Z_1\) being closed forces
+  \(\overline{\{\mathfrak{p}\}} \subseteq Z_1\), so \(Z_1\) is not strictly smaller.</p>
+
+  <p><em>Injectivity.</em> If \(V(\mathfrak{p}) = V(\mathfrak{q})\), then
+  \(\mathfrak{q} \in V(\mathfrak{q}) = V(\mathfrak{p})\) gives \(\mathfrak{p} \subseteq \mathfrak{q}\),
+  and the same argument with the roles exchanged gives \(\mathfrak{q} \subseteq \mathfrak{p}\).</p>
+
+  <p><em>Surjectivity.</em> Let \(Z\) be irreducible closed and set \(\mathfrak{p} = I(Z)\). First,
+  \(\mathfrak{p}\) is prime. It is proper, since \(Z\) is nonempty and so \(\mathfrak{p}\) is
+  contained in some prime. Suppose \(fg \in \mathfrak{p}\). For any prime \(\mathfrak{q}\) we have
+  \(fg \in \mathfrak{q}\) if and only if \(f \in \mathfrak{q}\) or \(g \in \mathfrak{q}\), so
+  \(V(fg) = V(f) \cup V(g)\), and therefore
+  \[
+    Z \;=\; \big(Z \cap V(f)\big) \,\cup\, \big(Z \cap V(g)\big),
+  \]
+  a union of two closed subsets of \(Z\). Irreducibility forces one of them to be all of \(Z\), say
+  \(Z \subseteq V(f)\), which says \(f \in \mathfrak{q}\) for every \(\mathfrak{q} \in Z\), i.e.
+  \(f \in I(Z) = \mathfrak{p}\). Second, \(V(\mathfrak{p}) = Z\). Writing \(Z = V(J)\), every
+  \(\mathfrak{q} \in Z\) contains \(J\), so \(J \subseteq I(Z) = \mathfrak{p}\) and hence
+  \(V(\mathfrak{p}) \subseteq V(J) = Z\); conversely if \(\mathfrak{q} \in Z\) then
+  \(I(Z) \subseteq \mathfrak{q}\) by definition of \(I(Z)\), so \(\mathfrak{q} \in V(\mathfrak{p})\).</p>
+
+  <p><em>Inclusions and the generic point.</em> If \(\mathfrak{p} \subseteq \mathfrak{q}\) and
+  \(\mathfrak{r} \in V(\mathfrak{q})\), then \(\mathfrak{p} \subseteq \mathfrak{q} \subseteq
+  \mathfrak{r}\), so \(V(\mathfrak{q}) \subseteq V(\mathfrak{p})\); conversely
+  \(V(\mathfrak{q}) \subseteq V(\mathfrak{p})\) applied to \(\mathfrak{q} \in V(\mathfrak{q})\) gives
+  \(\mathfrak{p} \subseteq \mathfrak{q}\). Finally, if \(\mathfrak{q} \in V(\mathfrak{p})\) has
+  \(\overline{\{\mathfrak{q}\}} = V(\mathfrak{p})\), then \(V(\mathfrak{q}) = V(\mathfrak{p})\), so
+  \(\mathfrak{q} = \mathfrak{p}\) by injectivity.</p>
+</div>
+
+<p>
+Let’s see what our work tells us so far. In the picture above, the vertical line over \(2\) <em>is</em> the single prime ideal
+\((2) \subset \mathbb{Z}[x]\), drawn as its closure. A horizontal curve <em>is</em> a single prime
+ideal \((f)\). The haze covering the whole plate is the single prime \((0)\), whose closure is
+everything. Only the dots at the crossings are what a classical geometer would call points, and by
+the lemma those are exactly the maximal ideals.
+</p>
+
+<p>Note: the smudges are drawn that way for a reason: a generic point is not located anywhere in particular,
+it is everywhere in its closure at once. Fuzz is the honest notation.
+</p>
+
+<h2><span class="secnum">2</span>Finding the primes of \(\mathbb{Z}[x]\)</h2>
+
+<p>
+<span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="double-struck">Z</mi><mo stretchy="false">[</mo><mi>x</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\mathbb{Z}[x]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathbb">Z</span><span class="mopen">[</span><span class="mord mathnormal">x</span><span class="mclose">]</span></span></span></span></span> is a Noetherian UFD but not a PID, e.g. the ideal <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>2</mn><mo separator="true">,</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(2,x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span></span> needs two generators. That
+failure of principality is exactly what gives the space its second dimension. Now, the classification of primes needs one classical input, and that input is about content, so we define it first on
+<span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="double-struck">Q</mi><mo stretchy="false">[</mo><mi>x</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\mathbb{Q}[x]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathbb">Q</span><span class="mopen">[</span><span class="mord mathnormal">x</span><span class="mclose">]</span></span></span></span></span> as well as on <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="double-struck">Z</mi><mo stretchy="false">[</mo><mi>x</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\mathbb{Z}[x]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathbb">Z</span><span class="mopen">[</span><span class="mord mathnormal">x</span><span class="mclose">]</span></span></span></span></span>, since the proof moves between the two.
+</p>
+
+<div class="defn">
+  <span class="head">Definition.</span>
+  <div class="body">
+  <p>For a nonzero \(f = a_nx^n + \cdots + a_0 \in \mathbb{Z}[x]\), the <em>content</em> is
+  \[
+    c(f) \;=\; \gcd(a_0, \ldots, a_n) \;\in\; \mathbb{Z}_{>0},
+  \]
+  and \(f\) is <em>primitive</em> if \(c(f) = 1\). Dividing through, \(f = c(f)\,f_0\) with
+  \(f_0 \in \mathbb{Z}[x]\) primitive.</p>
+
+  <p>For a nonzero \(g \in \mathbb{Q}[x]\), choose \(d \in \mathbb{Z}_{&gt;0}\) with
+  \(dg \in \mathbb{Z}[x]\), e.g. the&nbsp;common denominator of the coefficients, and set
+  \[
+    c(g) \;=\; \frac{c(dg)}{d} \;\in\; \mathbb{Q}_{&gt;0}.
+  \]</p>
+  </div>
+</div>
+
+<div class="lem">
+  <span class="head">Lemma (Normalization).</span>
+  <div class="body">
+  The content of a rational polynomial is well defined, agrees with the integral definition on
+  \(\mathbb{Z}[x]\), and satisfies \(c(\lambda g) = |\lambda|\,c(g)\) for \(\lambda \in
+  \mathbb{Q}^{\times}\). Every nonzero \(g \in \mathbb{Q}[x]\) factors uniquely as
+  \[
+    g \;=\; c(g)\, g_0, \qquad g_0 \in \mathbb{Z}[x] \text{ primitive},
+  \]
+  and \(g \in \mathbb{Z}[x]\) if and only if \(c(g) \in \mathbb{Z}\).
+  </div>
+</div>
+
+<div class="proof">
+  <span class="head">Proof.</span>
+  For \(m \in \mathbb{Z}_{>0}\) and \(h \in \mathbb{Z}[x]\) we have \(c(mh) = m\,c(h)\), since the
+  gcd of the coefficients scales. If \(d, d'\) both clear denominators of \(g\), then
+  \(d'\,c(dg) = c(d'dg) = d\,c(d'g)\), so \(c(dg)/d = c(d'g)/d'\) and \(c(g)\) is well defined;
+  taking \(d = 1\) recovers the integral definition. For \(\lambda = a/b\) with
+  \(a,b \in \mathbb{Z}_{>0}\), choosing \(d\) for \(g\) makes \(bd\) clear denominators of
+  \(\lambda g\), and \(c(\lambda g) = c(adg)/(bd) = a\,c(dg)/(bd) = \lambda\,c(g)\); the case
+  \(\lambda &lt; 0\) is the same since content ignores sign.
+
+  <p>For the factorization, pick \(d\) with \(dg \in \mathbb{Z}[x]\) and write
+  \(dg = c(dg)\,g_0\) with \(g_0\) primitive; dividing by \(d\) gives \(g = c(g)\,g_0\). It is
+  unique because \(g_0 = g/c(g)\) is determined by \(g\): if \(g = \lambda h_0\) with
+  \(\lambda \in \mathbb{Q}_{>0}\) and \(h_0\) primitive, then
+  \(c(g) = \lambda\,c(h_0) = \lambda\). Finally, if \(c(g) \in \mathbb{Z}\) then
+  \(g = c(g)g_0 \in \mathbb{Z}[x]\), and conversely \(c\) is integral on \(\mathbb{Z}[x]\) by
+  definition.</p>
+</div>
+
+<div class="lem">
+  <span class="head">Lemma (Gauss).</span>
+  <div class="body">
+  Content is multiplicative: \(c(fg) = c(f)\,c(g)\) for all nonzero \(f,g \in \mathbb{Q}[x]\). In
+  particular a product of primitive polynomials in \(\mathbb{Z}[x]\) is primitive. Consequently, if
+  \(f \in \mathbb{Z}[x]\) is primitive then
+  \(f\mathbb{Q}[x] \cap \mathbb{Z}[x] = f\mathbb{Z}[x]\), and a primitive \(f\) of degree \(\ge 1\)
+  is irreducible in \(\mathbb{Z}[x]\) if and only if it is irreducible in \(\mathbb{Q}[x]\).
+  </div>
+</div>
+
+<div class="proof">
+  <span class="head">Proof.</span>
+  Write \(f = c(f)f_0\) and \(g = c(g)g_0\) with \(f_0, g_0 \in \mathbb{Z}[x]\) primitive. By
+  homogeneity of the content, \(c(fg) = c(f)c(g)\,c(f_0g_0)\), so everything reduces to showing
+  \(f_0g_0\) is primitive. Let \(p\) be prime. Reduction mod \(p\) is a ring map
+  \(\mathbb{Z}[x] \to \mathbb{F}_p[x]\), and \(\mathbb{F}_p[x]\) is a domain. Primitivity says
+  that \(\bar f_0\) and \(\bar g_0\) are both nonzero, so \(\overline{f_0g_0} = \bar f_0\,\bar g_0\)
+  is nonzero,
+  i.e. \(p \nmid c(f_0g_0)\). As \(p\) was arbitrary, \(c(f_0g_0) = 1\).
+
+  <p>Now let \(f\) be primitive and \(h = fq \in \mathbb{Z}[x]\) with \(q \in \mathbb{Q}[x]\)
+  nonzero. Then \(c(h) = c(f)c(q) = c(q)\), and \(c(h) \in \mathbb{Z}\) because
+  \(h \in \mathbb{Z}[x]\); so \(c(q) \in \mathbb{Z}\) and therefore \(q \in \mathbb{Z}[x]\) by
+  normalization. That gives \(f\mathbb{Q}[x] \cap \mathbb{Z}[x] = f\mathbb{Z}[x]\).</p>
+
+  <p>For irreducibility, a factorization in \(\mathbb{Z}[x]\) into factors of degree \(\ge 1\) is
+  already one in \(\mathbb{Q}[x]\). Conversely if \(f = gh\) in \(\mathbb{Q}[x]\) with
+  \(\deg g, \deg h \ge 1\), normalize both: \(f = c(g)c(h)\,g_0h_0\), and taking contents gives
+  \(1 = c(f) = c(g)c(h)\), so \(f = g_0h_0\) is a factorization in \(\mathbb{Z}[x]\) with both
+  factors of degree \(\ge 1\).</p>
+</div>
+
+<div class="thm">
+  <span class="head">Theorem (classification of primes).</span>
+  <div class="body">
+  Every prime ideal of \(\mathbb{Z}[x]\) is of exactly one of the following four types.
+  <ol>
+    <li>\((0)\), of height \(0\);</li>
+    <li>\((p)\), for \(p\) a rational prime, of height \(1\);</li>
+    <li>\((f)\), for \(f \in \mathbb{Z}[x]\) primitive and irreducible of degree \(\ge 1\), of height \(1\);</li>
+    <li>\((p, f)\), for \(p\) a rational prime and \(f \in \mathbb{Z}[x]\) a lift of an irreducible
+        \(\bar f \in \mathbb{F}_p[x]\), of height \(2\) and maximal.</li>
+  </ol>
+  </div>
+</div>
+
+<div class="proof">
+  <span class="head">Proof.</span>
+  Let \(\mathfrak{p} \subset \mathbb{Z}[x]\) be prime. The contraction \(\mathfrak{p} \cap \mathbb{Z}\)
+  is prime in \(\mathbb{Z}\), so it is \((0)\) or \((p)\). These two cases are the whole proof, and
+  in each one we reduce to a principal ideal domain.
+
+  <p><em>Case \(\mathfrak{p} \cap \mathbb{Z} = (p)\).</em>
+  Then \(p \in \mathfrak{p}\), so \(\mathfrak{p}\) is the preimage of a prime of
+  \(\mathbb{Z}[x]/(p) \cong \mathbb{F}_p[x]\). But \(\mathbb{F}_p[x]\) is a PID, so its primes are
+  \((0)\) and \((\bar f)\) with \(\bar f\) irreducible. Pulling back gives \(\mathfrak{p} = (p)\) or
+  \(\mathfrak{p} = (p, f)\) for any lift \(f\) of \(\bar f\). In the latter case
+  \(\mathbb{Z}[x]/(p,f) \cong \mathbb{F}_p[x]/(\bar f)\) is a finite field, so \(\mathfrak{p}\) is
+  maximal.</p>
+
+  <p><em>Case \(\mathfrak{p} \cap \mathbb{Z} = (0)\).</em>
+  Then \(\mathfrak{p}\) misses the multiplicative set \(S = \mathbb{Z}\setminus\{0\}\), so
+  \(\mathfrak{p} \mapsto \mathfrak{p}\,\mathbb{Q}[x]\) is a bijection onto the primes of
+  \(S^{-1}\mathbb{Z}[x] = \mathbb{Q}[x]\), with inverse \(\mathfrak{q} \mapsto \mathfrak{q}\cap\mathbb{Z}[x]\).
+  Again \(\mathbb{Q}[x]\) is a PID. If \(\mathfrak{p}\,\mathbb{Q}[x] = (0)\) then \(\mathfrak{p} = (0)\).
+  Otherwise \(\mathfrak{p}\,\mathbb{Q}[x] = (g)\) for some irreducible \(g \in \mathbb{Q}[x]\). By
+  normalization \(g = c(g)\,f\) with \(f \in \mathbb{Z}[x]\) primitive, so
+  \(f\mathbb{Q}[x] = g\mathbb{Q}[x]\) and \(f\) is irreducible in \(\mathbb{Z}[x]\) by Gauss. Then
+  \[
+    \mathfrak{p} \;=\; f\mathbb{Q}[x] \cap \mathbb{Z}[x] \;=\; f\mathbb{Z}[x],
+  \]
+  the last equality being Gauss again.</p>
+
+  <p>The types are mutually exclusive by inspecting contractions to \(\mathbb{Z}\) and heights, and
+  the height claims follow from the chains exhibited in the corollary that follows.</p>
+</div>
+
+<div class="cor">
+  <span class="head">Corollary.</span>
+  <div class="body">
+  \(\dim \mathbb{Z}[x] = 2\). Every maximal chain of primes has length \(2\) and looks like
+  \[
+    (0) \subsetneq (p) \subsetneq (p,f)
+    \qquad\text{or}\qquad
+    (0) \subsetneq (f) \subsetneq (p,f).
+  \]
+  The closed points are exactly the \((p,f)\), and every residue field at a closed point is finite,
+  namely \(\kappa(p,f) \cong \mathbb{F}_{p^{\deg \bar f}}\).
+  </div>
+</div>
+
+<p>
+The two shapes of maximal chain are the two ways to walk down to a closed point, and they are
+already the vertical/horizontal dichotomy. Notice also the last sentence: <em>all</em> closed points
+have finite residue field, and the residue characteristic varies from point to point. Unlike
+\(\mathbb{A}^2_k\), there is no field over which the whole picture lives.
+</p>
+
+<p>
+This classification also settles the local structure at a closed point. Recall that a Noetherian
+local ring <span><span class="katex"><span class="katex-mathml">\</span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">A</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathfrak">m</span><span class="mclose">)</span></span></span></span></span> of Krull dimension <span><span class="katex"><span class="katex-mathml">\(</span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span></span> is <em>regular</em> if <span><span class="katex"><span class="katex-mathml">\(\</span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.4753em;"></span><span class="mord mathfrak">m</span></span></span></span></span> can
+be generated by <span><span class="katex"><span class="katex-mathml">\(</span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span></span> elements, and that such a generating set is called a <em>regular system of
+parameters</em>.
+</p>
+
+<div class="cor">
+  <span class="head">Corollary (local rings at closed points).</span>
+  <div class="body">
+  For every closed point \(\mathfrak{m} = (p,f)\) of \(\operatorname{Spec}\mathbb{Z}[x]\), the local
+  ring \(\mathbb{Z}[x]_{\mathfrak{m}}\) is regular local of dimension \(2\), and \(p, f\) is a
+  regular system of parameters.
+  </div>
+</div>
+
+<div class="proof">
+  <span class="head">Proof.</span>
+  \(\mathbb{Z}[x]\) is Noetherian, so \(\mathbb{Z}[x]_{\mathfrak{m}}\) is a Noetherian local ring,
+  and its Krull dimension is the height of \(\mathfrak{m}\), which the classification gives as
+  \(2\). Its maximal ideal is generated by the images of the two elements \(p\) and \(f\).
+</div>
+
+<h2><span class="secnum">3</span>The fibration over \(\operatorname{Spec}\mathbb{Z}\)</h2>
+
+<p>
+A ring map \(\varphi : R \to A\) induces \(\pi : \operatorname{Spec} A \to \operatorname{Spec} R\)
+by \(\mathfrak{q} \mapsto \varphi^{-1}(\mathfrak{q})\), which is continuous because
+\(\pi^{-1}(V(I)) = V(\varphi(I)A)\). The <em>fiber</em> of \(\pi\) over
+\(\mathfrak{p} \in \operatorname{Spec} R\) is the preimage \(\pi^{-1}(\mathfrak{p})\) with its
+subspace topology: the set of primes of \(A\) that contract to \(\mathfrak{p}\).
+</p>
+
+<p>
+Here <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="double-struck">Z</mi><mo>↪</mo><mi mathvariant="double-struck">Z</mi><mo stretchy="false">[</mo><mi>x</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\mathbb{Z} \hookrightarrow \mathbb{Z}[x]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6999em; vertical-align: -0.011em;"></span><span class="mord mathbb">Z</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">↪</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathbb">Z</span><span class="mopen">[</span><span class="mord mathnormal">x</span><span class="mclose">]</span></span></span></span></span> gives
+<span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi><mo>:</mo><msubsup><mi mathvariant="double-struck">A</mi><mi mathvariant="double-struck">Z</mi><mn>1</mn></msubsup><mo>→</mo><mi mathvariant="normal">Spec</mi><mo>⁡</mo><mi mathvariant="double-struck">Z</mi></mrow><annotation encoding="application/x-tex">\pi : \mathbb{A}^1_{\mathbb{Z}} \to \operatorname{Spec}\mathbb{Z}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal" style="margin-right: 0.0359em;">π</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.0933em; vertical-align: -0.2792em;"></span><span class="mord"><span class="mord mathbb">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.8141em;"><span class="" style="top: -2.4208em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbb mtight">Z</span></span></span></span><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2792em;"><span class=""></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.8833em; vertical-align: -0.1944em;"></span><span class="mop"><span class="mord mathrm">Spec</span></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathbb">Z</span></span></span></span></span> with
+<span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi><mo stretchy="false">(</mo><mi mathvariant="fraktur">q</mi><mo stretchy="false">)</mo><mo>=</mo><mi mathvariant="fraktur">q</mi><mo>∩</mo><mi mathvariant="double-struck">Z</mi></mrow><annotation encoding="application/x-tex">\pi(\mathfrak{q}) = \mathfrak{q} \cap \mathbb{Z}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.0359em;">π</span><span class="mopen">(</span><span class="mord mathfrak">q</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.7446em; vertical-align: -0.1891em;"></span><span class="mord mathfrak">q</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">∩</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.6889em;"></span><span class="mord mathbb">Z</span></span></span></span></span>, which is exactly the case division the proof
+of the classification used. So the classification <em>is</em> the fiber decomposition!</p>
+
+<div class="prop">
+  <span class="head">Proposition (the fibers).</span>
+  <div class="body">
+  <p>Let \(p\) be a rational prime. Then \(\pi^{-1}\big((p)\big) = V(p)\), and reduction
+  \(\mathbb{Z}[x] \twoheadrightarrow \mathbb{F}_p[x]\) induces a homeomorphism
+  \(\pi^{-1}\big((p)\big) \cong \mathbb{A}^1_{\mathbb{F}_p}\).</p>
+  <p>Over the generic point, the inclusion \(\mathbb{Z}[x] \hookrightarrow \mathbb{Q}[x]\) induces a
+  homeomorphism \(\pi^{-1}\big((0)\big) \cong \mathbb{A}^1_{\mathbb{Q}}\).</p>
+  </div>
+</div>
+
+<div class="proof">
+  <span class="head">Proof.</span>
+  For the first, \(\mathfrak{q} \cap \mathbb{Z} = (p)\) if and only if \(p \in \mathfrak{q}\):
+  one direction is immediate, and conversely \(\mathfrak{q} \cap \mathbb{Z}\) is a prime of
+  \(\mathbb{Z}\) containing \(p\) and not containing \(1\), hence equals the maximal ideal \((p)\).
+  So \(\pi^{-1}((p)) = V(p)\). The quotient map \(\mathbb{Z}[x] \to \mathbb{Z}[x]/(p) \cong
+  \mathbb{F}_p[x]\) carries primes of \(\mathbb{F}_p[x]\) bijectively and inclusion-preservingly onto
+  primes of \(\mathbb{Z}[x]\) containing \(p\), and it matches \(V(\bar J)\) with \(V(J + (p))\), so
+  it is a homeomorphism.
+
+  <p>For the second, \(\mathfrak{q} \cap \mathbb{Z} = (0)\) says exactly that \(\mathfrak{q}\) is
+  disjoint from \(S = \mathbb{Z} \setminus \{0\}\). Primes of \(S^{-1}\mathbb{Z}[x] = \mathbb{Q}[x]\)
+  correspond to primes of \(\mathbb{Z}[x]\) disjoint from \(S\), again compatibly with closed sets.</p>
+</div>
+
+<p>
+Reading this against the classification of primes: the fiber over <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>p</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(p)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">p</span><span class="mclose">)</span></span></span></span></span> consists of its generic point
+<span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>p</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(p)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">p</span><span class="mclose">)</span></span></span></span></span> together with the closed points <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>p</mi><mo separator="true">,</mo><mi>f</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(p,f)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">p</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathnormal" style="margin-right: 0.1076em;">f</span><span class="mclose">)</span></span></span></span></span>, and the fiber over <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(0)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord">0</span><span class="mclose">)</span></span></span></span></span> consists of <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(0)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord">0</span><span class="mclose">)</span></span></span></span></span>
+together with the primes <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>f</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(f)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right: 0.1076em;">f</span><span class="mclose">)</span></span></span></span></span>. Both fibers are affine lines with one over
+<span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="double-struck">F</mi><mi>p</mi></msub></mrow><annotation encoding="application/x-tex">\mathbb{F}_p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.975em; vertical-align: -0.2861em;"></span><span class="mord"><span class="mord mathbb">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.1514em;"><span class="" style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2861em;"><span class=""></span></span></span></span>&nbsp;and&nbsp;</span></span></span></span></span></span>one over <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="double-struck">Q</mi></mrow><annotation encoding="application/x-tex">\mathbb{Q}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8556em; vertical-align: -0.1667em;"></span><span class="mord mathbb">Q,</span></span></span></span></span>&nbsp;so <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi mathvariant="double-struck">A</mi><mi mathvariant="double-struck">Z</mi><mn>1</mn></msubsup></mrow><annotation encoding="application/x-tex">\mathbb{A}^1_{\mathbb{Z}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1.0933em; vertical-align: -0.2792em;"></span><span class="mord"><span class="mord mathbb">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.8141em;"><span class="" style="top: -2.4208em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathbb mtight">Z</span></span></span></span><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2792em;"><span class=""></span></span></span></span></span></span></span></span></span></span> is a family of
+lines parametrized by <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Spec</mi><mo>⁡</mo><mi mathvariant="double-struck">Z</mi></mrow><annotation encoding="application/x-tex">\operatorname{Spec}\mathbb{Z}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8833em; vertical-align: -0.1944em;"></span><span class="mop"><span class="mord mathrm">Spec</span></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathbb">Z</span></span></span></span></span>. That is all "surface" means here: a
+one-dimensional base with one-dimensional fibers. (The general statement, which we do not need, is
+that <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>π</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo stretchy="false">(</mo><mi mathvariant="fraktur">p</mi><mo stretchy="false">)</mo><mo>≅</mo><mi mathvariant="normal">Spec</mi><mo>⁡</mo><mo fence="false" stretchy="true" minsize="1.2em" maxsize="1.2em">(</mo><mi>A</mi><msub><mo>⊗</mo><mi>R</mi></msub><mi>κ</mi><mo stretchy="false">(</mo><mi mathvariant="fraktur">p</mi><mo stretchy="false">)</mo><mo fence="false" stretchy="true" minsize="1.2em" maxsize="1.2em">)</mo></mrow><annotation encoding="application/x-tex">\pi^{-1}(\mathfrak{p}) \cong \operatorname{Spec}\big(A \otimes_R \kappa(\mathfrak{p})\big)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1.0641em; vertical-align: -0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right: 0.0359em;">π</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8141em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">1</span></span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathfrak">p</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≅</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.2em; vertical-align: -0.35em;"></span><span class="mop"><span class="mord mathrm">Spec</span></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord"><span class="delimsizing size1">(</span></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin"><span class="mbin">⊗</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3283em;"><span class="" style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right: 0.0077em;">R</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span class=""></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1.2em; vertical-align: -0.35em;"></span><span class="mord mathnormal">κ</span><span class="mopen">(</span><span class="mord mathfrak">p</span><span class="mclose">)</span><span class="mord"><span class="delimsizing size1">)</span></span></span></span></span></span>;
+the two computations above are the cases <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="double-struck">Z</mi><mo stretchy="false">[</mo><mi>x</mi><mo stretchy="false">]</mo><mo>⊗</mo><msub><mi mathvariant="double-struck">F</mi><mi>p</mi></msub><mo>=</mo><msub><mi mathvariant="double-struck">F</mi><mi>p</mi></msub><mo stretchy="false">[</mo><mi>x</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\mathbb{Z}[x] \otimes \mathbb{F}_p = \mathbb{F}_p[x]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathbb">Z</span><span class="mopen">[</span><span class="mord mathnormal">x</span><span class="mclose">]</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">⊗</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.975em; vertical-align: -0.2861em;"></span><span class="mord"><span class="mord mathbb">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.1514em;"><span class="" style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2861em;"><span class=""></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.0361em; vertical-align: -0.2861em;"></span><span class="mord"><span class="mord mathbb">F</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.1514em;"><span class="" style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">p</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.2861em;"><span class=""></span></span></span></span></span></span><span class="mopen">[</span><span class="mord mathnormal">x</span><span class="mclose">]</span></span></span></span></span>
+and <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="double-struck">Z</mi><mo stretchy="false">[</mo><mi>x</mi><mo stretchy="false">]</mo><mo>⊗</mo><mi mathvariant="double-struck">Q</mi><mo>=</mo><mi mathvariant="double-struck">Q</mi><mo stretchy="false">[</mo><mi>x</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">\mathbb{Z}[x] \otimes \mathbb{Q} = \mathbb{Q}[x]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathbb">Z</span><span class="mopen">[</span><span class="mord mathnormal">x</span><span class="mclose">]</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">⊗</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.8556em; vertical-align: -0.1667em;"></span><span class="mord mathbb">Q</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathbb">Q</span><span class="mopen">[</span><span class="mord mathnormal">x</span><span class="mclose">]</span></span></span></span></span>.)
+</p>
+
+<h3>Vertical and horizontal</h3>
+
+<p>
+Let <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mo>=</mo><mi>V</mi><mo stretchy="false">(</mo><mi mathvariant="fraktur">p</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">Z = V(\mathfrak{p})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6833em;"></span><span class="mord mathnormal" style="margin-right: 0.0715em;">Z</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.2222em;">V</span><span class="mopen">(</span><span class="mord mathfrak">p</span><span class="mclose">)</span></span></span></span></span> be irreducible closed of dimension <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">1</span></span></span></span></span>, so <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="fraktur">p</mi></mrow><annotation encoding="application/x-tex">\mathfrak{p}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.713em; vertical-align: -0.1891em;"></span><span class="mord mathfrak">p</span></span></span></span></span> has height
+<span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">1</span></span></span></span></span> and the classification leaves two possibilities. Recall that&nbsp;<span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi><msub><mi mathvariant="normal">∣</mi><mi>Z</mi></msub></mrow><annotation encoding="application/x-tex">\pi|_Z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal" style="margin-right: 0.0359em;">π</span><span class="mord"><span class="mord">∣</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3283em;"><span class="" style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right: 0.0715em;">Z</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span class=""></span></span></span></span></span></span></span></span></span></span>&nbsp;is said to be&nbsp;<em>dominant</em> if its image
+is dense in <span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Spec</mi><mo>⁡</mo><mi mathvariant="double-struck">Z</mi></mrow><annotation encoding="application/x-tex">\operatorname{Spec}\mathbb{Z}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8833em; vertical-align: -0.1944em;"></span><span class="mop"><span class="mord mathrm">Spec</span></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord mathbb">Z</span></span></span></span></span>.
+</p>
+
+<ul>
+  <li><strong>Vertical:</strong> \(\mathfrak{p} = (p)\). Then \(\pi(Z) = \{(p)\}\), a single closed
+      point, and \(Z\) is the entire fiber \(\mathbb{A}^1_{\mathbb{F}_p}\). It lies in one
+      characteristic.</li>
+  <li><strong>Horizontal:</strong> \(\mathfrak{p} = (f)\) with \(f\) primitive irreducible of degree
+      \(\ge 1\). Then \((f) \cap \mathbb{Z} = (0)\), so \((0) \in \pi(Z)\) and \(\pi|_Z\) is
+      dominant, since \(\overline{\{(0)\}} = \operatorname{Spec}\mathbb{Z}\). It meets many
+      characteristics at once.</li>
+</ul>
+
+<p>
+Exactly which&nbsp;<span style="font-size: 16.32px;">characteristics</span>&nbsp;is worth pinning down explicitly, because it is where the one non-monic curve in the figure
+misbehaves.
+</p>
+
+<div class="lem">
+  <span class="head">Lemma (which fibers a horizontal curve meets).</span>
+  <div class="body">
+  Let \(f \in \mathbb{Z}[x]\) be primitive irreducible of degree \(\ge 1\). Then \(V(f)\) meets the
+  fiber over \(p\) if and only if the reduction \(\bar f \in \mathbb{F}_p[x]\) is nonconstant. If
+  \(f\) is monic this holds for every \(p\), so \(\pi|_{V(f)}\) is surjective.
+  </div>
+</div>
+
+<div class="proof">
+  <span class="head">Proof.</span>
+  \(V(f)\) meets the fiber over \(p\) exactly when some prime contains both \(p\) and \(f\), i.e.
+  when the ideal \((p,f)\) is proper, i.e. when \(\bar f\) is not a unit in \(\mathbb{F}_p[x]\).
+  Since \(f\) is primitive, \(\bar f\) is nonzero, so it is a unit precisely when it is a nonzero
+  constant. If \(f\) is monic then \(\bar f\) is monic of the same degree \(\ge 1\).
+</div>
+
+<p>
+So \(V(2x-1)\) misses the fiber over \(2\), where its reduction is the constant \(1\); every monic
+curve meets every fiber.
+</p>
+
+<h3>Horizontal curves are orders</h3>
+
+<p>
+An <em>order</em> in a number field \(K\) of degree \(n\) is a subring \(\mathcal{O} \subseteq K\)
+that is finitely generated as a \(\mathbb{Z}\)-module and spans \(K\) over \(\mathbb{Q}\);
+equivalently, a subring free of rank \(n\) as a \(\mathbb{Z}\)-module.
+</p>
+
+<div class="prop">
+  <span class="head">Proposition (horizontal curves are orders).</span>
+  <div class="body">
+  Let \(f\) be primitive irreducible of degree \(n \ge 1\), let \(K = \mathbb{Q}[x]/(f)\), and let
+  \(\alpha\) be the image of \(x\) in \(\mathbb{Z}[x]/(f)\). Then
+  \(V(f) = \operatorname{Spec}\mathbb{Z}[\alpha]\), the residue field at the generic point \((f)\) is
+  \(\kappa\big((f)\big) \cong K\), and if \(f\) is monic then \(\mathbb{Z}[\alpha]\) is an order in
+  \(K\).
+  </div>
+</div>
+
+<div class="proof">
+  <span class="head">Proof.</span>
+  \(V(f)\) is the set of primes containing \(f\), which correspond to primes of
+  \(\mathbb{Z}[x]/(f) = \mathbb{Z}[\alpha]\). Since \((f)\) is prime this ring is a domain, and
+  \(\kappa((f)) = \operatorname{Frac}(\mathbb{Z}[\alpha])\) by definition. That fraction field is
+  \(K\): it sits inside \(K = \mathbb{Q}[x]/(f)\), and every element of \(K\) has the form
+  \(\tfrac1m h(\alpha)\) with \(h \in \mathbb{Z}[x]\) and \(m \in \mathbb{Z}\), hence is a ratio of
+  elements of \(\mathbb{Z}[\alpha]\). If \(f\) is monic, division with remainder by \(f\) is
+  available in \(\mathbb{Z}[x]\), so every class mod \(f\) has a unique representative of degree
+  \(&lt; n\); thus \(\mathbb{Z}[\alpha]\) is free with basis
+  \(1, \alpha, \ldots, \alpha^{n-1}\), of rank \(n = [K:\mathbb{Q}]\), and it spans \(K\).
+</div>
+
+<p>&nbsp;(keep taking powers of 1/2)
+Monicity is not just decoration here. For \(f = 2x-1\) we get
+\(\mathbb{Z}[x]/(2x-1) \cong \mathbb{Z}[\tfrac12]\), which is not finitely generated over
+\(\mathbb{Z}\) and so is not an order in \(\mathbb{Q}\).
+</p>
+
+<div class="prop">
+  <span class="head">Proposition (spreading out).</span>
+  <div class="body">
+  Taking closures is a bijection
+  \[
+    \{\text{closed points of } \mathbb{A}^1_{\mathbb{Q}}\}
+      \;\xrightarrow{\ \sim\ }\;
+    \{\text{horizontal curves in } \mathbb{A}^1_{\mathbb{Z}}\},
+    \qquad \mathfrak{q} \longmapsto \overline{\{\mathfrak{q}\}},
+  \]
+  whose inverse sends a horizontal curve to its generic point, equivalently to its intersection with
+  the generic fiber.
+  </div>
+</div>
+
+<div class="proof">
+  <span class="head">Proof.</span>
+  By the proposition on fibers, the primes of \(\mathbb{Q}[x]\) correspond to the primes
+  \(\mathfrak{q}\) of \(\mathbb{Z}[x]\) with \(\mathfrak{q} \cap \mathbb{Z} = (0)\), which by our previous classification result are \((0)\) and the \((f)\). Discarding the zero ideal on both sides leaves the
+  closed points of \(\mathbb{A}^1_{\mathbb{Q}}\) matched with the primes \((f)\), whose closures are
+  by definition the horizontal curves. The dictionary of §1 says a nonempty irreducible closed set
+  has a unique generic point, which gives the inverse; and that generic point is the unique element
+  of \(V(f)\) contracting to \((0)\), i.e. \(V(f) \cap \pi^{-1}((0))\).
+</div>
+
+<p>
+So a closed point of the generic fiber and a horizontal curve are the same datum: a number field
+\(K\), presented as a point of a \(\mathbb{Q}\)-line, spreads out into a curve over \(\mathbb{Z}\).
+In the figure each horizontal curve converges on the right to the single dot it came from.
+</p>
+
+<h2><span class="secnum">4</span>Where the curves meet the fibers</h2>
+
+<p>
+Fix \(f\) monic irreducible of degree \(n\) and a prime \(p\), and factor the reduction into
+distinct monic irreducibles in \(\mathbb{F}_p[x]\),
+\[
+  \bar f \;=\; \prod_{i=1}^{r} \bar g_i^{\,e_i}, \qquad f_i := \deg \bar g_i .
+\]
+Call \(e_i\) the <em>ramification index</em> and \(f_i\) the <em>residue degree</em> at
+\(\bar g_i\). Following the usual terminology, \(p\) is <em>ramified</em> for \(f\) if some
+\(e_i > 1\); <em>inert</em> if \(r = 1\) with \(e_1 = 1\) and \(f_1 = n\); and <em>split
+completely</em> if \(r = n\), forcing every \(e_i = f_i = 1\).
+</p>
+
+<div class="prop">
+  <span class="head">Proposition (intersections).</span>
+  <div class="body">
+  \(V(f) \cap V(p) = V(p,f)\), and this is the finite set of closed points \((p, g_i)\) for
+  \(i = 1, \ldots, r\), with residue fields
+  \(\kappa\big((p,g_i)\big) \cong \mathbb{F}_{p^{f_i}}\).
+  </div>
+</div>
+
+<div class="proof">
+  <span class="head">Proof.</span>
+  A prime contains both \(p\) and \(f\) if and only if it contains the ideal they generate, so
+  \(V(f) \cap V(p) = V\big((p) + (f)\big) = V(p,f)\); these correspond to the primes of
+  \(\mathbb{Z}[x]/(p,f) \cong \mathbb{F}_p[x]/(\bar f)\). The Chinese remainder theorem splits that
+  ring as \(\prod_i \mathbb{F}_p[x]/(\bar g_i^{\,e_i})\), and each factor is local with maximal
+  ideal \((\bar g_i)\), so the primes are the \((\bar g_i)\) and the residue field at \((p,g_i)\) is
+  \(\mathbb{F}_p[x]/(\bar g_i)\), a field with \(p^{f_i}\) elements.
+</div>
+
+<p>We can define the <em>intersection number</em> of the curve with the fiber to be the
+\(\mathbb{F}_p\)-dimension of the intersection,
+\[
+  V(f) \cdot V(p) \;:=\; \dim_{\mathbb{F}_p} \mathbb{Z}[x]/(p,f),
+\]
+which counts the intersection points with multiplicity: the point \((p,g_i)\) contributes
+\(e_i f_i\), its ramification index times the degree of its residue field.
+</p>
+
+<div class="prop">
+  <span class="head">Proposition (constant intersection number).</span>
+  <div class="body">
+  Let \(f\) be monic of degree \(n\). Then \(\mathbb{Z}[x]/(f)\) is free of rank \(n\) over
+  \(\mathbb{Z}\), and for <em>every</em> prime \(p\),
+  \[
+    V(f)\cdot V(p) \;=\; \sum_{i=1}^{r} e_i f_i \;=\; n .
+  \]
+  </div>
+</div>
+
+<div class="proof">
+  <span class="head">Proof.</span>
+  Division with remainder by the monic \(f\) gives every class in \(\mathbb{Z}[x]/(f)\) a unique
+  representative of degree \(&lt; n\), so \(1, x, \ldots, x^{n-1}\) is a \(\mathbb{Z}\)-basis. Reducing
+  mod \(p\),
+  \(\mathbb{Z}[x]/(p,f) \cong \big(\mathbb{Z}[x]/(f)\big) \otimes_{\mathbb{Z}} \mathbb{F}_p\) has
+  \(\mathbb{F}_p\)-dimension \(n\). For the middle equality, the decomposition in the previous proof
+  gives \(\dim_{\mathbb{F}_p} \mathbb{F}_p[x]/(\bar f) = \sum_i \dim_{\mathbb{F}_p}
+  \mathbb{F}_p[x]/(\bar g_i^{\,e_i}) = \sum_i e_i f_i\), since
+  \(\deg \bar g_i^{\,e_i} = e_i f_i\).
+</div>
+
+<p>
+So a degree-\(n\) horizontal curve crosses every vertical fiber in a scheme of dimension exactly
+\(n\), without exception. What changes from prime to prime is only how that \(n\) is distributed:
+spread across \(n\) separate points, concentrated at one point with a large residue field, or piled
+up at one point with multiplicity. Those three are split, inert, and ramified.
+</p>
+
+<h3>Two classical inputs</h3>
+
+<p>To keep going, we will need to blackbox some classical results. To this end, let \(K\) be a number field of degree \(n\) and \(\mathcal{O}_K\) its <em>ring of integers</em>, the
+integral closure of \(\mathbb{Z}\) in \(K\); it is an order, and it contains every order, so any
+\(\mathbb{Z}[\alpha] \subseteq \mathcal{O}_K\) has finite index. The next theorem is the one result
+in this note we do not prove.
+</p>
+
+<div class="thm">
+  <span class="head">Theorem (Dedekind's factorization criterion).</span>
+  <div class="body">
+  Let \(f\) be monic irreducible with root \(\alpha\), let \(K = \mathbb{Q}(\alpha)\), and suppose
+  \(p \nmid [\mathcal{O}_K : \mathbb{Z}[\alpha]]\). With \(\bar f = \prod_i \bar g_i^{\,e_i}\) as
+  above,
+  \[
+    p\,\mathcal{O}_K \;=\; \prod_{i=1}^{r} \mathfrak{P}_i^{\,e_i},
+    \qquad \mathfrak{P}_i = \big(p,\; g_i(\alpha)\big),
+  \]
+  with the \(\mathfrak{P}_i\) distinct primes of \(\mathcal{O}_K\) and
+  \([\mathcal{O}_K/\mathfrak{P}_i : \mathbb{F}_p] = f_i\).
+  </div>
+</div>
+
+<p>
+So under that hypothesis the intersection of the horizontal curve with the fiber over \(p\)
+<em>is</em> the factorization of \(p\) in \(\mathcal{O}_K\), and the \(e_i, f_i\) defined above by
+polynomial factorization agree with the usual ramification indices and residue degrees. The index
+hypothesis is the price of drawing \(\operatorname{Spec}\mathbb{Z}[\alpha]\) rather than
+\(\operatorname{Spec}\mathcal{O}_K\), i.e.the figure flags the curves where it can fail.
+</p>
+
+<p>
+The second input is the discriminant. For monic \(f\) of degree \(n\) with roots
+\(\alpha_1, \ldots, \alpha_n\) in an algebraic closure,
+\(\operatorname{disc}(f) = \prod_{i&lt;j}(\alpha_i - \alpha_j)^2\). It is a universal polynomial with
+integer coefficients in the coefficients of \(f\), so \(\operatorname{disc}(f) \in \mathbb{Z}\) and
+reduction commutes with it: \(\operatorname{disc}(\bar f) = \overline{\operatorname{disc}(f)}\).
+</p>
+
+<div class="prop">
+  <span class="head">Proposition (ramification is a discriminant condition).</span>
+  <div class="body">
+  For \(f\) monic in \(\mathbb{Z}[x]\) and \(p\) prime, \(p\) is ramified for \(f\) if and only if
+  \(p \mid \operatorname{disc}(f)\).
+  </div>
+</div>
+
+<div class="proof">
+  <span class="head">Proof.</span>
+  A monic polynomial over a field has vanishing discriminant if and only if it has a repeated root
+  in an algebraic closure. Over \(\mathbb{F}_p\) that is the same as having a repeated irreducible
+  factor: irreducible polynomials over a finite field are separable, so distinct irreducible factors
+  have no common root, and a factor appearing to a power \(e_i > 1\) forces a repeated root.
+  Applying this to \(\bar f\) and using \(\operatorname{disc}(\bar f) =
+  \overline{\operatorname{disc}(f)}\), some \(e_i > 1\) if and only if
+  \(\operatorname{disc}(f) \equiv 0 \pmod p\).
+</div>
+
+<p>
+Since the discriminant of an irreducible polynomial is nonzero, only finitely many fibers are ramified
+for a given horizontal curve: the ones dividing the discriminant. Those are the primes where the
+strands in the figure touch instead of crossing.
+</p>
+
+<h2><span class="secnum">5</span>Reading the picture</h2>
+
+<h3>Three primes for \(x^2+1\)</h3>
+
+<p>Let’s think about our above work in the conext of Mumford’s drawing. Go turn on the curve \(x^2+1\) in the figure. It is
+\(V(x^2+1) = \operatorname{Spec}\mathbb{Z}[i]\), monic of degree \(2\), so two strands, and
+\(\operatorname{disc}(x^2+1) = -4\). Three things happen.
+</p>
+
+<div class="ex">
+  <span class="head">\(p = 5\), split.</span>
+  \(x^2+1 = (x-2)(x+2)\) in \(\mathbb{F}_5[x]\). The two strands land on the distinct rational points
+  \((5,x-2)\) and \((5,x+2)\), each with \(e = f = 1\) and residue field \(\mathbb{F}_5\).
+  Correspondingly \(5 = (2+i)(2-i)\) splits in \(\mathbb{Z}[i]\).
+</div>
+
+<div class="ex">
+  <span class="head">\(p = 3\), inert.</span>
+  \(x^2+1\) has no root mod \(3\), so it is irreducible in \(\mathbb{F}_3[x]\). The two strands merge
+  into the single closed point \((3, x^2+1)\), with \(e = 1\) and \(f = 2\), residue field
+  \(\mathbb{F}_9\) &mdash; one point, but twice as big. The intersection number is still
+  \(ef = 2\).
+</div>
+
+<div class="ex">
+  <span class="head">\(p = 2\), ramified.</span>
+  \(x^2 + 1 = (x+1)^2\) in \(\mathbb{F}_2[x]\), so \(e = 2\) and \(f = 1\) at the single point
+  \((2, x+1)\), and the strands touch there rather than crossing. In \(\mathbb{Z}[i]\) this is
+  \((1+i)^2 = 2i\), so \((2) = (1+i)^2\) as ideals. And indeed \(2 \mid \operatorname{disc} = -4\),
+  as the discriminant criterion requires.
+</div>
+
+<p>
+Stepping back from the three primes to the whole curve: the split primes are exactly those with
+\(p \equiv 1 \pmod 4\) and the inert ones exactly those with \(p \equiv 3 \pmod 4\). Fermat's sum of two-squares theorem and the splitting of primes in the Gaussian integers become one statement about
+how a single conic in \(\operatorname{Spec}\mathbb{Z}[x]\) crosses the vertical lines.
+</p>
+
+<h3>Sections</h3>
+
+<p>
+Turn on \(x\). Since \(\mathbb{Z}[x]/(x - c) \cong \mathbb{Z}\) for any \(c \in \mathbb{Z}\), the
+curve \(V(x-c)\) is a copy of \(\operatorname{Spec}\mathbb{Z}\) and \(\pi\) restricts to an
+isomorphism on it: it is a <em>section</em> of \(\pi\). Degree \(1\) means the intersection number
+with every fiber is \(1\), so it meets each fiber in exactly one rational point, namely
+\((p,\, x - \bar c)\), always with \(e = f = 1\). A section is never ramified, and consistently
+\(\operatorname{disc}(x-c) = 1\), divisible by no prime.
+</p>
+
+<h3>Where two curves meet</h3>
+
+<p>
+Distinct horizontal curves cross each other, and you can see that the figure shows this with both \(x^2+1\) and
+\(x^2-5\) switched on, the two curves share a point over \(2\) and another over \(3\). This is not an
+accident of the drawing.
+</p>
+
+<div class="prop">
+  <span class="head">Proposition (horizontal curves meet in closed points only).</span>
+  <div class="body">
+  Let \(f, g \in \mathbb{Z}[x]\) be primitive irreducible of degree \(\ge 1\) generating
+  distinct ideals. Then \(V(f) \cap V(g)\) is a finite set of closed points, and it is empty for all
+  but finitely many fibers.
+  </div>
+</div>
+
+<div class="proof">
+  <span class="head">Proof.</span>
+  By Gauss, \(f\) and \(g\) are non-associate irreducibles in \(\mathbb{Q}[x]\), hence coprime
+  there, so \(uf + vg = 1\) for some \(u,v \in \mathbb{Q}[x]\). Clearing denominators gives a nonzero
+  \(m \in \mathbb{Z}\) with \(m \in (f,g)\). Any prime \(\mathfrak{p} \supseteq (f,g)\) therefore
+  contains \(m\), so \(\mathfrak{p} \cap \mathbb{Z}\) is nonzero, say \(\mathfrak{p} \cap \mathbb{Z} =
+  (p)\) with \(p \mid m\). Also \(\mathfrak{p}\) is not \((p)\) itself: otherwise \(f \in (p)\), meaning \(p\)
+  divides every coefficient of \(f\), contradicting primitivity. By the classification
+  \(\mathfrak{p}\) is then a closed point \((p,h)\). Finitely many \(p\) divide \(m\), and each fiber
+  contains only finitely many points of \(V(f)\).
+</div>
+
+<p>
+For \(f = x^2+1\) and \(g = x^2-5\) this is concrete: \(f - g = 6\), so
+\((f,g) = (6,\, x^2+1)\), and a prime containing it contains \(2\) or \(3\). Modulo \(2\) both
+reduce to \((x+1)^2\), and modulo \(3\) both reduce to the irreducible \(x^2+1\). So
+\[
+  V(x^2+1) \,\cap\, V(x^2-5) \;=\; \big\{\,(2,\,x+1),\; (3,\,x^2+1)\,\big\},
+\]
+exactly the two shared dots in the figure. Two number fields that are different over
+\(\mathbb{Q}\) can still collide modulo small primes, and that collision is a literal crossing of
+curves on the surface.
+</p>
+
+<h3>The curve that gets away</h3>
+
+<p>
+Turn on \(2x-1\). It is primitive and irreducible, so \((2x-1)\) is an honest height-one prime, but
+it is not monic: \(\mathbb{Z}[x]/(2x-1) \cong \mathbb{Z}[1/2]\). Over \(p = 2\) its reduction is the
+constant \(1\), a unit, so by the lemma on which fibers a curve meets, \(V(2x-1)\) misses the fiber
+over \(2\) entirely — the strand runs off the top of the box. The map to
+\(\operatorname{Spec}\mathbb{Z}\) is neither finite nor surjective, and the constant intersection
+number fails precisely because monicity fails. This is the arithmetic version of an asymptote.
+</p>
+
+<h3>When the picture lies</h3>
+
+<p>
+Turn on \(x^2-5\), with \(\operatorname{disc} = 20\), and look at \(p = 2\): the reduction is
+\((x+1)^2\), so the drawing shows a tangency and reports ramification. But \(2\) is in fact
+<em>inert</em> in \(\mathcal{O}_K = \mathbb{Z}\!\left[\tfrac{1+\sqrt5}{2}\right]\), where
+\(K = \mathbb{Q}(\sqrt5)\). There is no contradiction, because
+\([\mathcal{O}_K : \mathbb{Z}[\sqrt5]] = 2\), so the hypothesis of Dedekind's criterion fails at
+\(p = 2\) and the factorization of \(\bar f\) is not entitled to describe the factorization of
+\(2\mathcal{O}_K\). What the tangency records instead is that
+\(\operatorname{Spec}\mathbb{Z}[\sqrt5]\) is singular at \((2, x+1)\): the curve drawn is an order,
+not the maximal one. The figure flags the curves where this can happen.
+</p>
+
+<h3>What the drawing leaves out</h3>
+
+<p>
+We have at least three omissions. Only six fibers are drawn, and only finitely many points on each, whereas
+every fiber \(\mathbb{A}^1_{\mathbb{F}_p}\) has one closed point for each monic irreducible in
+\(\mathbb{F}_p[x]\) and so is infinite. The vertical position of a closed point of degree
+\(&gt; 1\) carries no information at all — such a point has no coordinate to be placed by, unlike
+\((p, x-a)\), which sits at height \(a/p\). And the drawing records the topological space together
+with which prime each mark denotes; the structure sheaf, which is what makes
+\(\operatorname{Spec}\mathbb{Z}[x]\) a scheme rather than a space, is not visible anywhere in it.
+Multiplicity is the one place where non-reduced structure surfaces, and even there it is annotated
+rather than seen.
+</p>
+
+<h2><span class="secnum">6</span>References</h2>
+
+<ul class="refs">
+  <li>D. Mumford, <em>The Red Book of Varieties and Schemes</em>, Ch. II. The original drawing, and
+      the source of the fuzz convention.</li>
+  <li>D. Eisenbud and J. Harris, <em>The Geometry of Schemes</em>, Ch. II. A careful and very
+      readable treatment of \(\operatorname{Spec}\mathbb{Z}[x]\) with several worked fibers.</li>
+</ul>
+
+<footer>
+  <p>Corrections and comments are welcome: <i>see homepage for up-to-date email adress</i>.</p>
+  <p class="colophon">
+    Written with the help of Claude Opus 5 (Anthropic), which built the
+    interactive figure. The mathematical content and any errors are surely mine. Finally, I borrowed freely from the above references listed, so nothing here is orginal, and in fact Claude was able to solve nearly every question I had on this stuff which leads to me think this material is quite standard or at least well covered elsewhere besides the sources listed above!&nbsp;</p>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ============================================================
+     Small arithmetic helpers over F_p
+     ============================================================ */
+
+  function mod(a, n) { return ((a % n) % n + n) % n; }
+
+  function inverseMod(a, p) {
+    a = mod(a, p);
+    for (var i = 1; i < p; i++) { if (mod(a * i, p) === 1) return i; }
+    return 1;
+  }
+
+  // coefficients are stored low-degree first
+  function reduceCoeffs(c, p) {
+    var r = c.map(function (v) { return mod(v, p); });
+    while (r.length > 1 && r[r.length - 1] === 0) r.pop();
+    return r;
+  }
+
+  function isZeroPoly(c) { return c.length === 1 && c[0] === 0; }
+
+  function evalPoly(c, a, p) {
+    var s = 0;
+    for (var i = c.length - 1; i >= 0; i--) s = mod(s * a + c[i], p);
+    return s;
+  }
+
+  // synthetic division by (x - a), assumed exact
+  function divLinear(c, a, p) {
+    var n = c.length - 1;
+    var q = new Array(n);
+    q[n - 1] = mod(c[n], p);
+    for (var i = n - 1; i >= 1; i--) q[i - 1] = mod(c[i] + a * q[i], p);
+    return q;
+  }
+
+  function makeMonic(c, p) {
+    var li = inverseMod(c[c.length - 1], p);
+    return c.map(function (v) { return mod(v * li, p); });
+  }
+
+  /* Factor a polynomial of degree <= 3 over F_p.
+     Strategy: strip linear factors with multiplicity by root search; what
+     remains has no roots, so in degree 2 or 3 it is irreducible. Degrees
+     above 3 are not used by the curve library. */
+  function factorModP(coeffs, p) {
+    var c = reduceCoeffs(coeffs, p);
+    if (isZeroPoly(c)) return { degenerate: "zero", factors: [] };
+    if (c.length === 1) return { degenerate: "unit", factors: [] };
+
+    var factors = [];
+    for (var a = 0; a < p; a++) {
+      var m = 0;
+      while (c.length > 1 && evalPoly(c, a, p) === 0) { c = divLinear(c, a, p); m++; }
+      if (m > 0) factors.push({ g: [mod(-a, p), 1], deg: 1, mult: m, root: a });
+    }
+    if (c.length - 1 > 0) {
+      factors.push({ g: makeMonic(c, p), deg: c.length - 1, mult: 1, root: null });
+    }
+    return { degenerate: null, factors: factors };
+  }
+
+  /* ============================================================
+     TeX helpers
+     ============================================================ */
+
+  function polyTex(c) {
+    var terms = [];
+    for (var i = c.length - 1; i >= 0; i--) {
+      var v = c[i];
+      if (v === 0) continue;
+      var av = Math.abs(v), s = "";
+      if (i === 0) { s = String(av); }
+      else {
+        if (av !== 1) s = String(av);
+        s += (i === 1) ? "x" : ("x^{" + i + "}");
+      }
+      terms.push({ neg: v < 0, s: s });
+    }
+    if (!terms.length) return "0";
+    var out = (terms[0].neg ? "-" : "") + terms[0].s;
+    for (var k = 1; k < terms.length; k++) out += (terms[k].neg ? " - " : " + ") + terms[k].s;
+    return out;
+  }
+
+  function idealTex(p, g) { return "(" + p + ",\\; " + polyTex(g) + ")"; }
+
+  function residueFieldTex(p, d) {
+    return d === 1 ? ("\\mathbb{F}_{" + p + "}") : ("\\mathbb{F}_{" + p + "^{" + d + "}}");
+  }
+
+  /* ============================================================
+     Curve library
+     ============================================================ */
+
+  var CURVES = [
+    { id: "x2p1",  coeffs: [1, 0, 1],   deg: 2, disc: -4,
+      field: "\\mathbb{Q}(i)", order: "\\mathbb{Z}[i]", fieldDisc: -4, badIndex: [],
+      note: "The Gaussian integers. Split exactly at \\(p\\equiv 1 \\pmod 4\\)." },
+    { id: "x2m2",  coeffs: [-2, 0, 1],  deg: 2, disc: 8,
+      field: "\\mathbb{Q}(\\sqrt{2})", order: "\\mathbb{Z}[\\sqrt{2}]", fieldDisc: 8, badIndex: [],
+      note: "Split exactly at \\(p \\equiv \\pm 1 \\pmod 8\\)." },
+    { id: "x2px1", coeffs: [1, 1, 1],   deg: 2, disc: -3,
+      field: "\\mathbb{Q}(\\zeta_3)", order: "\\mathbb{Z}[\\zeta_3]", fieldDisc: -3, badIndex: [],
+      note: "The Eisenstein integers; ramified only at \\(3\\)." },
+    { id: "x2mxm1", coeffs: [-1, -1, 1], deg: 2, disc: 5,
+      field: "\\mathbb{Q}(\\sqrt{5})", order: "\\mathbb{Z}\\!\\left[\\tfrac{1+\\sqrt5}{2}\\right]",
+      fieldDisc: 5, badIndex: [],
+      note: "The golden ratio. This one <em>is</em> the maximal order, unlike \\(x^2-5\\)." },
+    { id: "x2m5",  coeffs: [-5, 0, 1],  deg: 2, disc: 20,
+      field: "\\mathbb{Q}(\\sqrt{5})", order: "\\mathbb{Z}[\\sqrt{5}]", fieldDisc: 5, badIndex: [2],
+      note: "Index \\(2\\) in the maximal order, so the picture misreports \\(p=2\\)." },
+    { id: "x3mxm1", coeffs: [-1, -1, 0, 1], deg: 3, disc: -23,
+      field: "\\mathbb{Q}[x]/(x^3-x-1)", order: "\\mathbb{Z}[\\alpha]", fieldDisc: -23, badIndex: [],
+      note: "The smallest cubic field; ramified only at \\(23\\)." },
+    { id: "x3m2",  coeffs: [-2, 0, 0, 1], deg: 3, disc: -108,
+      field: "\\mathbb{Q}(\\sqrt[3]{2})", order: "\\mathbb{Z}[\\sqrt[3]{2}]", fieldDisc: -108,
+      badIndex: [], note: "Ramified at \\(2\\) and \\(3\\); totally ramified at \\(2\\)." },
+    { id: "x",     coeffs: [0, 1],      deg: 1, disc: 1,
+      field: "\\mathbb{Q}", order: "\\mathbb{Z}", fieldDisc: 1, badIndex: [],
+      note: "The zero section: \\(V(x) \\cong \\operatorname{Spec}\\mathbb{Z}\\), a copy of the base." },
+    { id: "2xm1",  coeffs: [-1, 2],     deg: 1, disc: 1, nonMonic: true,
+      field: "\\mathbb{Q}", order: "\\mathbb{Z}[1/2]", fieldDisc: 1, badIndex: [],
+      note: "Not monic: \\(V(2x-1) \\cong \\operatorname{Spec}\\mathbb{Z}[1/2]\\) misses the fiber over \\(2\\)." }
+  ];
+
+  CURVES.forEach(function (c, i) {
+    c.tex = polyTex(c.coeffs);
+    c.color = "var(--c" + (i % 5) + ")";
+    c.colorHex = ["#a4243b", "#1d5b79", "#4a7c2f", "#8a5a00", "#6b3fa0"][i % 5];
+  });
+
+  var PRIMES = [2, 3, 5, 7, 11, 13];
+
+  /* ============================================================
+     Geometry of the plate
+     ============================================================ */
+
+  var GEO = {
+    top: 78, bottom: 428, baseY: 478,
+    xs: [95, 205, 315, 425, 535, 645],
+    xGeneric: 800, xDivider: 722,
+    left: 42, right: 866, escapeY: -34
+  };
+  GEO.h = GEO.bottom - GEO.top;
+
+  var SVGNS = "http://www.w3.org/2000/svg";
+  var state = {
+    active: { x2p1: true },
+    showRational: true,
+    selection: null
+  };
+
+  function yOfRational(a, p) { return GEO.top + ((a + 0.5) / p) * GEO.h; }
+
+  // deterministic pseudo-height for a closed point of degree > 1
+  function yOfHigher(p, g) {
+    var h = 2166136261 ^ p;
+    h = Math.imul(h, 16777619);
+    for (var i = 0; i < g.length; i++) { h ^= (g[i] + 1); h = Math.imul(h, 16777619); }
+    var t = ((h >>> 0) % 977) / 977;
+    var y = GEO.top + (0.07 + 0.86 * t) * GEO.h;
+    // nudge away from rational points so the dots stay distinguishable
+    for (var a = 0; a < p; a++) {
+      if (Math.abs(y - yOfRational(a, p)) < 11) { y += 15; }
+    }
+    if (y > GEO.bottom - 8) y -= 30;
+    return y;
+  }
+
+  function pointKey(p, g) { return p + "|" + g.join(","); }
+
+  /* For a curve and prime, return the closed points cut out, with data. */
+  function cutPoints(curve, p) {
+    var res = factorModP(curve.coeffs, p);
+    if (res.degenerate === "unit") return { escape: true, pts: [] };
+    if (res.degenerate === "zero") return { escape: true, pts: [] };
+    var pts = res.factors.map(function (f) {
+      return {
+        p: p, g: f.g, deg: f.deg, mult: f.mult, root: f.root,
+        y: f.deg === 1 ? yOfRational(f.root, p) : yOfHigher(p, f.g),
+        key: pointKey(p, f.g)
+      };
+    });
+    pts.sort(function (a, b) { return a.y - b.y; });
+    return { escape: false, pts: pts };
+  }
+
+  function splittingType(curve, p) {
+    var cut = cutPoints(curve, p);
+    if (cut.escape) return { kind: "escape", pts: [] };
+    var pts = cut.pts;
+    var ramified = pts.some(function (q) { return q.mult > 1; });
+    var kind;
+    if (ramified) kind = "ramified";
+    else if (pts.length === 1 && pts[0].deg === curve.deg) kind = curve.deg === 1 ? "split" : "inert";
+    else if (pts.length === curve.deg) kind = "split";
+    else kind = "partial";
+    return { kind: kind, pts: pts };
+  }
+
+  /* Assign strands: deg(f) strands, each landing on a point, repeated by e*f. */
+  function strandTargets(curve, p) {
+    var st = splittingType(curve, p);
+    if (st.kind === "escape") {
+      var esc = [];
+      for (var i = 0; i < curve.deg; i++) esc.push(GEO.escapeY);
+      return esc;
+    }
+    var ys = [];
+    st.pts.forEach(function (q) {
+      var n = q.mult * q.deg;
+      for (var j = 0; j < n; j++) ys.push(q.y);
+    });
+    while (ys.length < curve.deg) ys.push(ys.length ? ys[ys.length - 1] : GEO.top + GEO.h / 2);
+    return ys.slice(0, curve.deg);
+  }
+
+  function smoothPath(pts) {
+    if (pts.length < 2) return "";
+    var d = "M " + pts[0][0].toFixed(1) + " " + pts[0][1].toFixed(1);
+    for (var i = 0; i < pts.length - 1; i++) {
+      var p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || pts[i + 1];
+      var c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = p1[1] + (p2[1] - p0[1]) / 6;
+      var c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = p2[1] - (p3[1] - p1[1]) / 6;
+      d += " C " + c1x.toFixed(1) + " " + c1y.toFixed(1) + ", " +
+                   c2x.toFixed(1) + " " + c2y.toFixed(1) + ", " +
+                   p2[0].toFixed(1) + " " + p2[1].toFixed(1);
+    }
+    return d;
+  }
+
+  /* ============================================================
+     SVG construction
+     ============================================================ */
+
+  function el(name, attrs) {
+    var n = document.createElementNS(SVGNS, name);
+    for (var k in attrs) { if (attrs[k] !== null && attrs[k] !== undefined) n.setAttribute(k, attrs[k]); }
+    return n;
+  }
+
+  function hit(node, sel, label, focusable) {
+    node.classList.add("hit");
+    // every dot is clickable, but putting all ~150 of them in the tab order
+    // would bury the rest of the page; only the structural pieces get a stop
+    node.setAttribute("tabindex", focusable === false ? "-1" : "0");
+    node.setAttribute("role", "button");
+    if (label) node.setAttribute("aria-label", label);
+    node.addEventListener("click", function (e) { e.stopPropagation(); select(sel); });
+    node.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(sel); }
+    });
+    return node;
+  }
+
+  function sameSelection(a, b) {
+    if (!a || !b || a.type !== b.type) return false;
+    if (a.type === "fiber") return a.p === b.p;
+    if (a.type === "curve") return a.id === b.id;
+    if (a.type === "point") return a.key === b.key;
+    return true;
+  }
+
+  var svg = document.getElementById("plot");
+
+  function draw() {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    var defs = el("defs");
+    defs.innerHTML =
+      // pen wobble: displace the ink slightly so the lines read as drawn, not plotted
+      '<filter id="pen" x="-6%" y="-6%" width="112%" height="112%">' +
+        '<feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="3" seed="11" result="n"/>' +
+        '<feDisplacementMap in="SourceGraphic" in2="n" scale="1.4" xChannelSelector="R" yChannelSelector="G"/>' +
+      '</filter>' +
+      // wash for the generic point: turbulence used as the image itself, alpha
+      // driven off the red channel, so it is genuine fuzz rather than a tinted box
+      '<filter id="wash" x="-8%" y="-8%" width="116%" height="116%">' +
+        '<feTurbulence type="fractalNoise" baseFrequency="0.006 0.011" numOctaves="4" seed="3" result="t"/>' +
+        '<feColorMatrix in="t" type="matrix" values="' +
+          '0 0 0 0 0.20  0 0 0 0 0.19  0 0 0 0 0.17  0.36 0 0 0 -0.20"/>' +
+        '<feGaussianBlur stdDeviation="2.6"/>' +
+      '</filter>' +
+      // same idea at small scale, masked to the shape, for the smudge on each fiber
+      '<filter id="smudge" x="-45%" y="-70%" width="190%" height="240%">' +
+        '<feTurbulence type="fractalNoise" baseFrequency="0.13" numOctaves="3" seed="9" result="t"/>' +
+        '<feColorMatrix in="t" type="matrix" values="' +
+          '0 0 0 0 0.15  0 0 0 0 0.14  0 0 0 0 0.12  1.30 0 0 0 -0.22" result="c"/>' +
+        '<feComposite in="c" in2="SourceGraphic" operator="in" result="m"/>' +
+        '<feGaussianBlur in="m" stdDeviation="1.7"/>' +
+      '</filter>' +
+      '<clipPath id="plotclip"><rect x="0" y="16" width="900" height="500"/></clipPath>';
+    svg.appendChild(defs);
+
+    /* --- the generic point (0): a wash over everything --- */
+    var wash = el("g", { opacity: "0.9" });
+    var washRect = el("rect", {
+      x: GEO.left - 4, y: GEO.top - 34, width: GEO.right - GEO.left + 8,
+      height: GEO.bottom - GEO.top + 60, fill: "#000", opacity: "0.52",
+      filter: "url(#wash)"
+    });
+    wash.appendChild(hit(washRect, { type: "generic" }, "The generic point (0)"));
+    svg.appendChild(wash);
+
+    // Straight lines are ruled and stay crisp: the displacement filter breaks
+    // long thin strokes into visible dashes. Only the curves get the pen wobble.
+    var ruled = el("g");
+    var inked = el("g", { filter: "url(#pen)" });
+    var plain = el("g");
+    var clipped = el("g", { "clip-path": "url(#plotclip)" });
+    svg.appendChild(clipped);
+    clipped.appendChild(ruled);
+    clipped.appendChild(inked);
+    clipped.appendChild(plain);
+
+    /* --- base line: Spec Z --- */
+    ruled.appendChild(el("path", {
+      d: "M " + GEO.left + " " + GEO.baseY + " L " + (GEO.right + 6) + " " + GEO.baseY,
+      class: "baseline"
+    }));
+
+    /* --- fibers --- */
+    PRIMES.forEach(function (p, k) {
+      var x = GEO.xs[k];
+      var selNow = sameSelection(state.selection, { type: "fiber", p: p });
+
+      var line = el("path", {
+        d: "M " + x + " " + (GEO.bottom + 8) + " L " + x + " " + GEO.top,
+        class: "fiberline" + (selNow ? " sel" : "")
+      });
+      ruled.appendChild(line);
+
+      // wide invisible hit strip for the fiber
+      var strip = el("rect", {
+        x: x - 9, y: GEO.top - 26, width: 18, height: GEO.bottom - GEO.top + 34,
+        fill: "transparent"
+      });
+      plain.appendChild(hit(strip, { type: "fiber", p: p }, "The prime (" + p + ")"));
+
+      // generic point of the fiber = the prime (p) itself, drawn as fuzz on top
+      var fuzz = el("ellipse", {
+        cx: x, cy: GEO.top - 2, rx: 16, ry: 13,
+        fill: "#000", opacity: selNow ? "1" : "0.88", filter: "url(#smudge)"
+      });
+      plain.appendChild(hit(fuzz, { type: "fiber", p: p }, "Generic point of the fiber over " + p));
+
+      // base point
+      plain.appendChild(el("circle", { cx: x, cy: GEO.baseY, r: 3.4, class: "ptdot" }));
+      var lab = el("text", { x: x, y: GEO.baseY + 20, class: "lbl", "text-anchor": "middle" });
+      lab.textContent = "(" + p + ")";
+      plain.appendChild(lab);
+
+      // F_p-rational points
+      if (state.showRational) {
+        for (var a = 0; a < p; a++) {
+          var g = [mod(-a, p), 1];
+          var key = pointKey(p, g);
+          var selPt = sameSelection(state.selection, { type: "point", key: key });
+          var dot = el("circle", {
+            cx: x, cy: yOfRational(a, p), r: selPt ? 4.4 : 2.9, class: "ptdot"
+          });
+          plain.appendChild(hit(dot, { type: "point", p: p, g: g, deg: 1, key: key },
+            "Closed point (" + p + ", x - " + a + ")", false));
+        }
+      }
+    });
+
+    /* --- generic fiber --- */
+    var xg = GEO.xGeneric;
+    ruled.appendChild(el("path", {
+      d: "M " + GEO.xDivider + " " + (GEO.top - 30) + " L " + GEO.xDivider + " " + (GEO.baseY + 6),
+      stroke: "#b9b3a8", "stroke-width": "1", "stroke-dasharray": "2 6", fill: "none"
+    }));
+    var gfSel = sameSelection(state.selection, { type: "genericfiber" });
+    ruled.appendChild(el("path", {
+      d: "M " + xg + " " + (GEO.bottom + 8) + " L " + xg + " " + GEO.top,
+      class: "fiberline" + (gfSel ? " sel" : ""), "stroke-dasharray": "7 5"
+    }));
+    var gfStrip = el("rect", {
+      x: xg - 9, y: GEO.top - 26, width: 18, height: GEO.bottom - GEO.top + 34, fill: "transparent"
+    });
+    plain.appendChild(hit(gfStrip, { type: "genericfiber" }, "The generic fiber"));
+    var gfFuzz = el("ellipse", {
+      cx: xg, cy: GEO.top - 2, rx: 18, ry: 14, fill: "#000",
+      opacity: "0.92", filter: "url(#smudge)"
+    });
+    plain.appendChild(hit(gfFuzz, { type: "generic" }, "The generic point (0)"));
+    plain.appendChild(el("circle", { cx: xg, cy: GEO.baseY, r: 3.4, class: "ptdot hollow" }));
+    var glab = el("text", { x: xg, y: GEO.baseY + 20, class: "lbl", "text-anchor": "middle" });
+    glab.textContent = "(0)";
+    plain.appendChild(glab);
+
+    var baseLbl = el("text", { x: GEO.left + 2, y: GEO.baseY - 9, class: "lbl" });
+    var opPart = el("tspan", { class: "op" });
+    opPart.textContent = "Spec";
+    var bbPart = el("tspan", { class: "bb", dx: "2.5" });
+    bbPart.textContent = "Z";              // blackboard bold via KaTeX_AMS
+    baseLbl.appendChild(opPart);
+    baseLbl.appendChild(bbPart);
+    baseLbl.setAttribute("aria-label", "Spec Z");
+    plain.appendChild(baseLbl);
+
+    var gfLbl = el("text", { x: xg, y: GEO.top - 34, class: "lbl-small", "text-anchor": "middle" });
+    gfLbl.textContent = "generic fiber";
+    plain.appendChild(gfLbl);
+
+    /* --- curves --- */
+    CURVES.forEach(function (curve) {
+      if (!state.active[curve.id]) return;
+      var selNow = sameSelection(state.selection, { type: "curve", id: curve.id });
+
+      var cols = PRIMES.map(function (p) { return strandTargets(curve, p); });
+
+      // where the strands converge on the generic fiber
+      var last = cols[cols.length - 1];
+      var yGen = last.reduce(function (s, v) { return s + v; }, 0) / last.length;
+      if (yGen < GEO.top + 10 || !isFinite(yGen)) yGen = GEO.top + GEO.h / 2;
+
+      for (var j = 0; j < curve.deg; j++) {
+        var pts = [];
+        pts.push([GEO.xs[0] - 38, cols[0][j] + (cols[0][j] - (cols[1] ? cols[1][j] : cols[0][j])) * 0.13]);
+        for (var k = 0; k < PRIMES.length; k++) pts.push([GEO.xs[k], cols[k][j]]);
+        pts.push([(GEO.xs[PRIMES.length - 1] + xg) / 2, (cols[PRIMES.length - 1][j] + yGen) / 2]);
+        pts.push([xg, yGen]);
+
+        var path = el("path", {
+          d: smoothPath(pts),
+          class: "strand" + (selNow ? " sel" : ""),
+          stroke: curve.colorHex,
+          opacity: selNow ? "1" : "0.85"
+        });
+        inked.appendChild(path);
+
+        // wide transparent duplicate to make the strand easy to hit; deliberately
+        // NOT class "strand", or the stylesheet's stroke-width would win
+        var ghost = el("path", {
+          d: smoothPath(pts), fill: "none", stroke: "transparent",
+          style: "stroke-width:13px"
+        });
+        plain.appendChild(hit(ghost, { type: "curve", id: curve.id }, "The prime (" + curve.tex + ")"));
+      }
+
+      // emphasize the closed points the curve passes through
+      PRIMES.forEach(function (p, k) {
+        var st = splittingType(curve, p);
+        if (st.kind === "escape") return;
+        st.pts.forEach(function (q) {
+          var selPt = sameSelection(state.selection, { type: "point", key: q.key });
+          var r = q.deg > 1 ? (selPt ? 6.4 : 5.2) : (selPt ? 4.8 : 3.6);
+          // A hollow dot already means "big residue field", so multiplicity gets a
+          // different mark: a halo behind the point, i.e. a visibly fattened point.
+          if (q.mult > 1) {
+            plain.appendChild(el("circle", {
+              cx: GEO.xs[k], cy: q.y, r: r + 5.5, fill: curve.colorHex, opacity: "0.22"
+            }));
+          }
+          var dot = el("circle", {
+            cx: GEO.xs[k], cy: q.y, r: r,
+            fill: q.deg > 1 ? "var(--panel)" : curve.colorHex,
+            stroke: curve.colorHex, "stroke-width": q.deg > 1 ? 2 : 1.2
+          });
+          plain.appendChild(hit(dot,
+            { type: "point", p: p, g: q.g, deg: q.deg, key: q.key },
+            "Closed point of degree " + q.deg + " over " + p));
+        });
+      });
+
+      // the single point of the generic fiber this curve comes from
+      var gdot = el("circle", {
+        cx: xg, cy: yGen, r: selNow ? 5.4 : 4.2, fill: curve.colorHex
+      });
+      plain.appendChild(hit(gdot, { type: "curve", id: curve.id },
+        "The point (" + curve.tex + ") of the generic fiber"));
+    });
+  }
+
+  // registered once: clicking empty space falls through to the generic point
+  svg.addEventListener("click", function () { select({ type: "generic" }); });
+
+  /* ============================================================
+     Inspector
+     ============================================================ */
+
+  var inspector = document.getElementById("inspector");
+
+  function renderMath(node) {
+    if (window.renderMathInElement) {
+      window.renderMathInElement(node, {
+        delimiters: [
+          { left: "\\[", right: "\\]", display: true },
+          { left: "\\(", right: "\\)", display: false }
+        ],
+        throwOnError: false
+      });
+    }
+  }
+
+  function facts(rows) {
+    var s = '<dl class="facts">';
+    rows.forEach(function (r) {
+      if (r[1] === null || r[1] === undefined) return;
+      s += "<dt>" + r[0] + "</dt><dd>" + r[1] + "</dd>";
+    });
+    return s + "</dl>";
+  }
+
+  function activeCurvesThrough(p, g) {
+    var out = [];
+    CURVES.forEach(function (curve) {
+      if (!state.active[curve.id]) return;
+      var st = splittingType(curve, p);
+      st.pts.forEach(function (q) {
+        if (q.key === pointKey(p, g)) out.push({ curve: curve, q: q, kind: st.kind });
+      });
+    });
+    return out;
+  }
+
+  function describe(sel) {
+    if (!sel) return null;
+
+    if (sel.type === "generic") {
+      return {
+        kicker: "height 0 &middot; the generic point",
+        title: "\\((0)\\)",
+        html: facts([
+          ["ideal", "\\((0)\\)"],
+          ["closure", "all of \\(\\operatorname{Spec}\\mathbb{Z}[x]\\)"],
+          ["residue field", "\\(\\kappa = \\mathbb{Q}(x)\\)"],
+          ["local ring", "\\(\\mathbb{Z}[x]_{(0)} = \\mathbb{Q}(x)\\), a field"],
+          ["dimension", "\\(\\dim \\overline{\\{(0)\\}} = 2\\)"]
+        ]) +
+        '<p class="gloss">The unique point whose closure is everything, so it is dense: every ' +
+        'nonempty open set contains it. Drawn as the wash over the whole plate, since a generic ' +
+        'point is not located anywhere in particular. It is also the generic point of the generic ' +
+        'fiber \\(\\mathbb{A}^1_{\\mathbb{Q}}\\).</p>'
+      };
+    }
+
+    if (sel.type === "genericfiber") {
+      return {
+        kicker: "not a point &middot; a fiber",
+        title: "\\(\\mathbb{A}^1_{\\mathbb{Q}} = \\pi^{-1}\\big((0)\\big)\\)",
+        html: facts([
+          ["fiber over", "\\((0) \\in \\operatorname{Spec}\\mathbb{Z}\\)"],
+          ["ring", "\\(\\mathbb{Z}[x]\\otimes_{\\mathbb{Z}}\\mathbb{Q} = \\mathbb{Q}[x]\\)"],
+          ["its points", "\\((0)\\) and the \\((f)\\), \\(f\\) irreducible over \\(\\mathbb{Q}\\)"]
+        ]) +
+        '<p class="gloss">This dashed line is a fiber, not a point of the surface. Its closed ' +
+        'points are exactly the horizontal curves: a point of \\(\\mathbb{A}^1_{\\mathbb{Q}}\\) ' +
+        'with residue field \\(K\\) spreads out, on taking closure, into the curve ' +
+        '\\(\\operatorname{Spec}\\mathbb{Z}[\\alpha]\\). Every strand in the picture converges to ' +
+        'one dot here.</p>'
+      };
+    }
+
+    if (sel.type === "fiber") {
+      var p = sel.p;
+      return {
+        kicker: "height 1 &middot; vertical",
+        title: "\\((" + p + ")\\)",
+        html: facts([
+          ["ideal", "\\((" + p + ")\\)"],
+          ["closure", "the fiber \\(\\mathbb{A}^1_{\\mathbb{F}_{" + p + "}}\\)"],
+          ["quotient", "\\(\\mathbb{Z}[x]/(" + p + ") \\cong \\mathbb{F}_{" + p + "}[x]\\)"],
+          ["residue field", "\\(\\kappa = \\mathbb{F}_{" + p + "}(x)\\)"],
+          ["local ring", "\\(\\mathbb{Z}[x]_{(" + p + ")}\\), a DVR with uniformizer \\(" + p + "\\)"]
+        ]) +
+        '<p class="gloss">One prime ideal, drawn as the whole vertical line, because the line is ' +
+        'its closure and the ideal is the line\u2019s generic point \u2014 the smudge at the top. ' +
+        'This curve is <em>vertical</em>: it maps to the single point \\((' + p + ')\\) of the ' +
+        'base and lives entirely in characteristic \\(' + p + '\\).</p>'
+      };
+    }
+
+    if (sel.type === "curve") {
+      var curve = null;
+      CURVES.forEach(function (c) { if (c.id === sel.id) curve = c; });
+      if (!curve) return null;
+
+      var ramified = PRIMES.filter(function (p) {
+        return curve.disc % p === 0;
+      });
+      var rows = [
+        ["ideal", "\\((" + curve.tex + ")\\)"],
+        ["closure", "\\(V(" + curve.tex + ") = \\operatorname{Spec}\\," + curve.order + "\\)"],
+        ["residue field", "\\(\\kappa = " + curve.field + "\\)"],
+        ["degree over \\(\\mathbb{Z}\\)", curve.nonMonic ? "not finite (non-monic)" : "\\(" + curve.deg + "\\)"],
+        ["\\(\\operatorname{disc}(f)\\)", "\\(" + curve.disc + "\\)"],
+        ["field disc.", "\\(" + curve.fieldDisc + "\\)"],
+        ["ramified at", ramified.length ? ramified.map(function (p) { return "\\(" + p + "\\)"; }).join(", ") : "no prime shown"]
+      ];
+      var extra = "";
+      if (curve.badIndex.length) {
+        extra = '<div class="flag">The order \\(' + curve.order + '\\) is not maximal at ' +
+          curve.badIndex.map(function (p) { return "\\(" + p + "\\)"; }).join(", ") +
+          ', so Dedekind\u2019s criterion does not apply there and the drawn tangency records a ' +
+          '<em>singularity of the curve</em> rather than ramification in \\(\\mathcal{O}_K\\).</div>';
+      }
+      if (curve.nonMonic) {
+        extra += '<div class="flag">Not monic, so \\(V(f) \\to \\operatorname{Spec}\\mathbb{Z}\\) ' +
+          'is neither finite nor surjective: the strand runs off the top of the plate at the prime ' +
+          'dividing the leading coefficient.</div>';
+      }
+      return {
+        kicker: "height 1 &middot; horizontal",
+        title: "\\((" + curve.tex + ")\\)",
+        html: facts(rows) + '<p class="gloss">' + curve.note + " Drawn as \\(" + curve.deg +
+          "\\) strand" + (curve.deg > 1 ? "s" : "") + ", one for each sheet of the cover; they " +
+          "merge where \\(p\\) is inert and touch where \\(p\\) ramifies.</p>" + extra
+      };
+    }
+
+    if (sel.type === "point") {
+      var pp = sel.p, gg = sel.g, dd = sel.deg;
+      var through = activeCurvesThrough(pp, gg);
+      var rows2 = [
+        ["ideal", "\\(" + idealTex(pp, gg) + "\\)"],
+        ["height", "\\(2\\), maximal"],
+        ["closure", "just itself: a closed point"],
+        ["residue field", "\\(\\kappa \\cong " + residueFieldTex(pp, dd) + "\\), of degree \\(" + dd + "\\) over \\(\\mathbb{F}_{" + pp + "}\\)"],
+        ["local ring", "regular local of dimension \\(2\\); \\(\\{" + pp + ", " + polyTex(gg) + "\\}\\) is a regular system of parameters"],
+        ["lies over", "\\((" + pp + ") \\in \\operatorname{Spec}\\mathbb{Z}\\)"]
+      ];
+      var g2 = "";
+      if (through.length) {
+        var bits = through.map(function (t) {
+          var e = t.q.mult, f = t.q.deg;
+          var word = t.curve.deg === 1
+            ? "meets the fiber transversally in one rational point"
+            : (e > 1 ? "ramifies" : (f > 1 ? "is inert here" : "splits here"));
+          return "\\((" + t.curve.tex + ")\\) passes through with \\(e = " + e + "\\), \\(f = " + f +
+                 "\\) &mdash; " + word + ", contributing \\(ef = " + (e * f) + "\\) to the intersection number";
+        });
+        g2 = '<p class="gloss">' + bits.join(". ") + ".</p>";
+      } else {
+        g2 = '<p class="gloss">None of the displayed curves passes through this point. Turn one on ' +
+             'above, or click a strand, to see the intersection data here.</p>';
+      }
+      return {
+        kicker: "height 2 &middot; closed point",
+        title: "\\(" + idealTex(pp, gg) + "\\)",
+        html: facts(rows2) + g2
+      };
+    }
+    return null;
+  }
+
+  function renderInspector() {
+    var d = describe(state.selection);
+    if (!d) {
+      inspector.innerHTML =
+        '<span class="kicker">Inspector</span>' +
+        '<p class="idle">Click any line, dot, strand, or smudge in the figure. ' +
+        'Each one is a prime ideal of \\(\\mathbb{Z}[x]\\), and its details appear here. ' +
+        'Everything is reachable by <kbd>Tab</kbd> and <kbd>Enter</kbd> too.</p>';
+    } else {
+      inspector.innerHTML =
+        '<span class="kicker">' + d.kicker + "</span>" +
+        "<h4>" + d.title + "</h4>" + d.html;
+    }
+    renderMath(inspector);
+  }
+
+  function select(sel) {
+    state.selection = sameSelection(state.selection, sel) ? null : sel;
+    draw();
+    renderInspector();
+  }
+
+  /* ============================================================
+     Controls
+     ============================================================ */
+
+  function buildControls() {
+    var wrap = document.getElementById("controls");
+    var lab = document.createElement("span");
+    lab.className = "grouplabel";
+    lab.textContent = "Horizontal curves";
+    wrap.appendChild(lab);
+
+    CURVES.forEach(function (curve) {
+      var l = document.createElement("label");
+      l.className = "curvetoggle";
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = !!state.active[curve.id];
+      cb.addEventListener("change", function () {
+        state.active[curve.id] = cb.checked;
+        if (!cb.checked && state.selection && state.selection.type === "curve" &&
+            state.selection.id === curve.id) {
+          state.selection = null;
+        }
+        draw();
+        renderInspector();
+      });
+      var sw = document.createElement("span");
+      sw.className = "swatch";
+      sw.style.background = curve.colorHex;
+      var tx = document.createElement("span");
+      tx.textContent = "\\(" + curve.tex + "\\)";
+      l.appendChild(cb); l.appendChild(sw); l.appendChild(tx);
+      wrap.appendChild(l);
+    });
+
+    var l2 = document.createElement("label");
+    l2.className = "curvetoggle";
+    var cb2 = document.createElement("input");
+    cb2.type = "checkbox";
+    cb2.checked = state.showRational;
+    cb2.addEventListener("change", function () {
+      state.showRational = cb2.checked; draw();
+    });
+    var tx2 = document.createElement("span");
+    tx2.textContent = "\\(\\mathbb{F}_p\\)-points";
+    l2.appendChild(cb2); l2.appendChild(tx2);
+    wrap.appendChild(l2);
+
+    renderMath(wrap);
+  }
+
+  function start() {
+    renderMath(document.body);
+    buildControls();
+    draw();
+    renderInspector();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start);
+  } else {
+    start();
+  }
+})();
+</script>
+
+</body>
+</html>
