@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Jacob's Fun Math Zone</title>
+  <title>Jacob's GeoCity</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- start fetching the heavy background before CSS parsing discovers it -->
@@ -100,62 +100,48 @@
       to   { background-position: 300% 0; }
     }
 
-    .tagline {
-      font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Marker Felt", cursive;
-      color: #ffe94a;
-      font-size: 1.05rem;
-      margin: 0 0 1rem;
-      text-shadow: 1px 1px 0 #000;
+
+    /* ---------- the black hole ---------- */
+    .blackhole {
+      position: relative;
+      z-index: 3;
+      width: min(380px, 86vw);
+      margin: 2rem auto 2.4rem;
     }
 
-    .divider { margin: 0.8rem auto 1.6rem; display: block; max-width: 92%; }
-
-    /* ---------- portal buttons: one stacked column, all equal size ---------- */
-    .portal-stack {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
-      margin: 0.2rem 0 1.8rem;
+    /* the gif has 1-bit alpha, so its outer glow ends on a hard pixel edge.
+       this halo sits behind it and bleeds the same orange into the deep
+       field, which hides the cut. */
+    .blackhole::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 108%;
+      aspect-ratio: 1 / 1;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: radial-gradient(circle,
+        #ff8a3d40 0%, #ff5a0018 45%, transparent 70%);
+      animation: breathe 7s ease-in-out infinite;
+      pointer-events: none;
     }
 
-    .portal {
+    .blackhole img {
       display: block;
-      width: min(380px, 84vw);
-      font-family: "Press Start 2P", "Courier New", monospace;
-      font-size: clamp(0.55rem, 2.1vw, 0.75rem);
-      line-height: 1.6;
-      color: #fff;
-      text-decoration: none;
-      background: linear-gradient(#7a5cff, #4422aa);
-      border: 5px outset #9a80ff;
-      padding: 0.85rem 1rem;
-      text-shadow: 2px 2px 0 #200060;
-      box-shadow: 0 0 18px #6040ff80;
+      width: 100%;
+      height: auto;
+      position: relative;
     }
 
-    .portal:hover { background: linear-gradient(#8f75ff, #5533cc); }
-    .portal:active { border-style: inset; }
-    .portal small {
-      display: block;
-      font-family: Verdana, sans-serif;
-      font-size: 0.7rem;
-      color: #d8ccff;
-      text-shadow: none;
-      margin-top: 0.45rem;
+    @keyframes breathe {
+      0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
+      50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.07); }
     }
 
-    /* dead portals: same size, dimmer, inert */
-    .portal.mini {
-      background: linear-gradient(#5a4699, #332266);
-      border-color: #7a66c0;
-      box-shadow: none;
-      cursor: not-allowed;
+    @media (prefers-reduced-motion: reduce) {
+      .blackhole::before { animation: none; }
     }
-
-    .portal.mini:hover { background: linear-gradient(#5a4699, #332266); }
-    .portal.mini:active { border-style: outset; }
-    .portal.mini small { color: #b8aae0; }
 
     /* ---------- counter footer ---------- */
     .counter {
@@ -269,7 +255,7 @@
        is a desktop experience. (this block must come after .desktop-note's
        base rule: equal specificity, so source order decides the winner) */
     @media (max-width: 760px) {
-      .banner, .deco, .divider { display: none; }
+      .banner, .deco { display: none; }
       main { padding-top: 2.4rem; }
       .desktop-note { display: block; }
     }
@@ -299,7 +285,7 @@
 
   <!-- yes, a real marquee tag. it still works. -->
   <marquee id="marquee" class="banner" scrollamount="5">
-    ★ ☆ ★ WELCOME, TRAVELER, TO JACOB'S FUN MATH PAGE ★ ☆ ★ SIGN OF QUALITY:
+    ★ ☆ ★ WELCOME, TRAVELER, TO JACOB'S GEOCITY ★ ☆ ★ SIGN OF QUALITY:
     THIS PAGE IS BEST VIEWED AT 800×600 ★ ☆ ★<span id="daily-history"></span>
   </marquee>
 
@@ -323,27 +309,13 @@
   <img class="deco smooth blend" id="deco-galaxy" src="assets/galaxy.gif" alt="" loading="lazy" decoding="async">
 
   <main>
-    <h1>FUN&nbsp;MATH</h1>
-    <p class="tagline">a less than rigorous form of mathematics one ought to avoid</p>
+    <h1>MY&nbsp;GEOCITY</h1>
 
-    <img class="divider" src="assets/divider.png" alt="">
-
-    <div class="portal-stack">
-      <a class="portal" href="/fun-math/proofs/">
-        ▸ PROOFS FROM MY BOOK ◂
-        <small>proofs I like, written out until they are actually clear</small>
-      </a>
-      <a class="portal mini">
-        🚧 UNDER CONSTRUCTION 🚧
-        <small>future zone</small>
-      </a>
-      <a class="portal mini">
-        🚧 UNDER CONSTRUCTION 🚧
-        <small>future zone</small>
-      </a>
+    <div class="blackhole">
+      <img src="assets/black-hole.gif" width="380" height="253"
+           alt="A black hole, its accretion disk swirling around the event horizon"
+           decoding="async" fetchpriority="high">
     </div>
-
-    <img class="divider" src="assets/divider.png" alt="">
 
     <p class="counter">You are visitor <span class="digits" id="odometer">000042</span></p>
 
