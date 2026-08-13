@@ -36,3 +36,12 @@
 
 # 2026-07: /problems/ (Quick Math Problems) retired, section rebuilt as Fun Math
 /problems/*   /fun-math/   301
+
+# 2026-08: Proofs from My Book retired; Fun Math rebuilt as My GeoCity.
+/fun-math/proofs/algebra/*                   /fun-math/   301
+/fun-math/proofs/real-analysis/*             /fun-math/   301
+/fun-math/proofs/complex-analysis/*          /fun-math/   301
+/fun-math/proofs/topology/*                  /fun-math/   301
+/fun-math/proofs/algebraic-geometry/*        /fun-math/   301
+/fun-math/proofs/algebraic-number-theory/*   /fun-math/   301
+/fun-math/proofs/*                           /fun-math/   301
