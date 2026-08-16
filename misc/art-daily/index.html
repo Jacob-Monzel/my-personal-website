@@ -70,9 +70,9 @@
     inset: 0;
     pointer-events: none;
     z-index: 3;
-    background: radial-gradient(ellipse 62% 62% at 50% 47%,
-      rgba(0,0,0,0) 0%, rgba(0,0,0,0) 34%,
-      rgba(0,0,0,.34) 62%, rgba(0,0,0,.66) 84%, rgba(0,0,0,.84) 100%);
+    background: radial-gradient(ellipse 78% 78% at 50% 47%,
+      rgba(0,0,0,0) 0%, rgba(0,0,0,0) 46%,
+      rgba(0,0,0,.14) 68%, rgba(0,0,0,.36) 87%, rgba(0,0,0,.52) 100%);
   }
 
   #surface {
@@ -91,9 +91,12 @@
     margin: -600px 0 0 -750px;
     pointer-events: none;
     mix-blend-mode: screen;
-    background: radial-gradient(ellipse 50% 50% at 50% 50%,
-      var(--wall-lit) 0%, rgba(0,0,0,0) 68%);
-    opacity: .78;
+    background:
+      radial-gradient(ellipse 22% 24% at 50% 50%,
+        rgba(255,246,224,.55) 0%, rgba(255,246,224,.16) 45%, rgba(0,0,0,0) 70%),
+      radial-gradient(ellipse 50% 50% at 50% 50%,
+        var(--wall-lit) 0%, rgba(0,0,0,0) 70%);
+    opacity: .95;
     transition: left .45s ease, top .45s ease;
   }
 
@@ -108,7 +111,7 @@
     opacity: 0;
     transition: opacity .55s ease;
   }
-  .piece.in { opacity: .74; }
+  .piece.in { opacity: .9; }
   .piece.focus { opacity: 1; z-index: 5; }
 
   .frame {
@@ -155,31 +158,51 @@
   .f7 { padding:13px; border:14px solid;
         border-image:linear-gradient(135deg,#8a6236,#54371d 40%,#714c28) 1; }
 
-  .label {
-    margin-top: 11px;
-    max-width: 210px;
+  /* An engraved plate, the way a plaque is screwed to the lower rail of a
+     frame. Absolutely positioned, so it can never push neighbours around or
+     collide with the piece below. */
+  .plaque {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, 7px);
+    z-index: 6;
+    min-width: 118px;
+    max-width: 234px;
+    padding: 5px 13px 6px;
     text-align: center;
-    line-height: 1.35;
-    opacity: .0;
-    transition: opacity .3s ease;
+    line-height: 1.28;
+    background: linear-gradient(168deg,#efdcab 0%,#cdb478 38%,#b99f62 62%,#e2cd9c 100%);
+    border: 1px solid rgba(60,45,12,.5);
+    box-shadow: 0 2px 6px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.6),
+                inset 0 -1px 0 rgba(80,60,20,.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .22s ease;
   }
-  .piece.focus .label { opacity: 1; max-width: 300px; }
-  .piece:hover .label { opacity: .95; }
-  /* Touch devices have no hover, so labels are simply always on. */
-  @media (hover: none) { .label { opacity: .8; } }
+  .piece.focus .plaque { opacity: 1; }
+  .piece:hover { z-index: 8; }
+  .piece:hover .plaque { opacity: 1; }
+  .frame:focus-visible ~ .plaque { opacity: 1; }
 
-  .label .artist {
-    display:block; font-size:10px; letter-spacing:.13em;
-    text-transform:uppercase; color:var(--gold-pale);
+  .plaque .artist {
+    display: block; font-size: 8.5px; letter-spacing: .14em;
+    text-transform: uppercase; color: #4a3b18; font-family: Georgia, serif;
   }
-  .label .title {
-    display:block; font-style:italic; font-size:13px; margin-top:2px;
+  .plaque .title {
+    display: block; font-size: 11px; font-style: italic;
+    color: #241c06; margin-top: 1px;
   }
-  .label .date {
-    display:block; font-size:11px; margin-top:1px; color:rgba(246,243,234,.62);
+  .plaque .date {
+    display: block; font-size: 9px; color: #5e4d22; margin-top: 1px;
   }
-  .piece.focus .label .artist { font-size:11px; }
-  .piece.focus .label .title  { font-size:16px; }
+  .piece.focus .plaque {
+    min-width: 170px; max-width: 300px; padding: 7px 17px 8px;
+    transform: translate(-50%, 11px);
+  }
+  .piece.focus .plaque .artist { font-size: 10px; }
+  .piece.focus .plaque .title  { font-size: 14px; }
+  .piece.focus .plaque .date   { font-size: 10.5px; }
 
   .frame:focus-visible { outline:2px solid var(--gold-pale); outline-offset:4px; }
 
@@ -242,9 +265,7 @@
 
   @media (max-width: 700px) {
     :root { --cell-w:210px; --cell-h:215px; --art-max-w:140px; --art-max-h:118px; }
-    .label { max-width:132px; }
-    .label .title { font-size:11px; }
-    .piece.focus .label .title { font-size:14px; }
+    .plaque { max-width:150px; min-width:96px; }
     #bar { gap:11px; padding:10px 13px; }
     #bar a, #bar button { font-size:12px; }
     #walls button { width:15px; height:15px; }
@@ -386,25 +407,34 @@
     return Promise.resolve(null);
   }
 
-  function loadInto(img, frame, art, big) {
+  function loadInto(img, frame, art, big, delay) {
     var list = candidates(art, big);
-    var i = 0, triedLive = false;
+    var i = 0, sweep = 0, triedLive = false;
 
+    // A blank frame should mean "this image is genuinely gone", not "the
+    // server was busy for a moment". Desktop hangs 25 tiles at once and a
+    // burst of those is enough for AIC to throttle some, so each candidate
+    // list gets three passes with increasing delay before we give up.
     function next() {
       if (i < list.length) { img.src = list[i++]; return; }
+      if (sweep < 2) {
+        sweep++; i = 0;
+        setTimeout(next, 700 * sweep + Math.random() * 400);
+        return;
+      }
       if (!triedLive) {
         triedLive = true;
         reresolve(art).then(function (live) {
-          if (live) { img.src = live; }        // handler stays attached
+          if (live) img.src = live;          // handler stays attached
           else blank(frame, art);
-        }).catch(function(){ blank(frame, art); });
+        }).catch(function () { blank(frame, art); });
         return;
       }
       blank(frame, art);
     }
 
     img.onerror = next;
-    next();
+    if (delay) setTimeout(next, delay); else next();
   }
 
   function blank(frame, art) {
@@ -440,10 +470,11 @@
     img.alt = art.title;
     img.decoding = "async";
     frame.appendChild(img);
-    loadInto(img, frame, art, isFocus);
+    var ring = Math.abs(col - focusCol) + Math.abs(row - focusRow);
+    loadInto(img, frame, art, isFocus, isFocus ? 0 : 60 * ring);
 
     var label = document.createElement("figcaption");
-    label.className = "label";
+    label.className = "plaque";
     label.innerHTML = '<span class="artist"></span><span class="title"></span><span class="date"></span>';
     label.querySelector(".artist").textContent =
       (art.artist && art.artist !== "Unknown") ? art.artist : "Unknown maker";
