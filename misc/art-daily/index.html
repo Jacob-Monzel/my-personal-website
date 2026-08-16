@@ -51,11 +51,13 @@
 
   /* Woven fabric: a fine warp/weft grid over fractal noise, blended into
      the wall colour rather than painted on top of it. */
+  /* Inside #wall and beneath #surface, so it textures the wall and not the
+     paintings hanging on it. */
   #weave {
-    position: fixed;
+    position: absolute;
     inset: 0;
     pointer-events: none;
-    z-index: 1;
+    z-index: 0;
     opacity: .5;
     mix-blend-mode: overlay;
     background-image:
@@ -180,8 +182,9 @@
     pointer-events: none;
     transition: opacity .22s ease;
   }
-  .piece.focus .plaque { opacity: 1; }
   .piece:hover { z-index: 8; }
+  .piece.active { z-index: 9; }
+  .piece.active .plaque { opacity: 1; }
   .piece:hover .plaque { opacity: 1; }
   .frame:focus-visible ~ .plaque { opacity: 1; }
 
@@ -280,9 +283,9 @@
 <body data-wall="teal">
 
 <div id="wall">
+  <div id="weave"></div>
   <div id="surface"><div id="glow"></div></div>
 </div>
-<div id="weave"></div>
 <div id="vignette"></div>
 
 <div id="bar">
@@ -357,16 +360,17 @@
     if (art.local) out.push(art.local);
 
     if (art.image_id) {
-      var w = Math.min(big ? 1000 : 420, AIC_MAX);
+      // Always 843. The Art Institute documents this as the size their own
+      // site uses, so it is already cached; any other width is a cache miss
+      // their server has to render on demand, which is what was timing out.
       out.push("https://www.artic.edu/iiif/2/" + art.image_id +
-               "/full/" + w + ",/0/default.jpg");
-      out.push("https://www.artic.edu/iiif/2/" + art.image_id +
-               "/full/400,/0/default.jpg");
+               "/full/" + AIC_MAX + ",/0/default.jpg");
     }
 
     if (art.commons) {
       var f = encodeURIComponent(art.commons);
-      var cw = big ? 1000 : 420;
+      // Standard MediaWiki thumbnail widths, cached for the same reason.
+      var cw = big ? 1024 : 640;
       out.push("https://commons.wikimedia.org/wiki/Special:FilePath/" + f + "?width=" + cw);
       out.push("https://commons.wikimedia.org/wiki/Special:FilePath/" + f + "?width=320");
       // pageimages sometimes names a file hosted on en.wikipedia rather than
@@ -407,34 +411,52 @@
     return Promise.resolve(null);
   }
 
-  function loadInto(img, frame, art, big, delay) {
-    var list = candidates(art, big);
-    var i = 0, sweep = 0, triedLive = false;
+  // The Art Institute asks callers to self-throttle, and a burst of 25 was
+  // enough to get images refused. Four at a time, nearest the light first.
+  var MAX_INFLIGHT = 4;
+  var queue = [], inflight = 0;
 
-    // A blank frame should mean "this image is genuinely gone", not "the
-    // server was busy for a moment". Desktop hangs 25 tiles at once and a
-    // burst of those is enough for AIC to throttle some, so each candidate
-    // list gets three passes with increasing delay before we give up.
-    function next() {
-      if (i < list.length) { img.src = list[i++]; return; }
-      if (sweep < 2) {
-        sweep++; i = 0;
-        setTimeout(next, 700 * sweep + Math.random() * 400);
-        return;
-      }
-      if (!triedLive) {
-        triedLive = true;
-        reresolve(art).then(function (live) {
-          if (live) img.src = live;          // handler stays attached
-          else blank(frame, art);
-        }).catch(function () { blank(frame, art); });
-        return;
-      }
-      blank(frame, art);
+  function enqueue(job) { queue.push(job); pump(); }
+  function pump() {
+    while (inflight < MAX_INFLIGHT && queue.length) {
+      var job = queue.shift();
+      inflight++;
+      job(function () { inflight--; pump(); });
     }
+  }
 
-    img.onerror = next;
-    if (delay) setTimeout(next, delay); else next();
+  function loadInto(img, frame, art, big) {
+    enqueue(function (release) {
+      var list = candidates(art, big);
+      var i = 0, sweep = 0, triedLive = false, settled = false;
+
+      function finish() { if (!settled) { settled = true; release(); } }
+
+      // A blank frame should mean the image is genuinely gone, not that the
+      // server was busy: three passes with increasing, jittered delays.
+      function next() {
+        if (i < list.length) { img.src = list[i++]; return; }
+        if (sweep < 2) {
+          sweep++; i = 0;
+          setTimeout(next, 800 * sweep + Math.random() * 500);
+          return;
+        }
+        if (!triedLive) {
+          triedLive = true;
+          reresolve(art).then(function (live) {
+            if (live) img.src = live;         // handler stays attached
+            else { blank(frame, art); finish(); }
+          }).catch(function () { blank(frame, art); finish(); });
+          return;
+        }
+        blank(frame, art);
+        finish();
+      }
+
+      img.onload = finish;
+      img.onerror = next;
+      next();
+    });
   }
 
   function blank(frame, art) {
@@ -470,8 +492,7 @@
     img.alt = art.title;
     img.decoding = "async";
     frame.appendChild(img);
-    var ring = Math.abs(col - focusCol) + Math.abs(row - focusRow);
-    loadInto(img, frame, art, isFocus, isFocus ? 0 : 60 * ring);
+    loadInto(img, frame, art, isFocus);
 
     var label = document.createElement("figcaption");
     label.className = "plaque";
@@ -494,16 +515,21 @@
     var c0 = Math.floor((-panX-halfW)/cell.w), c1 = Math.ceil((-panX+halfW)/cell.w);
     var r0 = Math.floor((-panY-halfH)/cell.h), r1 = Math.ceil((-panY+halfH)/cell.h);
 
-    var wanted = new Set();
+    var wanted = new Set(), fresh = [];
     for (var c=c0;c<=c1;c++) for (var r=r0;r<=r1;r++) {
       var key = c+","+r;
       wanted.add(key);
-      if (!tiles.has(key)) {
-        var el = buildPiece(c,r);
-        surface.appendChild(el);
-        tiles.set(key, el);
-      }
+      if (!tiles.has(key)) fresh.push([c,r,key]);
     }
+    fresh.sort(function(a,b){
+      return (Math.abs(a[0]-focusCol)+Math.abs(a[1]-focusRow)) -
+             (Math.abs(b[0]-focusCol)+Math.abs(b[1]-focusRow));
+    });
+    fresh.forEach(function(t){
+      var el = buildPiece(t[0],t[1]);
+      surface.appendChild(el);
+      tiles.set(t[2], el);
+    });
     tiles.forEach(function(el,key){
       if (!wanted.has(key)) { el.remove(); tiles.delete(key); }
     });
@@ -600,8 +626,23 @@
   }, {passive:false});
   wall.addEventListener("touchend", up);
 
+  var TOUCH = window.matchMedia && window.matchMedia("(hover: none)").matches;
+
   wall.addEventListener("click", function(e){
-    if (moved > 6) { e.preventDefault(); e.stopPropagation(); }
+    if (moved > 6) { e.preventDefault(); e.stopPropagation(); return; }
+    if (!TOUCH) return;
+    // Without hover, the first tap is how you ask what a piece is; the
+    // second tap opens it.
+    var piece = e.target;
+    while (piece && piece !== wall && !(piece.className || "").includes("piece")) {
+      piece = piece.parentNode;
+    }
+    if (!piece || piece === wall) return;
+    if (!piece.classList.contains("active")) {
+      e.preventDefault(); e.stopPropagation();
+      tiles.forEach(function(el){ el.classList.remove("active"); });
+      piece.classList.add("active");
+    }
   }, true);
 
   wall.addEventListener("wheel", function(e){
