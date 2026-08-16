@@ -25,7 +25,7 @@
 /Teaching/*   /teaching/   301
 
 # Old double-nested misc pages
-/Misc/Misc/ArtDaily.html             /misc/art-daily.html             301
+/Misc/Misc/ArtDaily.html             /misc/art-daily/                 301
 /Misc/Misc/BlackJack.html            /misc/blackjack.html             301
 /Misc/Misc/BooksIveRead.html         /misc/books-ive-read.html        301
 /Misc/Misc/CardCountingTrainer.html  /misc/card-counting-trainer.html 301
@@ -45,3 +45,6 @@
 /fun-math/proofs/algebraic-geometry/*        /fun-math/   301
 /fun-math/proofs/algebraic-number-theory/*   /fun-math/   301
 /fun-math/proofs/*                           /fun-math/   301
+
+# 2026-08: Art Daily rebuilt as a bundle (page + artworks.json + pin.py).
+/misc/art-daily.html   /misc/art-daily/   301
