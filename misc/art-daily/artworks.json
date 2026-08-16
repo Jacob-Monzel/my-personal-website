@@ -269,12 +269,12 @@
   },
   {
    "day": 25,
-   "title": "A Rake's Progress",
+   "title": "A Rake's Progress III: The Tavern Scene",
    "artist": "William Hogarth",
    "date": "1732–1734",
    "source": "wikimedia",
-   "wikipedia": "A Rake's Progress",
-   "link": "https://en.wikipedia.org/wiki/A_Rake's_Progress",
+   "wikipedia": "A Rake's Progress, 3: The Tavern Scene",
+   "link": "https://en.wikipedia.org/wiki/A_Rake%27s_Progress,_3:_The_Tavern_Scene",
    "commons": null,
    "local": null
   },
@@ -929,13 +929,13 @@
   },
   {
    "day": 85,
-   "title": "The Sleepers",
-   "artist": "Gustave Courbet",
-   "date": "1866",
+   "title": "Venus de Milo",
+   "artist": "Alexandros of Antioch",
+   "date": "c. 130 BCE",
    "source": "wikimedia",
-   "wikipedia": "Le Sommeil",
-   "link": "https://en.wikipedia.org/wiki/Le_Sommeil",
-   "commons": "Gustave_Courbet_-_Le_Sommeil_(1866),_Paris,_Petit_Palais.jpg",
+   "wikipedia": "Venus de Milo",
+   "link": "https://en.wikipedia.org/wiki/Venus_de_Milo",
+   "commons": null,
    "local": null
   },
   {
@@ -1072,13 +1072,13 @@
   },
   {
    "day": 98,
-   "title": "Portrait of Émile Zola",
-   "artist": "Édouard Manet",
-   "date": "1868",
+   "title": "Mona Lisa",
+   "artist": "Leonardo da Vinci",
+   "date": "c. 1503–1519",
    "source": "wikimedia",
-   "wikipedia": "Émile Zola",
-   "link": "https://en.wikipedia.org/wiki/Émile_Zola",
-   "commons": "Nadar_(atelier_de)_-_Emile_Zola,_13-556535.jpg",
+   "wikipedia": "Mona Lisa",
+   "link": "https://en.wikipedia.org/wiki/Mona_Lisa",
+   "commons": null,
    "local": null
   },
   {
@@ -2579,13 +2579,13 @@
   },
   {
    "day": 235,
-   "title": "The Large Bathers",
-   "artist": "Paul Cézanne",
-   "date": "1898–1905",
+   "title": "Luncheon of the Boating Party",
+   "artist": "Pierre-Auguste Renoir",
+   "date": "1881",
    "source": "wikimedia",
-   "wikipedia": "The Bathers (Cézanne)",
-   "link": "https://en.wikipedia.org/wiki/The_Bathers_(Cézanne)",
-   "commons": "Paul_Cézanne,_French_-_The_Large_Bathers_-_Google_Art_Project.jpg",
+   "wikipedia": "Luncheon of the Boating Party",
+   "link": "https://en.wikipedia.org/wiki/Luncheon_of_the_Boating_Party",
+   "commons": null,
    "local": null
   },
   {
@@ -2700,13 +2700,13 @@
   },
   {
    "day": 246,
-   "title": "The Boulevard Montmartre at Night",
-   "artist": "Camille Pissarro",
-   "date": "1897",
+   "title": "Oath of the Horatii",
+   "artist": "Jacques-Louis David",
+   "date": "1784",
    "source": "wikimedia",
-   "wikipedia": "Camille Pissarro",
-   "link": "https://en.wikipedia.org/wiki/Camille_Pissarro",
-   "commons": "Pissarro-portrait.jpg",
+   "wikipedia": "Oath of the Horatii",
+   "link": "https://en.wikipedia.org/wiki/Oath_of_the_Horatii",
+   "commons": null,
    "local": null
   },
   {
@@ -2755,13 +2755,13 @@
   },
   {
    "day": 251,
-   "title": "Judith and the Head of Holofernes",
-   "artist": "Gustav Klimt",
-   "date": "1901",
+   "title": "Grande Odalisque",
+   "artist": "Jean-Auguste-Dominique Ingres",
+   "date": "1814",
    "source": "wikimedia",
-   "wikipedia": "Judith beheading Holofernes",
-   "link": "https://en.wikipedia.org/wiki/Judith_beheading_Holofernes",
-   "commons": "Judit_decapitando_a_Holofernes,_por_Artemisia_Gentileschi.jpg",
+   "wikipedia": "Grande Odalisque",
+   "link": "https://en.wikipedia.org/wiki/Grande_Odalisque",
+   "commons": null,
    "local": null
   },
   {
@@ -2821,13 +2821,13 @@
   },
   {
    "day": 257,
-   "title": "The Japanese Footbridge",
-   "artist": "Claude Monet",
-   "date": "1899",
+   "title": "Whistler's Mother",
+   "artist": "James McNeill Whistler",
+   "date": "1871",
    "source": "wikimedia",
-   "wikipedia": "Water Lilies (Monet series)",
-   "link": "https://en.wikipedia.org/wiki/Water_Lilies_(Monet_series)",
-   "commons": "Reflections_of_Clouds_on_the_Water-Lily_Pond.jpg",
+   "wikipedia": "Whistler's Mother",
+   "link": "https://en.wikipedia.org/wiki/Whistler's_Mother",
+   "commons": null,
    "local": null
   },
   {
@@ -2915,7 +2915,7 @@
    "source": "wikimedia",
    "wikipedia": "Witches' Sabbath (The Great He-Goat)",
    "link": "https://en.wikipedia.org/wiki/Witches'_Sabbath_(The_Great_He-Goat)",
-   "commons": null,
+   "commons": "Francisco de Goya y Lucientes - Witches' Sabbath (The Great He-Goat).jpg",
    "local": null
   },
   {
@@ -3811,13 +3811,13 @@
   },
   {
    "day": 347,
-   "title": "Almond Blossoms",
+   "title": "The Starry Night",
    "artist": "Vincent van Gogh",
-   "date": "1890",
+   "date": "1889",
    "source": "wikimedia",
-   "wikipedia": "Almond Blossoms",
-   "link": "https://en.wikipedia.org/wiki/Almond_Blossoms",
-   "commons": "Vincent_van_Gogh_-_Almond_blossom_-_Google_Art_Project.jpg",
+   "wikipedia": "The Starry Night",
+   "link": "https://en.wikipedia.org/wiki/The_Starry_Night",
+   "commons": null,
    "local": null
   },
   {
