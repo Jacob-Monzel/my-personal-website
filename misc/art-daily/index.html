@@ -7,22 +7,24 @@
 <meta name="description" content="A different artwork every day, hung on an endless gallery wall.">
 <style>
   :root {
-    --wall:        #1b5e63;
-    --wall-deep:   #0e3538;
-    --wall-lit:    #2a7c80;
-    --mat:         #f4f1e8;
-    --mat-shadow:  #d8d2c2;
-    --label:       #f6f3ea;
-    --label-ink:   #16383a;
-    --gold:        #c9a227;
-    --gold-pale:   #efd98a;
-    --gold-deep:   #8a6d1b;
+    --mat:        #f4f1e8;
+    --mat-shade:  #d8d2c2;
+    --label:      #f6f3ea;
+    --gold-pale:  #efd98a;
 
     --cell-w: 340px;
     --cell-h: 330px;
     --art-max-w: 240px;
     --art-max-h: 190px;
   }
+
+  /* Wall finishes. Museums line walls in fabric; each of these is a real
+     gallery colour rather than a decorative pick. */
+  body[data-wall="teal"]    { --wall:#1b5e63; --wall-deep:#092a2d; --wall-lit:#3a9298; }
+  body[data-wall="claret"]  { --wall:#7a2c46; --wall-deep:#33101d; --wall-lit:#a94263; }
+  body[data-wall="forest"]  { --wall:#2d4a3b; --wall-deep:#111f19; --wall-lit:#4a7a61; }
+  body[data-wall="oxblood"] { --wall:#5e2320; --wall-deep:#280d0c; --wall-lit:#8b3a34; }
+  body[data-wall="slate"]   { --wall:#3a4348; --wall-deep:#171c1f; --wall-lit:#5c6a71; }
 
   * { box-sizing: border-box; }
 
@@ -36,27 +38,63 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* The gallery lighting: a warm pool centred on the focus piece, falling
-     off into the corners the way a spotlit wall actually behaves. */
   #wall {
     position: fixed;
     inset: 0;
-    background:
-      radial-gradient(ellipse 70% 60% at 50% 45%,
-        var(--wall-lit) 0%, var(--wall) 42%, var(--wall-deep) 100%);
+    background: var(--wall);
     cursor: grab;
     touch-action: none;
     overscroll-behavior: none;
+    transition: background-color .6s ease;
   }
   #wall.dragging { cursor: grabbing; }
 
+  /* Woven fabric: a fine warp/weft grid over fractal noise, blended into
+     the wall colour rather than painted on top of it. */
+  #weave {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: .5;
+    mix-blend-mode: overlay;
+    background-image:
+      repeating-linear-gradient(0deg,  rgba(0,0,0,.16) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.10) 0 1px, transparent 1px 3px),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='0.5'/></svg>");
+  }
+
+  /* Viewport vignette: the room falling away at the edges. */
+  #vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    background: radial-gradient(ellipse 62% 62% at 50% 47%,
+      rgba(0,0,0,0) 0%, rgba(0,0,0,0) 34%,
+      rgba(0,0,0,.34) 62%, rgba(0,0,0,.66) 84%, rgba(0,0,0,.84) 100%);
+  }
+
   #surface {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    z-index: 2;
     will-change: transform;
+  }
+
+  /* The picture light. Lives on the wall, so it travels with the artwork
+     and you watch it recede as you walk away. */
+  #glow {
+    position: absolute;
+    width: 1500px; height: 1200px;
+    margin: -600px 0 0 -750px;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    background: radial-gradient(ellipse 50% 50% at 50% 50%,
+      var(--wall-lit) 0%, rgba(0,0,0,0) 68%);
+    opacity: .78;
+    transition: left .45s ease, top .45s ease;
   }
 
   /* ---------------- a hung piece ---------------- */
@@ -70,7 +108,7 @@
     opacity: 0;
     transition: opacity .55s ease;
   }
-  .piece.in { opacity: .82; }
+  .piece.in { opacity: .74; }
   .piece.focus { opacity: 1; z-index: 5; }
 
   .frame {
@@ -78,218 +116,160 @@
     display: inline-block;
     line-height: 0;
     background: var(--mat);
-    box-shadow:
-      0 1px 2px rgba(0,0,0,.35),
-      0 10px 26px -6px rgba(0,0,0,.55);
+    box-shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 26px -6px rgba(0,0,0,.6);
   }
   .piece.focus .frame {
-    box-shadow:
-      0 2px 4px rgba(0,0,0,.4),
-      0 22px 50px -10px rgba(0,0,0,.7),
-      0 0 60px -10px rgba(239,217,138,.28);
+    box-shadow: 0 2px 5px rgba(0,0,0,.45), 0 26px 56px -10px rgba(0,0,0,.75),
+                0 0 70px -12px rgba(239,217,138,.32);
   }
-
+  .frame::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.18), inset 0 2px 5px rgba(0,0,0,.16);
+  }
   .frame img {
     display: block;
     max-width: var(--art-max-w);
     max-height: var(--art-max-h);
-    width: auto;
-    height: auto;
-    background: var(--mat-shadow);
+    width: auto; height: auto;
+    background: var(--mat-shade);
   }
   .piece.focus .frame img {
-    max-width: calc(var(--art-max-w) * 1.42);
-    max-height: calc(var(--art-max-h) * 1.42);
+    max-width: calc(var(--art-max-w) * 1.45);
+    max-height: calc(var(--art-max-h) * 1.45);
   }
 
-  /* Inner bevel: the lip of the mat catching light */
-  .frame::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,.18),
-                inset 0 2px 5px rgba(0,0,0,.16);
-  }
-
-  /* ---------------- frame styles ---------------- */
-  /* Eight profiles. Assigned deterministically per artwork, so a given
-     piece always hangs in the same frame. */
-
-  .f0 { padding: 14px; border: 11px solid;
-        border-image: linear-gradient(140deg,#f2dc96,#b8912c 35%,#7d6217 60%,#e8cf83) 1; }
-  .f1 { padding: 18px; border: 7px solid;
-        border-image: linear-gradient(160deg,#e6cf85,#9d7c22,#d9be6d) 1; }
-  .f2 { padding: 12px; border: 13px solid;
-        border-image: linear-gradient(150deg,#6b4a2c,#3d2817 45%,#5c3f24) 1; }
-  .f3 { padding: 16px; border: 8px solid #14100c;
-        box-shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 26px -6px rgba(0,0,0,.6),
-                    inset 0 0 0 2px #2c2621; }
-  .f4 { padding: 22px; border: 5px solid #efeae0; }
-  .f5 { padding: 15px; border: 12px solid;
-        border-image: linear-gradient(120deg,#cbb26a,#8d7326 30%,#e3d3a0 55%,#7a6320) 1; }
-  .f6 { padding: 17px; border: 9px solid;
-        border-image: linear-gradient(150deg,#d8d8d2,#9a9a94,#c6c6c0) 1; }
-  .f7 { padding: 13px; border: 14px solid;
-        border-image: linear-gradient(135deg,#8a6236,#54371d 40%,#714c28) 1; }
-
-  /* ---------------- wall label ---------------- */
+  .f0 { padding:14px; border:11px solid;
+        border-image:linear-gradient(140deg,#f2dc96,#b8912c 35%,#7d6217 60%,#e8cf83) 1; }
+  .f1 { padding:18px; border:7px solid;
+        border-image:linear-gradient(160deg,#e6cf85,#9d7c22,#d9be6d) 1; }
+  .f2 { padding:12px; border:13px solid;
+        border-image:linear-gradient(150deg,#6b4a2c,#3d2817 45%,#5c3f24) 1; }
+  .f3 { padding:16px; border:8px solid #14100c;
+        box-shadow:0 1px 2px rgba(0,0,0,.4),0 10px 26px -6px rgba(0,0,0,.6),
+                   inset 0 0 0 2px #2c2621; }
+  .f4 { padding:22px; border:5px solid #efeae0; }
+  .f5 { padding:15px; border:12px solid;
+        border-image:linear-gradient(120deg,#cbb26a,#8d7326 30%,#e3d3a0 55%,#7a6320) 1; }
+  .f6 { padding:17px; border:9px solid;
+        border-image:linear-gradient(150deg,#d8d8d2,#9a9a94,#c6c6c0) 1; }
+  .f7 { padding:13px; border:14px solid;
+        border-image:linear-gradient(135deg,#8a6236,#54371d 40%,#714c28) 1; }
 
   .label {
     margin-top: 11px;
     max-width: 210px;
     text-align: center;
     line-height: 1.35;
-    opacity: 0;
+    opacity: .0;
     transition: opacity .3s ease;
   }
   .piece.focus .label { opacity: 1; max-width: 300px; }
-  .piece:hover .label { opacity: 1; }
+  .piece:hover .label { opacity: .95; }
+  /* Touch devices have no hover, so labels are simply always on. */
+  @media (hover: none) { .label { opacity: .8; } }
 
   .label .artist {
-    display: block;
-    font-size: 10px;
-    letter-spacing: .13em;
-    text-transform: uppercase;
-    color: var(--gold-pale);
+    display:block; font-size:10px; letter-spacing:.13em;
+    text-transform:uppercase; color:var(--gold-pale);
   }
   .label .title {
-    display: block;
-    font-style: italic;
-    font-size: 13px;
-    margin-top: 2px;
-    color: var(--label);
+    display:block; font-style:italic; font-size:13px; margin-top:2px;
   }
   .label .date {
-    display: block;
-    font-size: 11px;
-    margin-top: 1px;
-    color: rgba(246,243,234,.62);
+    display:block; font-size:11px; margin-top:1px; color:rgba(246,243,234,.62);
   }
-  .piece.focus .label .artist { font-size: 11px; }
-  .piece.focus .label .title  { font-size: 16px; }
+  .piece.focus .label .artist { font-size:11px; }
+  .piece.focus .label .title  { font-size:16px; }
 
-  .label a {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-  }
-  .label a:hover { border-bottom-color: var(--gold-pale); }
-  .label a:focus-visible { outline: 2px solid var(--gold-pale); outline-offset: 3px; }
+  .frame:focus-visible { outline:2px solid var(--gold-pale); outline-offset:4px; }
 
-  /* Empty frame when an image cannot be had at all. */
   .frame.blank {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--art-max-w);
-    height: var(--art-max-h);
+    display:flex; align-items:center; justify-content:center;
+    width: var(--art-max-w); height: var(--art-max-h);
   }
   .frame.blank span {
-    font-size: 11px;
-    font-style: italic;
-    color: #8d8677;
-    line-height: 1.4;
-    padding: 0 14px;
-    text-align: center;
+    font-size:11px; font-style:italic; color:#8d8677;
+    line-height:1.4; padding:0 14px; text-align:center;
   }
 
   /* ---------------- chrome ---------------- */
 
   #bar {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    display: flex;
-    align-items: baseline;
-    gap: 18px;
-    padding: 14px 20px;
-    background: linear-gradient(to bottom, rgba(9,32,34,.9), rgba(9,32,34,0));
-    z-index: 20;
-    pointer-events: none;
+    position: fixed; top:0; left:0; right:0;
+    display:flex; align-items:center; gap:16px;
+    padding:13px 20px; z-index:20; pointer-events:none;
+    background:linear-gradient(to bottom, rgba(0,0,0,.42), rgba(0,0,0,0));
   }
   #bar a, #bar button {
-    pointer-events: auto;
-    font-family: inherit;
-    color: var(--label);
-    background: none;
-    border: none;
-    font-size: 13px;
-    letter-spacing: .06em;
-    text-decoration: none;
-    cursor: pointer;
-    padding: 0;
+    pointer-events:auto; font-family:inherit; color:var(--label);
+    background:none; border:none; font-size:13px; letter-spacing:.06em;
+    text-decoration:none; cursor:pointer; padding:0;
   }
-  #bar a:hover, #bar button:hover { color: var(--gold-pale); }
-  #bar .spacer { flex: 1; }
+  #bar a:hover, #bar button:hover { color:var(--gold-pale); }
+  #bar .spacer { flex:1; }
   #today-label {
-    font-size: 11px;
-    letter-spacing: .16em;
-    text-transform: uppercase;
-    color: rgba(246,243,234,.55);
-    pointer-events: none;
+    font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+    color:rgba(246,243,234,.6); pointer-events:none;
   }
+
+  #walls { display:flex; gap:7px; pointer-events:auto; }
+  #walls button {
+    width:17px; height:17px; border-radius:50%; padding:0;
+    border:1px solid rgba(255,255,255,.35); cursor:pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  #walls button:hover { transform:scale(1.18); }
+  #walls button[aria-pressed="true"] {
+    box-shadow:0 0 0 2px rgba(255,255,255,.85);
+  }
+  #walls button:focus-visible { outline:2px solid var(--gold-pale); outline-offset:3px; }
 
   #hint {
-    position: fixed;
-    bottom: 22px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 11px;
-    letter-spacing: .18em;
-    text-transform: uppercase;
-    color: rgba(246,243,234,.42);
-    z-index: 20;
-    pointer-events: none;
-    transition: opacity .8s ease;
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    color:rgba(246,243,234,.4); z-index:20; pointer-events:none;
+    transition:opacity .8s ease;
   }
-  #hint.gone { opacity: 0; }
+  #hint.gone { opacity:0; }
 
   #status {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    letter-spacing: .14em;
-    text-transform: uppercase;
-    color: rgba(246,243,234,.6);
-    z-index: 30;
-    background: var(--wall-deep);
-    transition: opacity .6s ease;
+    position:fixed; inset:0; display:flex; align-items:center;
+    justify-content:center; font-size:13px; letter-spacing:.14em;
+    text-transform:uppercase; color:rgba(246,243,234,.6); z-index:30;
+    background:var(--wall-deep); transition:opacity .6s ease;
   }
-  #status.gone { opacity: 0; pointer-events: none; }
+  #status.gone { opacity:0; pointer-events:none; }
 
   @media (max-width: 700px) {
-    :root {
-      --cell-w: 210px;
-      --cell-h: 215px;
-      --art-max-w: 140px;
-      --art-max-h: 118px;
-    }
-    .label { max-width: 132px; }
-    .label .title { font-size: 11px; }
-    .piece.focus .label .title { font-size: 14px; }
-    #bar { gap: 12px; padding: 11px 14px; }
-    #bar a, #bar button { font-size: 12px; }
+    :root { --cell-w:210px; --cell-h:215px; --art-max-w:140px; --art-max-h:118px; }
+    .label { max-width:132px; }
+    .label .title { font-size:11px; }
+    .piece.focus .label .title { font-size:14px; }
+    #bar { gap:11px; padding:10px 13px; }
+    #bar a, #bar button { font-size:12px; }
+    #walls button { width:15px; height:15px; }
+    #glow { width:900px; height:800px; margin:-400px 0 0 -450px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .piece { transition: none; }
-    #status, #hint { transition: none; }
+    .piece, #glow, #wall, #status, #hint { transition:none; }
   }
 </style>
 </head>
-<body>
+<body data-wall="teal">
 
 <div id="wall">
-  <div id="surface"></div>
+  <div id="surface"><div id="glow"></div></div>
 </div>
+<div id="weave"></div>
+<div id="vignette"></div>
 
 <div id="bar">
   <a href="/">Home</a>
   <a href="/misc/">Misc</a>
   <span class="spacer"></span>
+  <div id="walls" role="group" aria-label="Wall colour"></div>
+  <button id="shuffle" type="button">Random</button>
   <span id="today-label"></span>
   <button id="recentre" type="button">Today</button>
 </div>
@@ -301,25 +281,34 @@
 (function () {
   "use strict";
 
-  // Slots follow a leap year so a calendar date always maps to the same
-  // artwork and Feb 29 gets its own. Matches artworks.json.
-  var LEAP_CUM = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
+  var LEAP_CUM = [0,31,60,91,121,152,182,213,244,274,305,335];
   function slotFor(d) { return LEAP_CUM[d.getMonth()] + d.getDate(); }
 
-  // Column steps one day; row steps 25. 25 is coprime to 366 and puts the
-  // nearest repeated artwork 24 tiles away, well outside any viewport.
-  var ROW_STRIDE = 25;
+  var ROW_STRIDE = 25;      // coprime to 366; nearest repeat 24 tiles away
+  var AIC_MAX = 843;        // works still in copyright are capped here
+
+  var WALLS = [
+    ["teal",    "#1b5e63", "Teal"],
+    ["claret",  "#7a2c46", "Claret"],
+    ["forest",  "#2d4a3b", "Forest"],
+    ["oxblood", "#5e2320", "Oxblood"],
+    ["slate",   "#3a4348", "Slate"]
+  ];
 
   var wall = document.getElementById("wall");
   var surface = document.getElementById("surface");
+  var glow = document.getElementById("glow");
   var statusEl = document.getElementById("status");
   var hintEl = document.getElementById("hint");
   var todayLabel = document.getElementById("today-label");
 
   var manifest = null, N = 0, todayIdx = 0;
   var panX = 0, panY = 0;
+  var focusCol = 0, focusRow = 0;
   var tiles = new Map();
   var cell = { w: 340, h: 330 };
+
+  function mod(n,m){ return ((n%m)+m)%m; }
 
   function readCell() {
     var cs = getComputedStyle(document.documentElement);
@@ -327,131 +316,95 @@
     cell.h = parseFloat(cs.getPropertyValue("--cell-h")) || 330;
   }
 
-  function mod(n, m) { return ((n % m) + m) % m; }
-
-  // Cheap deterministic hash so a given wall position always looks the same.
-  function hash(a, b) {
-    var h = a * 374761393 + b * 668265263;
-    h = (h ^ (h >> 13)) * 1274126177;
-    return mod(h ^ (h >> 16), 100000) / 100000;
+  function hash(a,b) {
+    var h = a*374761393 + b*668265263;
+    h = (h ^ (h>>13)) * 1274126177;
+    return mod(h ^ (h>>16), 100000)/100000;
   }
 
-  function artAt(col, row) {
-    return manifest.artworks[mod(todayIdx + col + row * ROW_STRIDE, N)];
+  function artAt(col,row) {
+    return manifest.artworks[mod(todayIdx + col + row*ROW_STRIDE, N)];
   }
 
-  // ---- image URLs -------------------------------------------------------
-  // Both sources take a width, so peripheral tiles stay small and only the
-  // focus piece pulls a large file.
+  // ---- image sources ----------------------------------------------------
+  // An ordered list of places to look. Every rung is tried in turn and the
+  // handler is never detached, so the worst case is an empty frame rather
+  // than a broken-image icon.
 
-  function urlFor(art, width) {
-    if (art.local) return art.local;
+  function candidates(art, big) {
+    var out = [];
+    if (art.local) out.push(art.local);
+
     if (art.image_id) {
-      return "https://www.artic.edu/iiif/2/" + art.image_id +
-             "/full/" + width + ",/0/default.jpg";
+      var w = Math.min(big ? 1000 : 420, AIC_MAX);
+      out.push("https://www.artic.edu/iiif/2/" + art.image_id +
+               "/full/" + w + ",/0/default.jpg");
+      out.push("https://www.artic.edu/iiif/2/" + art.image_id +
+               "/full/400,/0/default.jpg");
     }
+
     if (art.commons) {
-      return "https://commons.wikimedia.org/wiki/Special:FilePath/" +
-             encodeURIComponent(art.commons) + "?width=" + width;
+      var f = encodeURIComponent(art.commons);
+      var cw = big ? 1000 : 420;
+      out.push("https://commons.wikimedia.org/wiki/Special:FilePath/" + f + "?width=" + cw);
+      out.push("https://commons.wikimedia.org/wiki/Special:FilePath/" + f + "?width=320");
+      // pageimages sometimes names a file hosted on en.wikipedia rather than
+      // Commons; those 404 on the Commons host, so try there too.
+      out.push("https://en.wikipedia.org/wiki/Special:FilePath/" + f + "?width=" + cw);
     }
-    return null;
+    return out;
   }
 
   function fetchJSON(u) {
-    return fetch(u, { mode: "cors" }).then(function (r) {
+    return fetch(u, { mode:"cors" }).then(function(r){
       if (!r.ok) throw new Error("HTTP " + r.status);
       return r.json();
     });
   }
 
-  // Live re-resolution from the stable identifier. Only the focus piece pays
-  // for this, and only when its pinned URL has actually failed.
   function reresolve(art) {
-    if (art.image_id !== undefined && art.aic_id) {
+    if (art.aic_id) {
       return fetchJSON("https://api.artic.edu/api/v1/artworks/" + art.aic_id +
-                       "?fields=image_id,date_display")
-        .then(function (j) {
+                       "?fields=image_id")
+        .then(function(j){
           var d = j && j.data;
           return d && d.image_id
-            ? "https://www.artic.edu/iiif/2/" + d.image_id + "/full/843,/0/default.jpg"
+            ? "https://www.artic.edu/iiif/2/" + d.image_id + "/full/" + AIC_MAX + ",/0/default.jpg"
             : null;
         });
     }
     if (art.wikipedia) {
       return fetchJSON("https://en.wikipedia.org/w/api.php?action=query&format=json" +
-                       "&prop=pageimages&piprop=thumbnail&pithumbsize=1000" +
-                       "&redirects=1&origin=*&titles=" +
-                       encodeURIComponent(art.wikipedia))
-        .then(function (j) {
+                       "&prop=pageimages&piprop=thumbnail&pithumbsize=900&redirects=1" +
+                       "&origin=*&titles=" + encodeURIComponent(art.wikipedia))
+        .then(function(j){
           var pages = j && j.query && j.query.pages;
-          for (var k in pages) {
-            if (pages[k].thumbnail) return pages[k].thumbnail.source;
-          }
+          for (var k in pages) if (pages[k].thumbnail) return pages[k].thumbnail.source;
           return null;
         });
     }
     return Promise.resolve(null);
   }
 
-  // ---- building a piece -------------------------------------------------
+  function loadInto(img, frame, art, big) {
+    var list = candidates(art, big);
+    var i = 0, triedLive = false;
 
-  function buildPiece(col, row) {
-    var art = artAt(col, row);
-    var isFocus = (col === 0 && row === 0);
+    function next() {
+      if (i < list.length) { img.src = list[i++]; return; }
+      if (!triedLive) {
+        triedLive = true;
+        reresolve(art).then(function (live) {
+          if (live) { img.src = live; }        // handler stays attached
+          else blank(frame, art);
+        }).catch(function(){ blank(frame, art); });
+        return;
+      }
+      blank(frame, art);
+    }
 
-    var piece = document.createElement("div");
-    piece.className = "piece" + (isFocus ? " focus" : "");
-
-    var jx = (hash(col, row) - 0.5) * cell.w * 0.16;
-    var jy = (hash(row, col) - 0.5) * cell.h * 0.16;
-    piece.style.left = (col * cell.w + (isFocus ? 0 : jx)) + "px";
-    piece.style.top = (row * cell.h + (isFocus ? 0 : jy)) + "px";
-
-    var frame = document.createElement("a");
-    frame.className = "frame f" + Math.floor(hash(art.day, 7) * 8);
-    frame.href = art.link;
-    frame.target = "_blank";
-    frame.rel = "noopener";
-    frame.setAttribute("aria-label",
-      art.title + (art.artist ? " by " + art.artist : ""));
-
-    var img = document.createElement("img");
-    img.alt = art.title + (art.artist && art.artist !== "Unknown"
-      ? " by " + art.artist : "");
-    img.loading = "lazy";
-    img.decoding = "async";
-
-    var width = isFocus ? 1000 : 420;
-    var primary = urlFor(art, width);
-
-    img.onerror = function () {
-      // Smaller size first, then re-derive from the identifier, then give
-      // the piece an empty frame rather than a broken square.
-      var smaller = urlFor(art, isFocus ? 600 : 240);
-      if (smaller && img.src !== smaller) { img.src = smaller; return; }
-      img.onerror = null;
-      reresolve(art).then(function (live) {
-        if (live) { img.src = live; return; }
-        blank(frame, art);
-      }).catch(function () { blank(frame, art); });
-    };
-
-    if (primary) { img.src = primary; frame.appendChild(img); }
-    else { blank(frame, art); }
-
-    var label = document.createElement("figcaption");
-    label.className = "label";
-    label.innerHTML =
-      '<span class="artist"></span><span class="title"></span><span class="date"></span>';
-    label.querySelector(".artist").textContent =
-      (art.artist && art.artist !== "Unknown") ? art.artist : "Unknown maker";
-    label.querySelector(".title").textContent = art.title;
-    label.querySelector(".date").textContent = art.date || "";
-
-    piece.appendChild(frame);
-    piece.appendChild(label);
-    requestAnimationFrame(function () { piece.classList.add("in"); });
-    return piece;
+    img.onerror = next;
+    next();
   }
 
   function blank(frame, art) {
@@ -462,132 +415,244 @@
     frame.appendChild(s);
   }
 
+  // ---- building a piece -------------------------------------------------
+
+  function buildPiece(col,row) {
+    var art = artAt(col,row);
+    var isFocus = (col === focusCol && row === focusRow);
+
+    var piece = document.createElement("div");
+    piece.className = "piece" + (isFocus ? " focus" : "");
+
+    var jx = (hash(col,row)-0.5) * cell.w * 0.16;
+    var jy = (hash(row,col)-0.5) * cell.h * 0.16;
+    piece.style.left = (col*cell.w + (isFocus ? 0 : jx)) + "px";
+    piece.style.top  = (row*cell.h + (isFocus ? 0 : jy)) + "px";
+
+    var frame = document.createElement("a");
+    frame.className = "frame f" + Math.floor(hash(art.day,7)*8);
+    frame.href = art.link;
+    frame.target = "_blank";
+    frame.rel = "noopener";
+    frame.setAttribute("aria-label", art.title + (art.artist ? " by " + art.artist : ""));
+
+    var img = document.createElement("img");
+    img.alt = art.title;
+    img.decoding = "async";
+    frame.appendChild(img);
+    loadInto(img, frame, art, isFocus);
+
+    var label = document.createElement("figcaption");
+    label.className = "label";
+    label.innerHTML = '<span class="artist"></span><span class="title"></span><span class="date"></span>';
+    label.querySelector(".artist").textContent =
+      (art.artist && art.artist !== "Unknown") ? art.artist : "Unknown maker";
+    label.querySelector(".title").textContent = art.title;
+    label.querySelector(".date").textContent = art.date || "";
+
+    piece.appendChild(frame);
+    piece.appendChild(label);
+    requestAnimationFrame(function(){ piece.classList.add("in"); });
+    return piece;
+  }
+
   // ---- virtualised rendering -------------------------------------------
 
   function render() {
-    var halfW = window.innerWidth / 2, halfH = window.innerHeight / 2;
-    var padX = 0, padY = 0;   // floor/ceil already over-covers the edges
-    var c0 = Math.floor((-panX - halfW) / cell.w) - padX;
-    var c1 = Math.ceil((-panX + halfW) / cell.w) + padX;
-    var r0 = Math.floor((-panY - halfH) / cell.h) - padY;
-    var r1 = Math.ceil((-panY + halfH) / cell.h) + padY;
+    var halfW = window.innerWidth/2, halfH = window.innerHeight/2;
+    var c0 = Math.floor((-panX-halfW)/cell.w), c1 = Math.ceil((-panX+halfW)/cell.w);
+    var r0 = Math.floor((-panY-halfH)/cell.h), r1 = Math.ceil((-panY+halfH)/cell.h);
 
     var wanted = new Set();
-    for (var c = c0; c <= c1; c++) {
-      for (var r = r0; r <= r1; r++) {
-        var key = c + "," + r;
-        wanted.add(key);
-        if (!tiles.has(key)) {
-          var el = buildPiece(c, r);
-          surface.appendChild(el);
-          tiles.set(key, el);
-        }
+    for (var c=c0;c<=c1;c++) for (var r=r0;r<=r1;r++) {
+      var key = c+","+r;
+      wanted.add(key);
+      if (!tiles.has(key)) {
+        var el = buildPiece(c,r);
+        surface.appendChild(el);
+        tiles.set(key, el);
       }
     }
-    tiles.forEach(function (el, key) {
+    tiles.forEach(function(el,key){
       if (!wanted.has(key)) { el.remove(); tiles.delete(key); }
     });
   }
 
-  var frameQueued = false;
+  function rebuild() {
+    tiles.forEach(function(el){ el.remove(); });
+    tiles.clear();
+    render();
+  }
+
+  var queued = false;
   function apply() {
-    surface.style.transform = "translate3d(" + panX + "px," + panY + "px,0)";
-    if (!frameQueued) {
-      frameQueued = true;
-      requestAnimationFrame(function () { frameQueued = false; render(); });
+    surface.style.transform = "translate3d("+panX+"px,"+panY+"px,0)";
+    if (!queued) {
+      queued = true;
+      requestAnimationFrame(function(){ queued = false; render(); });
     }
+  }
+
+  function placeGlow() {
+    glow.style.left = (focusCol*cell.w) + "px";
+    glow.style.top  = (focusRow*cell.h) + "px";
+  }
+
+  // ---- moving about -----------------------------------------------------
+
+  var anim = null;
+  function glideTo(x, y, done) {
+    if (anim) cancelAnimationFrame(anim);
+    var sx = panX, sy = panY, t0 = performance.now();
+    var dur = Math.min(1100, 380 + Math.hypot(x-sx, y-sy) * 0.12);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) dur = 0;
+
+    (function step(now){
+      var t = dur === 0 ? 1 : Math.min(1, (now - t0)/dur);
+      var e = 1 - Math.pow(1-t, 3);
+      panX = sx + (x-sx)*e;
+      panY = sy + (y-sy)*e;
+      apply();
+      if (t < 1) anim = requestAnimationFrame(step);
+      else { anim = null; if (done) done(); }
+    })(performance.now());
+  }
+
+  function setFocus(col,row) {
+    focusCol = col; focusRow = row;
+    placeGlow();
+    glideTo(-col*cell.w, -row*cell.h, rebuild);
+  }
+
+  // Find the nearest wall position showing a given artwork, so a jump is a
+  // short walk rather than a trek across hundreds of columns.
+  function nearestCell(targetIdx) {
+    var d = mod(targetIdx - todayIdx, N);
+    var best = null;
+    for (var r = -8; r <= 8; r++) {
+      var c = mod(d - r*ROW_STRIDE, N);
+      if (c > N/2) c -= N;
+      var cost = Math.abs(c)*cell.w + Math.abs(r)*cell.h;
+      if (!best || cost < best.cost) best = { c:c, r:r, cost:cost };
+    }
+    return best;
   }
 
   // ---- panning ----------------------------------------------------------
 
-  var dragging = false, startX = 0, startY = 0, baseX = 0, baseY = 0, moved = 0;
+  var dragging=false, sx=0, sy=0, bx=0, by=0, moved=0;
 
-  function down(x, y) {
-    dragging = true; moved = 0;
-    startX = x; startY = y; baseX = panX; baseY = panY;
-    wall.classList.add("dragging");
-    hintEl.classList.add("gone");
+  function down(x,y){
+    if (anim) { cancelAnimationFrame(anim); anim = null; }
+    dragging=true; moved=0; sx=x; sy=y; bx=panX; by=panY;
+    wall.classList.add("dragging"); hintEl.classList.add("gone");
   }
-  function move(x, y) {
-    if (!dragging) return;
-    var dx = x - startX, dy = y - startY;
-    moved = Math.max(moved, Math.abs(dx) + Math.abs(dy));
-    panX = baseX + dx; panY = baseY + dy;
-    apply();
+  function move(x,y){
+    if(!dragging) return;
+    var dx=x-sx, dy=y-sy;
+    moved=Math.max(moved,Math.abs(dx)+Math.abs(dy));
+    panX=bx+dx; panY=by+dy; apply();
   }
-  function up() { dragging = false; wall.classList.remove("dragging"); }
+  function up(){ dragging=false; wall.classList.remove("dragging"); }
 
-  wall.addEventListener("mousedown", function (e) {
-    if (e.button !== 0) return;
-    down(e.clientX, e.clientY); e.preventDefault();
+  wall.addEventListener("mousedown", function(e){
+    if(e.button!==0) return; down(e.clientX,e.clientY); e.preventDefault();
   });
-  window.addEventListener("mousemove", function (e) { move(e.clientX, e.clientY); });
+  window.addEventListener("mousemove", function(e){ move(e.clientX,e.clientY); });
   window.addEventListener("mouseup", up);
 
-  wall.addEventListener("touchstart", function (e) {
+  wall.addEventListener("touchstart", function(e){
     down(e.touches[0].clientX, e.touches[0].clientY);
-  }, { passive: true });
-  wall.addEventListener("touchmove", function (e) {
-    move(e.touches[0].clientX, e.touches[0].clientY);
-    e.preventDefault();
-  }, { passive: false });
+  }, {passive:true});
+  wall.addEventListener("touchmove", function(e){
+    move(e.touches[0].clientX, e.touches[0].clientY); e.preventDefault();
+  }, {passive:false});
   wall.addEventListener("touchend", up);
 
-  // A drag should not also open the link it finished on.
-  wall.addEventListener("click", function (e) {
+  wall.addEventListener("click", function(e){
     if (moved > 6) { e.preventDefault(); e.stopPropagation(); }
   }, true);
 
-  wall.addEventListener("wheel", function (e) {
+  wall.addEventListener("wheel", function(e){
     panX -= e.deltaX; panY -= e.deltaY;
-    hintEl.classList.add("gone");
-    apply(); e.preventDefault();
-  }, { passive: false });
+    hintEl.classList.add("gone"); apply(); e.preventDefault();
+  }, {passive:false});
 
-  window.addEventListener("keydown", function (e) {
-    var step = e.shiftKey ? cell.w : cell.w / 2;
-    if (e.key === "ArrowLeft")  { panX += step; }
-    else if (e.key === "ArrowRight") { panX -= step; }
-    else if (e.key === "ArrowUp")    { panY += cell.h / 2; }
-    else if (e.key === "ArrowDown")  { panY -= cell.h / 2; }
-    else if (e.key === "Home") { panX = 0; panY = 0; }
+  window.addEventListener("keydown", function(e){
+    if (e.key === "ArrowLeft")       panX += cell.w/2;
+    else if (e.key === "ArrowRight") panX -= cell.w/2;
+    else if (e.key === "ArrowUp")    panY += cell.h/2;
+    else if (e.key === "ArrowDown")  panY -= cell.h/2;
+    else if (e.key === "Home")       { setFocus(0,0); return; }
+    else if (e.key.toLowerCase() === "r") { shuffle(); return; }
     else return;
-    hintEl.classList.add("gone");
-    apply(); e.preventDefault();
+    hintEl.classList.add("gone"); apply(); e.preventDefault();
   });
 
-  document.getElementById("recentre").addEventListener("click", function () {
-    panX = 0; panY = 0; apply();
+  document.getElementById("recentre").addEventListener("click", function(){
+    setFocus(0,0);
+  });
+
+  function shuffle() {
+    var target = Math.floor(Math.random()*N);
+    if (target === mod(todayIdx + focusCol + focusRow*ROW_STRIDE, N)) {
+      target = mod(target + 1 + Math.floor(Math.random()*(N-1)), N);
+    }
+    var p = nearestCell(target);
+    hintEl.classList.add("gone");
+    setFocus(p.c, p.r);
+  }
+  document.getElementById("shuffle").addEventListener("click", shuffle);
+
+  // ---- wall colour ------------------------------------------------------
+
+  var wallsBox = document.getElementById("walls");
+  function setWall(name) {
+    document.body.setAttribute("data-wall", name);
+    try { localStorage.setItem("artDaily.wall", name); } catch (e) {}
+    Array.prototype.forEach.call(wallsBox.children, function(b){
+      b.setAttribute("aria-pressed", String(b.dataset.wall === name));
+    });
+  }
+  WALLS.forEach(function(w){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.dataset.wall = w[0];
+    b.style.background = w[1];
+    b.title = w[2];
+    b.setAttribute("aria-label", w[2] + " wall");
+    b.addEventListener("click", function(){ setWall(w[0]); });
+    wallsBox.appendChild(b);
   });
 
   var resizeTimer;
-  window.addEventListener("resize", function () {
+  window.addEventListener("resize", function(){
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () {
-      readCell();
-      tiles.forEach(function (el) { el.remove(); });
-      tiles.clear();
-      render();
-    }, 180);
+    resizeTimer = setTimeout(function(){ readCell(); placeGlow(); rebuild(); }, 180);
   });
 
   // ---- start ------------------------------------------------------------
 
+  var saved = null;
+  try { saved = localStorage.getItem("artDaily.wall"); } catch (e) {}
+  setWall(saved && WALLS.some(function(w){return w[0]===saved;}) ? saved : "teal");
+
   fetch("artworks.json")
-    .then(function (r) { return r.json(); })
-    .then(function (j) {
+    .then(function(r){ return r.json(); })
+    .then(function(j){
       manifest = j;
       N = j.artworks.length;
       var now = new Date();
-      todayIdx = mod(slotFor(now) - 1, N);
+      todayIdx = mod(slotFor(now)-1, N);
       todayLabel.textContent =
-        now.toLocaleDateString(undefined, { month: "long", day: "numeric" });
+        now.toLocaleDateString(undefined, { month:"long", day:"numeric" });
       readCell();
+      placeGlow();
       apply();
       statusEl.classList.add("gone");
-      setTimeout(function () { hintEl.classList.add("gone"); }, 7000);
+      setTimeout(function(){ hintEl.classList.add("gone"); }, 7000);
     })
-    .catch(function () {
+    .catch(function(){
       statusEl.textContent = "The wall could not be loaded. Try reloading.";
     });
 })();
