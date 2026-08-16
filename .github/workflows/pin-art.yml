@@ -17,6 +17,7 @@ on:
           - check          # report only, change nothing
           - pin-missing    # resolve only entries not yet pinned
           - pin-all        # re-resolve everything from scratch
+          - verify         # re-resolve, then confirm every image loads
   schedule:
     - cron: "0 6 1 * *"    # 06:00 UTC, first of the month
   push:
@@ -57,6 +58,7 @@ jobs:
           case "${{ steps.mode.outputs.mode }}" in
             check)       FLAGS="--check" ;;
             pin-missing) FLAGS="--stale" ;;
+            verify)      FLAGS="--verify" ;;
             *)           FLAGS="" ;;
           esac
           python3 pin.py $FLAGS --report "$GITHUB_STEP_SUMMARY"
