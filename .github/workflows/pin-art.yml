@@ -1,0 +1,75 @@
+name: Pin Art Daily images
+
+# Runs the resolver on GitHub's servers so nothing has to be installed
+# locally. Three ways in:
+#   - the "Run workflow" button on the Actions tab
+#   - automatically on the 1st of each month, to catch link rot early
+#   - whenever artworks.json itself changes on main
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "What to do"
+        required: true
+        default: check
+        type: choice
+        options:
+          - check          # report only, change nothing
+          - pin-missing    # resolve only entries not yet pinned
+          - pin-all        # re-resolve everything from scratch
+  schedule:
+    - cron: "0 6 1 * *"    # 06:00 UTC, first of the month
+  push:
+    branches: [main]
+    paths: ["misc/art-daily/artworks.json"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pin-art-daily
+  cancel-in-progress: false
+
+jobs:
+  pin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Decide mode
+        id: mode
+        run: |
+          # Scheduled and push runs re-resolve everything; only the manual
+          # button can ask for something else.
+          MODE="${{ github.event.inputs.mode }}"
+          if [ -z "$MODE" ]; then MODE="pin-all"; fi
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "Running in mode: $MODE"
+
+      - name: Resolve images
+        id: run
+        working-directory: misc/art-daily
+        run: |
+          case "${{ steps.mode.outputs.mode }}" in
+            check)       FLAGS="--check" ;;
+            pin-missing) FLAGS="--stale" ;;
+            *)           FLAGS="" ;;
+          esac
+          python3 pin.py $FLAGS --report "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit updated manifest
+        if: steps.mode.outputs.mode != 'check'
+        run: |
+          if git diff --quiet -- misc/art-daily/artworks.json; then
+            echo "No changes to artworks.json."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add misc/art-daily/artworks.json
+          git commit -m "Pin Art Daily image URLs [skip ci]"
+          git push
