@@ -144,6 +144,61 @@ def search_for_article(query):
         return None
 
 
+
+# ------------------------------------------------- AIC -> Commons fallback
+
+def _norm(t):
+    keep = []
+    for ch in t.lower():
+        keep.append(ch if (ch.isalnum() or ch.isspace()) else " ")
+    return " ".join("".join(keep).split())
+
+
+def looks_like_same_work(artwork_title, article_title):
+    """Only accept an article that is plausibly the same object.
+
+    A loose match here would silently hang the wrong painting on the wall,
+    which is worse than an empty frame, so the bar is deliberately high."""
+    a, b = _norm(artwork_title), _norm(article_title)
+    if len(a) < 6 or len(b) < 6:
+        return False
+    # strip a trailing disambiguator like "(painting)" or "(Hopper)"
+    b_head = b.split(" ")[0:len(a.split(" "))]
+    if a == b:
+        return True
+    # Only the artwork title inside the article title, never the reverse.
+    # An article whose name is shorter is a more general topic -- "Harvest"
+    # is not "Harvest Talk" -- and that is how you hang the wrong picture.
+    if a in b:
+        return True
+    return " ".join(b_head) == a
+
+
+def resolve_aic_fallbacks(works):
+    """Give AIC works a Commons image as a second source.
+
+    The Art Institute's image host is not always reachable for every visitor,
+    and a work that also exists on Commons should not vanish because of it."""
+    found, checked = {}, 0
+    for w in works:
+        checked += 1
+        query = '"%s" %s' % (w["title"], w["artist"])
+        article = search_for_article(query)
+        if not article:
+            time.sleep(0.3)
+            continue
+        if not looks_like_same_work(w["title"], article):
+            time.sleep(0.3)
+            continue
+        got = resolve_wikipedia([article])
+        if article in got:
+            found[w["day"]] = (article, got[article])
+        sys.stdout.write("\r  matched %d of %d checked " % (len(found), checked))
+        sys.stdout.flush()
+        time.sleep(0.3)
+    print()
+    return found
+
 # --------------------------------------------------------------- verify
 
 def image_loads(url):
@@ -184,6 +239,8 @@ def main():
     ap.add_argument("--check", action="store_true", help="report only")
     ap.add_argument("--stale", action="store_true",
                     help="only entries with nothing pinned yet")
+    ap.add_argument("--aic-fallback", action="store_true",
+                    help="give AIC works a Commons image as a second source")
     ap.add_argument("--verify", action="store_true",
                     help="also confirm each resolved image actually loads")
     ap.add_argument("--report", metavar="FILE",
@@ -267,6 +324,30 @@ def main():
         if not args.check:
             w["commons"] = name
         resolved += 1
+
+    # --- optional second source for AIC works ---
+    if args.aic_fallback:
+        pool = [w for w in aic_works if not w.get("commons")]
+        print("Looking for Commons fallbacks for %d Art Institute works..." % len(pool))
+        found = resolve_aic_fallbacks(pool)
+        # If two different works resolved to the same image, the match was
+        # ambiguous for both. Drop them rather than guess.
+        seen = {}
+        for day, hit in found.items():
+            seen.setdefault(hit[1], []).append(day)
+        for fname, days in seen.items():
+            if len(days) > 1:
+                for day in days:
+                    found.pop(day, None)
+                print("  ambiguous match dropped for days %s" % days)
+        for w in pool:
+            hit = found.get(w["day"])
+            if not hit:
+                continue
+            if not args.check:
+                w["commons"] = hit[1]
+            substituted.append((w["day"], w["title"], "also on Commons via '%s'" % hit[0]))
+        print("Commons fallbacks added: %d of %d" % (len(found), len(pool)))
 
     # --- optional verification ---
     if args.verify:
