@@ -11,7 +11,7 @@
    "source": "wikimedia",
    "wikipedia": "Great Sphinx of Giza",
    "link": "https://en.wikipedia.org/wiki/Great_Sphinx_of_Giza",
-   "commons": null,
+   "commons": "Sphinx_with_the_third_pyramid.jpg",
    "local": null
   },
   {
@@ -22,7 +22,7 @@
    "source": "wikimedia",
    "wikipedia": "Bacchus and Ariadne",
    "link": "https://en.wikipedia.org/wiki/Bacchus_and_Ariadne",
-   "commons": null,
+   "commons": "Titian_Bacchus_and_Ariadne.jpg",
    "local": null
   },
   {
@@ -33,7 +33,7 @@
    "source": "wikimedia",
    "wikipedia": "Charles I in Three Positions",
    "link": "https://en.wikipedia.org/wiki/Charles_I_in_Three_Positions",
-   "commons": null,
+   "commons": "Sir_Anthony_Van_Dyck_-_Charles_I_(1600-49)_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -44,18 +44,18 @@
    "source": "wikimedia",
    "wikipedia": "The Gulf Stream (painting)",
    "link": "https://en.wikipedia.org/wiki/The_Gulf_Stream_(painting)",
-   "commons": null,
+   "commons": "Winslow_Homer_-_The_Gulf_Stream_-_Metropolitan_Museum_of_Art.jpg",
    "local": null
   },
   {
    "day": 5,
    "title": "Allegory of Science",
    "artist": "Jean Baptiste Carpeaux",
-   "date": null,
+   "date": "1865",
    "source": "aic",
    "aic_id": 5830,
    "link": "https://www.artic.edu/artworks/5830",
-   "image_id": null,
+   "image_id": "0626750b-d73d-1e8a-b66c-07d824c271d2",
    "local": null
   },
   {
@@ -66,7 +66,7 @@
    "source": "wikimedia",
    "wikipedia": "The Balcony (painting)",
    "link": "https://en.wikipedia.org/wiki/The_Balcony_(painting)",
-   "commons": null,
+   "commons": "Edouard_Manet_-_The_Balcony_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -77,7 +77,7 @@
    "source": "wikimedia",
    "wikipedia": "Dynamism of a Dog on a Leash",
    "link": "https://en.wikipedia.org/wiki/Dynamism_of_a_Dog_on_a_Leash",
-   "commons": null,
+   "commons": "Giacomo_Balla,_1912,_Dynamism_of_a_Dog_on_a_Leash,_oil_on_canvas,_89.8_x_109.8_cm,_Albright-Knox_Art_Gallery.jpg",
    "local": null
   },
   {
@@ -86,9 +86,9 @@
    "artist": "Edvard Munch",
    "date": "1885–1886",
    "source": "wikimedia",
-   "wikipedia": "The Sick Child",
-   "link": "https://en.wikipedia.org/wiki/The_Sick_Child",
-   "commons": null,
+   "wikipedia": "The Sick Child (Munch)",
+   "link": "https://en.wikipedia.org/wiki/The_Sick_Child_(Munch)",
+   "commons": "Munch_Det_Syke_Barn_1885-86.jpg",
    "local": null
   },
   {
@@ -99,18 +99,18 @@
    "source": "wikimedia",
    "wikipedia": "The Daughters of Edward Darley Boit",
    "link": "https://en.wikipedia.org/wiki/The_Daughters_of_Edward_Darley_Boit",
-   "commons": null,
+   "commons": "The_Daughters_of_Edward_Darley_Boit,_John_Singer_Sargent,_1882_(unfree_frame_crop).jpg",
    "local": null
   },
   {
    "day": 10,
    "title": "Stacks of Wheat (End of Summer)",
    "artist": "Claude Monet",
-   "date": null,
+   "date": "1890–91",
    "source": "aic",
    "aic_id": 64818,
    "link": "https://www.artic.edu/artworks/64818",
-   "image_id": null,
+   "image_id": "a38e2828-ec6f-ece1-a30f-70243449197b",
    "local": null
   },
   {
@@ -121,7 +121,7 @@
    "source": "wikimedia",
    "wikipedia": "Night Revels of Han Xizai",
    "link": "https://en.wikipedia.org/wiki/Night_Revels_of_Han_Xizai",
-   "commons": null,
+   "commons": "Gu_Hongzhong's_Night_Revels_1_edit_(cropped2)_(cropped)_(cropped).jpg",
    "local": null
   },
   {
@@ -132,18 +132,18 @@
    "source": "wikimedia",
    "wikipedia": "The Jewish Bride",
    "link": "https://en.wikipedia.org/wiki/The_Jewish_Bride",
-   "commons": null,
+   "commons": "Rembrandt_Harmensz._van_Rijn_-_Portret_van_een_paar_als_oudtestamentische_figuren,_genaamd_'Het_Joodse_bruidje'_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 13,
    "title": "Sunset",
    "artist": "Paul Klee",
-   "date": null,
+   "date": "1930",
    "source": "aic",
    "aic_id": 61608,
    "link": "https://www.artic.edu/artworks/61608",
-   "image_id": null,
+   "image_id": "92da7102-0562-f4da-55f9-1d29828b20d7",
    "local": null
   },
   {
@@ -154,29 +154,29 @@
    "source": "wikimedia",
    "wikipedia": "The Wedding at Cana",
    "link": "https://en.wikipedia.org/wiki/The_Wedding_at_Cana",
-   "commons": null,
+   "commons": "Kafr_Kanna_BW_1.JPG",
    "local": null
   },
   {
    "day": 15,
    "title": "St. Christopher Facing to the Right",
    "artist": "Albrecht Dürer",
-   "date": null,
+   "date": "1521",
    "source": "aic",
    "aic_id": 4107,
    "link": "https://www.artic.edu/artworks/4107",
-   "image_id": null,
+   "image_id": "2c7e949f-9a23-55b2-9edb-1a383c9b63e9",
    "local": null
   },
   {
    "day": 16,
    "title": "...And the Home of the Brave",
    "artist": "Charles Demuth",
-   "date": null,
+   "date": "1931",
    "source": "aic",
    "aic_id": 64276,
    "link": "https://www.artic.edu/artworks/64276",
-   "image_id": null,
+   "image_id": "f70f3419-2911-ace8-469e-a997aa001b0a",
    "local": null
   },
   {
@@ -187,7 +187,7 @@
    "source": "wikimedia",
    "wikipedia": "The Oxbow",
    "link": "https://en.wikipedia.org/wiki/The_Oxbow",
-   "commons": null,
+   "commons": "Cole_Thomas_The_Oxbow_(The_Connecticut_River_near_Northampton_1836).jpg",
    "local": null
   },
   {
@@ -198,7 +198,7 @@
    "source": "wikimedia",
    "wikipedia": "Standard of Ur",
    "link": "https://en.wikipedia.org/wiki/Standard_of_Ur",
-   "commons": null,
+   "commons": "Denis_Bourez_-_British_Museum,_London_(8747049029)_(2).jpg",
    "local": null
   },
   {
@@ -209,7 +209,7 @@
    "source": "wikimedia",
    "wikipedia": "Liberty Leading the People",
    "link": "https://en.wikipedia.org/wiki/Liberty_Leading_the_People",
-   "commons": null,
+   "commons": "La_Liberté_guidant_le_peuple_-_Eugène_Delacroix_-_Musée_du_Louvre_Peintures_RF_129_-_après_restauration_2024.jpg",
    "local": null
   },
   {
@@ -220,29 +220,29 @@
    "source": "wikimedia",
    "wikipedia": "The Night Café",
    "link": "https://en.wikipedia.org/wiki/The_Night_Café",
-   "commons": null,
+   "commons": "Vincent_Willem_van_Gogh_076.jpg",
    "local": null
   },
   {
    "day": 21,
    "title": "Nightlife",
    "artist": "Archibald John Motley Jr.",
-   "date": null,
+   "date": "1943",
    "source": "aic",
    "aic_id": 117266,
    "link": "https://www.artic.edu/artworks/117266",
-   "image_id": null,
+   "image_id": "ec19d5f1-ae0f-5186-d421-4a53dca5fb90",
    "local": null
   },
   {
    "day": 22,
    "title": "Stela of Tjenti and Nefret",
    "artist": "Ancient Egyptian",
-   "date": null,
+   "date": "Old Kingdom, Dynasty 4, about 2540 BCE",
    "source": "aic",
    "aic_id": 121737,
    "link": "https://www.artic.edu/artworks/121737",
-   "image_id": null,
+   "image_id": "ded5de06-e39e-7974-27ba-0d2db380f149",
    "local": null
   },
   {
@@ -253,18 +253,18 @@
    "source": "wikimedia",
    "wikipedia": "The Sleep of Reason Produces Monsters",
    "link": "https://en.wikipedia.org/wiki/The_Sleep_of_Reason_Produces_Monsters",
-   "commons": null,
+   "commons": "Francisco_José_de_Goya_y_Lucientes_-_The_sleep_of_reason_produces_monsters_(No._43),_from_Los_Caprichos_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 24,
    "title": "Woman before an Aquarium",
    "artist": "Henri Matisse",
-   "date": null,
+   "date": "1921–23",
    "source": "aic",
    "aic_id": 27984,
    "link": "https://www.artic.edu/artworks/27984",
-   "image_id": null,
+   "image_id": "d0e36029-27fc-bf4e-357a-55cfbaf7bdfd",
    "local": null
   },
   {
@@ -286,7 +286,7 @@
    "source": "wikimedia",
    "wikipedia": "Black Square (painting)",
    "link": "https://en.wikipedia.org/wiki/Black_Square_(painting)",
-   "commons": null,
+   "commons": "Kazimir_Malevich,_1915,_Black_Suprematic_Square,_oil_on_linen_canvas,_79.5_x_79.5_cm,_Tretyakov_Gallery,_Moscow.jpg",
    "local": null
   },
   {
@@ -297,7 +297,7 @@
    "source": "wikimedia",
    "wikipedia": "Moulin Rouge: La Goulue",
    "link": "https://en.wikipedia.org/wiki/Moulin_Rouge:_La_Goulue",
-   "commons": null,
+   "commons": "Henri_de_Toulouse-Lautrec,_Moulin_Rouge_-_La_Goulue,_1891_-_The_Metropolitan_Museum_of_Art.jpg",
    "local": null
   },
   {
@@ -308,7 +308,7 @@
    "source": "wikimedia",
    "wikipedia": "The Thinker",
    "link": "https://en.wikipedia.org/wiki/The_Thinker",
-   "commons": null,
+   "commons": "Le_Penseur_by_Rodin_(Kunsthalle_Bielefeld)_2014-04-10.JPG",
    "local": null
   },
   {
@@ -319,7 +319,7 @@
    "source": "wikimedia",
    "wikipedia": "Portrait of Baldassare Castiglione",
    "link": "https://en.wikipedia.org/wiki/Portrait_of_Baldassare_Castiglione",
-   "commons": null,
+   "commons": "Baldassare_Castiglione,_by_Raffaello_Sanzio,_from_C2RMF_retouched.jpg",
    "local": null
   },
   {
@@ -330,29 +330,29 @@
    "source": "wikimedia",
    "wikipedia": "The Kiss (Klimt)",
    "link": "https://en.wikipedia.org/wiki/The_Kiss_(Klimt)",
-   "commons": null,
+   "commons": "The_Kiss_-_Gustav_Klimt_-_Google_Cultural_Institute.jpg",
    "local": null
   },
   {
    "day": 31,
    "title": "Nativity",
    "artist": "Albrecht Dürer",
-   "date": null,
+   "date": "1504",
    "source": "aic",
    "aic_id": 14448,
    "link": "https://www.artic.edu/artworks/14448",
-   "image_id": null,
+   "image_id": "f7c93ce5-818b-1c63-96d7-88b1efe3b2d2",
    "local": null
   },
   {
    "day": 32,
    "title": "The Room No. VI",
    "artist": "Eldzier Cortor",
-   "date": null,
+   "date": "1948",
    "source": "aic",
    "aic_id": 191556,
    "link": "https://www.artic.edu/artworks/191556",
-   "image_id": null,
+   "image_id": "3cc73910-3b2a-5e23-b458-679d84188f06",
    "local": null
   },
   {
@@ -363,7 +363,7 @@
    "source": "wikimedia",
    "wikipedia": "Borobudur",
    "link": "https://en.wikipedia.org/wiki/Borobudur",
-   "commons": null,
+   "commons": "Pradaksina.jpg",
    "local": null
   },
   {
@@ -374,7 +374,7 @@
    "source": "wikimedia",
    "wikipedia": "Supper at Emmaus (Caravaggio, London)",
    "link": "https://en.wikipedia.org/wiki/Supper_at_Emmaus_(Caravaggio,_London)",
-   "commons": null,
+   "commons": "1602-3_Caravaggio,Supper_at_Emmaus_National_Gallery,_London.jpg",
    "local": null
   },
   {
@@ -385,18 +385,18 @@
    "source": "wikimedia",
    "wikipedia": "The Fall of the Rebel Angels (Bruegel)",
    "link": "https://en.wikipedia.org/wiki/The_Fall_of_the_Rebel_Angels_(Bruegel)",
-   "commons": null,
+   "commons": "Pieter_Bruegel_the_Elder_-_The_Fall_of_the_Rebel_Angels_-_RMFAB_584_(derivative_work).jpg",
    "local": null
   },
   {
    "day": 36,
    "title": "The Crucifixion",
    "artist": "Francisco de Zurbarán",
-   "date": null,
+   "date": "1627",
    "source": "aic",
    "aic_id": 80084,
    "link": "https://www.artic.edu/artworks/80084",
-   "image_id": null,
+   "image_id": "c8ee825f-bc8c-c76b-1f05-5d692d9a6b47",
    "local": null
   },
   {
@@ -407,7 +407,7 @@
    "source": "wikimedia",
    "wikipedia": "The Dream (Rousseau painting)",
    "link": "https://en.wikipedia.org/wiki/The_Dream_(Rousseau_painting)",
-   "commons": null,
+   "commons": "Henri_Rousseau_-_Le_Rêve_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -418,29 +418,29 @@
    "source": "wikimedia",
    "wikipedia": "The Creation of Adam",
    "link": "https://en.wikipedia.org/wiki/The_Creation_of_Adam",
-   "commons": null,
+   "commons": "Michelangelo_-_Creation_of_Adam_(cropped).jpg",
    "local": null
   },
   {
    "day": 39,
    "title": "Landscape with Saint John on Patmos",
    "artist": "Nicolas Poussin",
-   "date": null,
+   "date": "1640",
    "source": "aic",
    "aic_id": 5848,
    "link": "https://www.artic.edu/artworks/5848",
-   "image_id": null,
+   "image_id": "aa870b0d-5a1b-660a-6dc6-56c12109cf6e",
    "local": null
   },
   {
    "day": 40,
    "title": "Caribs' Leap/Western Deep",
    "artist": "Steve McQueen",
-   "date": null,
+   "date": "2002",
    "source": "aic",
    "aic_id": 181091,
    "link": "https://www.artic.edu/artworks/181091",
-   "image_id": null,
+   "image_id": "a52c0c03-9668-ae2b-d780-dc928a9d16c1",
    "local": null
   },
   {
@@ -451,18 +451,18 @@
    "source": "wikimedia",
    "wikipedia": "Primavera (Botticelli)",
    "link": "https://en.wikipedia.org/wiki/Primavera_(Botticelli)",
-   "commons": null,
+   "commons": "Botticelli-primavera.jpg",
    "local": null
   },
   {
    "day": 42,
    "title": "Kummeralp Mountain and Two Sheds",
    "artist": "Ernst Ludwig Kirchner",
-   "date": null,
+   "date": "1920",
    "source": "aic",
    "aic_id": 87447,
    "link": "https://www.artic.edu/artworks/87447",
-   "image_id": null,
+   "image_id": "bd944158-acd3-3e76-e208-b5dd2636c1ac",
    "local": null
   },
   {
@@ -473,7 +473,7 @@
    "source": "wikimedia",
    "wikipedia": "Las Meninas",
    "link": "https://en.wikipedia.org/wiki/Las_Meninas",
-   "commons": null,
+   "commons": "Las_Meninas,_by_Diego_Velázquez,_from_Prado_in_Google_Earth.jpg",
    "local": null
   },
   {
@@ -484,7 +484,7 @@
    "source": "wikimedia",
    "wikipedia": "The Lady of Shalott (painting)",
    "link": "https://en.wikipedia.org/wiki/The_Lady_of_Shalott_(painting)",
-   "commons": null,
+   "commons": "John_William_Waterhouse_-_The_Lady_of_Shalott_-_Google_Art_Project_edit.jpg",
    "local": null
   },
   {
@@ -493,9 +493,9 @@
    "artist": "Peter Paul Rubens",
    "date": "1612–1614",
    "source": "wikimedia",
-   "wikipedia": "The Descent from the Cross (Rubens)",
-   "link": "https://en.wikipedia.org/wiki/The_Descent_from_the_Cross_(Rubens)",
-   "commons": null,
+   "wikipedia": "The Descent from the Cross (Rubens, 1612–1614)",
+   "link": "https://en.wikipedia.org/wiki/The_Descent_from_the_Cross_(Rubens,_1612–1614)",
+   "commons": "Peter_Paul_Rubens_-_The_Descent_from_the_Cross_(Antwerp_Cathedral).,_c._1613.jpg",
    "local": null
   },
   {
@@ -506,7 +506,7 @@
    "source": "wikimedia",
    "wikipedia": "Nocturne in Black and Gold – The Falling Rocket",
    "link": "https://en.wikipedia.org/wiki/Nocturne_in_Black_and_Gold_–_The_Falling_Rocket",
-   "commons": null,
+   "commons": "Whistler-Nocturne_in_black_and_gold.jpg",
    "local": null
   },
   {
@@ -517,7 +517,7 @@
    "source": "wikimedia",
    "wikipedia": "An Experiment on a Bird in the Air Pump",
    "link": "https://en.wikipedia.org/wiki/An_Experiment_on_a_Bird_in_the_Air_Pump",
-   "commons": null,
+   "commons": "An_Experiment_on_a_Bird_in_an_Air_Pump_by_Joseph_Wright_of_Derby,_1768.jpg",
    "local": null
   },
   {
@@ -528,7 +528,7 @@
    "source": "wikimedia",
    "wikipedia": "The Ancient of Days",
    "link": "https://en.wikipedia.org/wiki/The_Ancient_of_Days",
-   "commons": null,
+   "commons": "Europe_a_Prophecy_copy_K_plate_01.jpg",
    "local": null
   },
   {
@@ -539,7 +539,7 @@
    "source": "wikimedia",
    "wikipedia": "Riace bronzes",
    "link": "https://en.wikipedia.org/wiki/Riace_bronzes",
-   "commons": null,
+   "commons": "Reggio_calabria_museo_nazionale_bronzi_di_riace.jpg",
    "local": null
   },
   {
@@ -550,7 +550,7 @@
    "source": "wikimedia",
    "wikipedia": "The Fifer",
    "link": "https://en.wikipedia.org/wiki/The_Fifer",
-   "commons": null,
+   "commons": "Manet,_Edouard_-_Young_Flautist,_or_The_Fifer,_1866_(2).jpg",
    "local": null
   },
   {
@@ -561,7 +561,7 @@
    "source": "wikimedia",
    "wikipedia": "Water Lilies (Monet series)",
    "link": "https://en.wikipedia.org/wiki/Water_Lilies_(Monet_series)",
-   "commons": null,
+   "commons": "Reflections_of_Clouds_on_the_Water-Lily_Pond.jpg",
    "local": null
   },
   {
@@ -572,29 +572,29 @@
    "source": "wikimedia",
    "wikipedia": "Praying Hands (Dürer)",
    "link": "https://en.wikipedia.org/wiki/Praying_Hands_(Dürer)",
-   "commons": null,
+   "commons": "Albrecht_Dürer_-_Praying_Hands,_1508_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 53,
    "title": "The Watermill with the Great Red Roof",
    "artist": "Meindert Hobbema",
-   "date": null,
+   "date": "c. 1665",
    "source": "aic",
    "aic_id": 869,
    "link": "https://www.artic.edu/artworks/869",
-   "image_id": null,
+   "image_id": "237c25a2-6051-a8e7-1610-a01938d4deab",
    "local": null
   },
   {
    "day": 54,
    "title": "Nighthawks",
    "artist": "Edward Hopper",
-   "date": null,
+   "date": "1942",
    "source": "aic",
    "aic_id": 111628,
    "link": "https://www.artic.edu/artworks/111628",
-   "image_id": null,
+   "image_id": "831a05de-d3f6-f4fa-a460-23008dd58dda",
    "local": null
   },
   {
@@ -605,18 +605,18 @@
    "source": "wikimedia",
    "wikipedia": "The Gross Clinic",
    "link": "https://en.wikipedia.org/wiki/The_Gross_Clinic",
-   "commons": null,
+   "commons": "Thomas_Eakins,_American_-_Portrait_of_Dr._Samuel_D._Gross_(The_Gross_Clinic)_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 56,
    "title": "Frederick Douglass",
    "artist": "Samuel J. Miller",
-   "date": null,
+   "date": "1847-52",
    "source": "aic",
    "aic_id": 145681,
    "link": "https://www.artic.edu/artworks/145681",
-   "image_id": null,
+   "image_id": "68597cf9-01aa-7c1f-1179-d4b8811e1c05",
    "local": null
   },
   {
@@ -627,7 +627,7 @@
    "source": "wikimedia",
    "wikipedia": "Nefertiti Bust",
    "link": "https://en.wikipedia.org/wiki/Nefertiti_Bust",
-   "commons": null,
+   "commons": "Nofretete_Neues_Museum.jpg",
    "local": null
   },
   {
@@ -638,7 +638,7 @@
    "source": "wikimedia",
    "wikipedia": "The Milkmaid (Vermeer)",
    "link": "https://en.wikipedia.org/wiki/The_Milkmaid_(Vermeer)",
-   "commons": null,
+   "commons": "Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.png",
    "local": null
   },
   {
@@ -649,7 +649,7 @@
    "source": "wikimedia",
    "wikipedia": "The Hay Wain",
    "link": "https://en.wikipedia.org/wiki/The_Hay_Wain",
-   "commons": null,
+   "commons": "John_Constable_-_The_Hay_Wain_(1821).jpg",
    "local": null
   },
   {
@@ -660,7 +660,7 @@
    "source": "wikimedia",
    "wikipedia": "Virgin of the Rocks",
    "link": "https://en.wikipedia.org/wiki/Virgin_of_the_Rocks",
-   "commons": null,
+   "commons": "Leonardo_Da_Vinci_-_Vergine_delle_Rocce_(Louvre).jpg",
    "local": null
   },
   {
@@ -671,18 +671,18 @@
    "source": "wikimedia",
    "wikipedia": "Mont Sainte-Victoire (Cézanne)",
    "link": "https://en.wikipedia.org/wiki/Mont_Sainte-Victoire_(Cézanne)",
-   "commons": null,
+   "commons": "Paul_Cézanne_-_Montagne_Saint-victoire_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 62,
    "title": "Mural Fragment Depicting a Maguey Bloodletting Ritual",
    "artist": "Teotihuacan",
-   "date": null,
+   "date": "500–600 CE",
    "source": "aic",
    "aic_id": 14968,
    "link": "https://www.artic.edu/artworks/14968",
-   "image_id": null,
+   "image_id": "09d2b000-8e44-c735-5099-126d6453aaaa",
    "local": null
   },
   {
@@ -693,7 +693,7 @@
    "source": "wikimedia",
    "wikipedia": "Wheatfield with Crows",
    "link": "https://en.wikipedia.org/wiki/Wheatfield_with_Crows",
-   "commons": null,
+   "commons": "Korenveld_met_kraaien_-_s0149V1962_-_Van_Gogh_Museum.jpg",
    "local": null
   },
   {
@@ -704,18 +704,18 @@
    "source": "wikimedia",
    "wikipedia": "Among the Sierra Nevada, California",
    "link": "https://en.wikipedia.org/wiki/Among_the_Sierra_Nevada,_California",
-   "commons": null,
+   "commons": "Bierstadt_-_Among_the_Sierra_Nevada_Mountains_-_1868.jpg",
    "local": null
   },
   {
    "day": 65,
    "title": "Gasthof zur Muldentalsperre",
    "artist": "Peter Doig",
-   "date": null,
+   "date": "2000/2002",
    "source": "aic",
    "aic_id": 160226,
    "link": "https://www.artic.edu/artworks/160226",
-   "image_id": null,
+   "image_id": "153493fa-8cc8-4126-f790-0a796bdf84de",
    "local": null
   },
   {
@@ -726,7 +726,7 @@
    "source": "wikimedia",
    "wikipedia": "Equestrian Statue of Gattamelata",
    "link": "https://en.wikipedia.org/wiki/Equestrian_Statue_of_Gattamelata",
-   "commons": null,
+   "commons": "Statue_of_Gattamelata_by_Donatello_-_Padua_2016_(2).jpg",
    "local": null
   },
   {
@@ -735,9 +735,9 @@
    "artist": "Edgar Degas",
    "date": "1881",
    "source": "wikimedia",
-   "wikipedia": "The Little Fourteen-Year-Old Dancer",
-   "link": "https://en.wikipedia.org/wiki/The_Little_Fourteen-Year-Old_Dancer",
-   "commons": null,
+   "wikipedia": "Little Dancer of Fourteen Years",
+   "link": "https://en.wikipedia.org/wiki/Little_Dancer_of_Fourteen_Years",
+   "commons": "The_Little_Fourteen-Year-Old_Dancer_MET_DP-14939-005.jpg",
    "local": null
   },
   {
@@ -748,51 +748,51 @@
    "source": "wikimedia",
    "wikipedia": "Rosetta Stone",
    "link": "https://en.wikipedia.org/wiki/Rosetta_Stone",
-   "commons": null,
+   "commons": "Rosetta_Stone.JPG",
    "local": null
   },
   {
    "day": 69,
    "title": "Still Life with Dead Game, Fruits, and Vegetables in a Market",
    "artist": "Frans Snyders",
-   "date": null,
+   "date": "1614",
    "source": "aic",
    "aic_id": 62042,
    "link": "https://www.artic.edu/artworks/62042",
-   "image_id": null,
+   "image_id": "d9bde524-38b2-4262-3338-e4d06a50746d",
    "local": null
   },
   {
    "day": 70,
    "title": "Statue of the Madonna in the Mountains",
    "artist": "Caspar David Friedrich",
-   "date": null,
+   "date": "1804",
    "source": "aic",
    "aic_id": 50276,
    "link": "https://www.artic.edu/artworks/50276",
-   "image_id": null,
+   "image_id": "444f3e95-b21f-c821-e6af-00fe9560fb95",
    "local": null
   },
   {
    "day": 71,
    "title": "An Icy Night, New York",
    "artist": "Alfred Stieglitz",
-   "date": null,
+   "date": "1898",
    "source": "aic",
    "aic_id": 66258,
    "link": "https://www.artic.edu/artworks/66258",
-   "image_id": null,
+   "image_id": "4affa44a-d7ba-2f99-ddb8-e1e9f61660b4",
    "local": null
   },
   {
    "day": 72,
    "title": "Adam and Eve",
    "artist": "Albrecht Dürer",
-   "date": null,
+   "date": "1504",
    "source": "aic",
    "aic_id": 51498,
    "link": "https://www.artic.edu/artworks/51498",
-   "image_id": null,
+   "image_id": "910855f0-a558-4e31-8e88-c0f2694ddbea",
    "local": null
   },
   {
@@ -803,18 +803,18 @@
    "source": "wikimedia",
    "wikipedia": "Self-Portrait with Two Circles",
    "link": "https://en.wikipedia.org/wiki/Self-Portrait_with_Two_Circles",
-   "commons": null,
+   "commons": "Rembrandt_Self-portrait_(Kenwood).jpg",
    "local": null
   },
   {
    "day": 74,
    "title": "American Collectors (Fred and Marcia Weisman)",
    "artist": "David Hockney",
-   "date": null,
+   "date": "1968",
    "source": "aic",
    "aic_id": 102234,
    "link": "https://www.artic.edu/artworks/102234",
-   "image_id": null,
+   "image_id": "f95a0a70-90c5-2806-2a66-68f27f8c0735",
    "local": null
   },
   {
@@ -825,7 +825,7 @@
    "source": "wikimedia",
    "wikipedia": "Heart of the Andes",
    "link": "https://en.wikipedia.org/wiki/Heart_of_the_Andes",
-   "commons": null,
+   "commons": "Church_Heart_of_the_Andes.jpg",
    "local": null
   },
   {
@@ -836,40 +836,40 @@
    "source": "wikimedia",
    "wikipedia": "The Blind Leading the Blind",
    "link": "https://en.wikipedia.org/wiki/The_Blind_Leading_the_Blind",
-   "commons": null,
+   "commons": "Притча_о_слепых.jpeg",
    "local": null
   },
   {
    "day": 77,
    "title": "Judith",
    "artist": "Jan Sanders van Hemessen",
-   "date": null,
+   "date": "c. 1540",
    "source": "aic",
    "aic_id": 4575,
    "link": "https://www.artic.edu/artworks/4575",
-   "image_id": null,
+   "image_id": "5b9758c9-24ef-8661-fac0-c9a4229eefd4",
    "local": null
   },
   {
    "day": 78,
    "title": "Croquet Scene",
    "artist": "Winslow Homer",
-   "date": null,
+   "date": "1866",
    "source": "aic",
    "aic_id": 44018,
    "link": "https://www.artic.edu/artworks/44018",
-   "image_id": null,
+   "image_id": "f7b2db45-f393-653c-07ef-84319b0cdb92",
    "local": null
   },
   {
    "day": 79,
    "title": "Lovers Surprised by Death",
    "artist": "Hans Burgkmair, the elder",
-   "date": null,
+   "date": "1510",
    "source": "aic",
    "aic_id": 147064,
    "link": "https://www.artic.edu/artworks/147064",
-   "image_id": null,
+   "image_id": "7b0d2ab3-5a80-bf90-dd38-612d928ef433",
    "local": null
   },
   {
@@ -880,18 +880,18 @@
    "source": "wikimedia",
    "wikipedia": "Pierrot (Watteau)",
    "link": "https://en.wikipedia.org/wiki/Pierrot_(Watteau)",
-   "commons": null,
+   "commons": "Pierrot_-_Antoine_Watteau_-_Musée_du_Louvre_Peintures_MI_1121_-_après_restauration_2024.jpg",
    "local": null
   },
   {
    "day": 81,
    "title": "Zapata",
    "artist": "José Clemente Orozco",
-   "date": null,
+   "date": "1930",
    "source": "aic",
    "aic_id": 40619,
    "link": "https://www.artic.edu/artworks/40619",
-   "image_id": null,
+   "image_id": "81b5faed-1b74-4689-ae83-50fcd5e8f32e",
    "local": null
   },
   {
@@ -902,18 +902,18 @@
    "source": "wikimedia",
    "wikipedia": "The Second of May 1808",
    "link": "https://en.wikipedia.org/wiki/The_Second_of_May_1808",
-   "commons": null,
+   "commons": "El_dos_de_mayo_de_1808_en_Madrid.jpg",
    "local": null
   },
   {
    "day": 83,
    "title": "Little Landscape at the Seaside (Kleine Landschaft am Meer)",
    "artist": "Gerhard Richter",
-   "date": null,
+   "date": "1969",
    "source": "aic",
    "aic_id": 146998,
    "link": "https://www.artic.edu/artworks/146998",
-   "image_id": null,
+   "image_id": "9cfecb3d-7496-1b54-5650-25876a5decfe",
    "local": null
   },
   {
@@ -924,7 +924,7 @@
    "source": "wikimedia",
    "wikipedia": "Nataraja",
    "link": "https://en.wikipedia.org/wiki/Nataraja",
-   "commons": null,
+   "commons": "Shiva_as_the_Lord_of_Dance_LACMA_edit.jpg",
    "local": null
   },
   {
@@ -933,9 +933,9 @@
    "artist": "Gustave Courbet",
    "date": "1866",
    "source": "wikimedia",
-   "wikipedia": "The Sleepers (painting)",
-   "link": "https://en.wikipedia.org/wiki/The_Sleepers_(painting)",
-   "commons": null,
+   "wikipedia": "Le Sommeil",
+   "link": "https://en.wikipedia.org/wiki/Le_Sommeil",
+   "commons": "Gustave_Courbet_-_Le_Sommeil_(1866),_Paris,_Petit_Palais.jpg",
    "local": null
   },
   {
@@ -946,18 +946,18 @@
    "source": "wikimedia",
    "wikipedia": "The Fighting Temeraire",
    "link": "https://en.wikipedia.org/wiki/The_Fighting_Temeraire",
-   "commons": null,
+   "commons": "The_Fighting_Temeraire,_JMW_Turner,_National_Gallery.jpg",
    "local": null
   },
   {
    "day": 87,
    "title": "Love of Winter",
    "artist": "George Wesley Bellows",
-   "date": null,
+   "date": "1914",
    "source": "aic",
    "aic_id": 109780,
    "link": "https://www.artic.edu/artworks/109780",
-   "image_id": null,
+   "image_id": "18ab0c35-e35c-0216-9afd-f93357920db1",
    "local": null
   },
   {
@@ -968,18 +968,18 @@
    "source": "wikimedia",
    "wikipedia": "The Horse in Motion",
    "link": "https://en.wikipedia.org/wiki/The_Horse_in_Motion",
-   "commons": null,
+   "commons": "The_Horse_in_motion._\"Abe_Edgington,\"_owned_by_Leland_Stanford;_driven_by_C._Marvin,_trotting_at_a_2-24_gait_over_the_Palo_Alto_track,_15th_June_1878_LOC_13624627695.jpg",
    "local": null
   },
   {
    "day": 89,
    "title": "Weeping Woman I",
    "artist": "Pablo Picasso",
-   "date": null,
+   "date": "July 1, 1937",
    "source": "aic",
    "aic_id": 135430,
    "link": "https://www.artic.edu/artworks/135430",
-   "image_id": null,
+   "image_id": "9794c354-eccb-5b8c-628b-a664416c78e6",
    "local": null
   },
   {
@@ -990,18 +990,18 @@
    "source": "wikimedia",
    "wikipedia": "Saint Jerome in His Study (Dürer)",
    "link": "https://en.wikipedia.org/wiki/Saint_Jerome_in_His_Study_(Dürer)",
-   "commons": null,
+   "commons": "Dürer-Hieronymus-im-Gehäus.jpg",
    "local": null
   },
   {
    "day": 91,
    "title": "New York",
    "artist": "Charles Sheeler",
-   "date": null,
+   "date": "1920",
    "source": "aic",
    "aic_id": 7242,
    "link": "https://www.artic.edu/artworks/7242",
-   "image_id": null,
+   "image_id": "fce3d7ef-e08b-6881-c9c3-3bbc3c326fe3",
    "local": null
   },
   {
@@ -1012,7 +1012,7 @@
    "source": "wikimedia",
    "wikipedia": "Doni Tondo",
    "link": "https://en.wikipedia.org/wiki/Doni_Tondo",
-   "commons": null,
+   "commons": "Tondo_Doni_2015.png",
    "local": null
   },
   {
@@ -1023,7 +1023,7 @@
    "source": "wikimedia",
    "wikipedia": "Rouen Cathedral (Monet series)",
    "link": "https://en.wikipedia.org/wiki/Rouen_Cathedral_(Monet_series)",
-   "commons": null,
+   "commons": "RouenCathedral_Monet_1894.jpg",
    "local": null
   },
   {
@@ -1034,7 +1034,7 @@
    "source": "wikimedia",
    "wikipedia": "The Beguiling of Merlin",
    "link": "https://en.wikipedia.org/wiki/The_Beguiling_of_Merlin",
-   "commons": null,
+   "commons": "Beguiling_of_Merlin.jpg",
    "local": null
   },
   {
@@ -1045,7 +1045,7 @@
    "source": "wikimedia",
    "wikipedia": "The Circus (Seurat)",
    "link": "https://en.wikipedia.org/wiki/The_Circus_(Seurat)",
-   "commons": null,
+   "commons": "Georges_Seurat,_1891,_Le_Cirque_(The_Circus),_oil_on_canvas,_185_x_152_cm,_Musée_d'Orsay.jpg",
    "local": null
   },
   {
@@ -1056,7 +1056,7 @@
    "source": "wikimedia",
    "wikipedia": "Portrait of a Man (Self Portrait?)",
    "link": "https://en.wikipedia.org/wiki/Portrait_of_a_Man_(Self_Portrait?)",
-   "commons": null,
+   "commons": "Jan_van_Eyck_-_Portrait_of_a_Man_(Self_Portrait?)_1433.jpg",
    "local": null
   },
   {
@@ -1067,7 +1067,7 @@
    "source": "wikimedia",
    "wikipedia": "The Incredulity of Saint Thomas (Caravaggio)",
    "link": "https://en.wikipedia.org/wiki/The_Incredulity_of_Saint_Thomas_(Caravaggio)",
-   "commons": null,
+   "commons": "Der_ungläubige_Thomas_-_Michelangelo_Merisi,_named_Caravaggio.jpg",
    "local": null
   },
   {
@@ -1076,20 +1076,20 @@
    "artist": "Édouard Manet",
    "date": "1868",
    "source": "wikimedia",
-   "wikipedia": "Portrait of Émile Zola",
-   "link": "https://en.wikipedia.org/wiki/Portrait_of_Émile_Zola",
-   "commons": null,
+   "wikipedia": "Émile Zola",
+   "link": "https://en.wikipedia.org/wiki/Émile_Zola",
+   "commons": "Nadar_(atelier_de)_-_Emile_Zola,_13-556535.jpg",
    "local": null
   },
   {
    "day": 99,
    "title": "Fragment (Hanging)",
    "artist": "Coptic",
-   "date": null,
+   "date": "5th-6th century",
    "source": "aic",
    "aic_id": 99602,
    "link": "https://www.artic.edu/artworks/99602",
-   "image_id": null,
+   "image_id": "548e0a34-6043-2fea-628e-97f46484d3f5",
    "local": null
   },
   {
@@ -1100,7 +1100,7 @@
    "source": "wikimedia",
    "wikipedia": "Perseus with the Head of Medusa",
    "link": "https://en.wikipedia.org/wiki/Perseus_with_the_Head_of_Medusa",
-   "commons": null,
+   "commons": "Perseus_(Benvenuto_Cellini)_2013_February.jpg",
    "local": null
   },
   {
@@ -1111,7 +1111,7 @@
    "source": "wikimedia",
    "wikipedia": "Terracotta Army",
    "link": "https://en.wikipedia.org/wiki/Terracotta_Army",
-   "commons": null,
+   "commons": "51714-Terracota-Army.jpg",
    "local": null
   },
   {
@@ -1122,18 +1122,18 @@
    "source": "wikimedia",
    "wikipedia": "The Potato Eaters",
    "link": "https://en.wikipedia.org/wiki/The_Potato_Eaters",
-   "commons": null,
+   "commons": "De_aardappeleters_-_s0005V1962_-_Van_Gogh_Museum.jpg",
    "local": null
   },
   {
    "day": 103,
    "title": "Statuette of a Striding Figure",
    "artist": "Ancient Mesopotamian",
-   "date": null,
+   "date": "3000-2800 BCE",
    "source": "aic",
    "aic_id": 206785,
    "link": "https://www.artic.edu/artworks/206785",
-   "image_id": null,
+   "image_id": "cb29f9b8-2955-9c1e-fd52-ccfca730942b",
    "local": null
   },
   {
@@ -1144,18 +1144,18 @@
    "source": "wikimedia",
    "wikipedia": "Where Do We Come From? What Are We? Where Are We Going?",
    "link": "https://en.wikipedia.org/wiki/Where_Do_We_Come_From?_What_Are_We?_Where_Are_We_Going?",
-   "commons": null,
+   "commons": "Gauguin_-_Where_Do_We_Come_From?_What_Are_We?_Where_Are_We_Going?_(1897-98).jpg",
    "local": null
   },
   {
    "day": 105,
    "title": "Fleeing Ghost",
    "artist": "Paul Klee",
-   "date": null,
+   "date": "1929",
    "source": "aic",
    "aic_id": 111664,
    "link": "https://www.artic.edu/artworks/111664",
-   "image_id": null,
+   "image_id": "2aec7f1b-9adf-63ec-e72f-8840b58e27b7",
    "local": null
   },
   {
@@ -1166,7 +1166,7 @@
    "source": "wikimedia",
    "wikipedia": "Portrait of Adele Bloch-Bauer I",
    "link": "https://en.wikipedia.org/wiki/Portrait_of_Adele_Bloch-Bauer_I",
-   "commons": null,
+   "commons": "Gustav_Klimt_046.jpg",
    "local": null
   },
   {
@@ -1177,40 +1177,40 @@
    "source": "wikimedia",
    "wikipedia": "Fountain (Duchamp)",
    "link": "https://en.wikipedia.org/wiki/Fountain_(Duchamp)",
-   "commons": null,
+   "commons": "Marcel_Duchamp,_1917,_Fountain,_photograph_by_Alfred_Stieglitz.jpg",
    "local": null
   },
   {
    "day": 108,
    "title": "Mao",
    "artist": "Andy Warhol",
-   "date": null,
+   "date": "1972",
    "source": "aic",
    "aic_id": 47149,
    "link": "https://www.artic.edu/artworks/47149",
-   "image_id": null,
+   "image_id": "97cb5c4b-cce5-c4d8-f303-613ce92832c7",
    "local": null
   },
   {
    "day": 109,
    "title": "Knight, Death, and the Devil",
    "artist": "Albrecht Dürer",
-   "date": null,
+   "date": "1513",
    "source": "aic",
    "aic_id": 11100,
    "link": "https://www.artic.edu/artworks/11100",
-   "image_id": null,
+   "image_id": "afe2d15e-fb42-6b5c-706d-7457582e537b",
    "local": null
   },
   {
    "day": 110,
    "title": "New York Street",
    "artist": "Childe Hassam",
-   "date": null,
+   "date": "1902",
    "source": "aic",
    "aic_id": 60294,
    "link": "https://www.artic.edu/artworks/60294",
-   "image_id": null,
+   "image_id": "8ed7e389-dbe7-ed35-ade2-fe7743943479",
    "local": null
   },
   {
@@ -1221,7 +1221,7 @@
    "source": "wikimedia",
    "wikipedia": "Along the River During the Qingming Festival",
    "link": "https://en.wikipedia.org/wiki/Along_the_River_During_the_Qingming_Festival",
-   "commons": null,
+   "commons": "Bianjing_city_gate.JPG",
    "local": null
   },
   {
@@ -1232,7 +1232,7 @@
    "source": "wikimedia",
    "wikipedia": "Beata Beatrix",
    "link": "https://en.wikipedia.org/wiki/Beata_Beatrix",
-   "commons": null,
+   "commons": "Dante_Gabriel_Rossetti_-_Beata_Beatrix,_1864-1870.jpg",
    "local": null
   },
   {
@@ -1243,29 +1243,29 @@
    "source": "wikimedia",
    "wikipedia": "The Haywain Triptych",
    "link": "https://en.wikipedia.org/wiki/The_Haywain_Triptych",
-   "commons": null,
+   "commons": "Bosch_-_Haywain_Triptych.jpg",
    "local": null
   },
   {
    "day": 114,
    "title": "Painter",
    "artist": "Paul Wunderlich",
-   "date": null,
+   "date": "1962",
    "source": "aic",
    "aic_id": 20678,
    "link": "https://www.artic.edu/artworks/20678",
-   "image_id": null,
+   "image_id": "703bd6f7-6005-5a90-7487-d16eec2fe042",
    "local": null
   },
   {
    "day": 115,
    "title": "Houses at Murnau",
    "artist": "Vasily Kandinsky",
-   "date": null,
+   "date": "1909",
    "source": "aic",
    "aic_id": 129849,
    "link": "https://www.artic.edu/artworks/129849",
-   "image_id": null,
+   "image_id": "3f732b69-0ae7-7d1e-ad53-e20b0cc2de72",
    "local": null
   },
   {
@@ -1276,7 +1276,7 @@
    "source": "wikimedia",
    "wikipedia": "Dulle Griet",
    "link": "https://en.wikipedia.org/wiki/Dulle_Griet",
-   "commons": null,
+   "commons": "Dulle_Griet,_Ghent,_Belgium.jpg",
    "local": null
   },
   {
@@ -1287,7 +1287,7 @@
    "source": "wikimedia",
    "wikipedia": "Book of Kells",
    "link": "https://en.wikipedia.org/wiki/Book_of_Kells",
-   "commons": null,
+   "commons": "KellsFol032vChristEnthroned.jpg",
    "local": null
   },
   {
@@ -1298,7 +1298,7 @@
    "source": "wikimedia",
    "wikipedia": "Transfiguration (Raphael)",
    "link": "https://en.wikipedia.org/wiki/Transfiguration_(Raphael)",
-   "commons": null,
+   "commons": "Transfiguration_Raphael.jpg",
    "local": null
   },
   {
@@ -1309,7 +1309,7 @@
    "source": "wikimedia",
    "wikipedia": "The Nightmare",
    "link": "https://en.wikipedia.org/wiki/The_Nightmare",
-   "commons": null,
+   "commons": "Johann_Heinrich_Füssli_-_The_Nightmare_55.5.A-d1-2019-04-15.jpg",
    "local": null
   },
   {
@@ -1320,7 +1320,7 @@
    "source": "wikimedia",
    "wikipedia": "View of Delft",
    "link": "https://en.wikipedia.org/wiki/View_of_Delft",
-   "commons": null,
+   "commons": "Vermeer-view-of-delft.jpg",
    "local": null
   },
   {
@@ -1331,18 +1331,18 @@
    "source": "wikimedia",
    "wikipedia": "Apollo and Daphne (Bernini)",
    "link": "https://en.wikipedia.org/wiki/Apollo_and_Daphne_(Bernini)",
-   "commons": null,
+   "commons": "Apollo_and_Daphne_(Bernini)_(cropped).jpg",
    "local": null
   },
   {
    "day": 122,
    "title": "Art Institute of Chicago II, Chicago",
    "artist": "Thomas Struth",
-   "date": null,
+   "date": "1990",
    "source": "aic",
    "aic_id": 117271,
    "link": "https://www.artic.edu/artworks/117271",
-   "image_id": null,
+   "image_id": "bc03f8ff-68ed-b6d4-7e5f-edc26dc80c88",
    "local": null
   },
   {
@@ -1353,7 +1353,7 @@
    "source": "wikimedia",
    "wikipedia": "The City Rises",
    "link": "https://en.wikipedia.org/wiki/The_City_Rises",
-   "commons": null,
+   "commons": "The_City_Rises_by_Umberto_Boccioni_1910.jpg",
    "local": null
   },
   {
@@ -1364,29 +1364,29 @@
    "source": "wikimedia",
    "wikipedia": "Venus of Urbino",
    "link": "https://en.wikipedia.org/wiki/Venus_of_Urbino",
-   "commons": null,
+   "commons": "Tiziano_-_Venere_di_Urbino_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 125,
    "title": "Still Life with Game Fowl",
    "artist": "Juan Sánchez Cotán",
-   "date": null,
+   "date": "c. 1600–3",
    "source": "aic",
    "aic_id": 84709,
    "link": "https://www.artic.edu/artworks/84709",
-   "image_id": null,
+   "image_id": "f2021182-1302-f76f-97f1-4e7850030e3b",
    "local": null
   },
   {
    "day": 126,
    "title": "Calvary",
    "artist": "Albrecht Dürer",
-   "date": null,
+   "date": "c. 1503–04",
    "source": "aic",
    "aic_id": 11056,
    "link": "https://www.artic.edu/artworks/11056",
-   "image_id": null,
+   "image_id": "93259665-fa1d-c166-6dec-ad51fe805848",
    "local": null
   },
   {
@@ -1397,7 +1397,7 @@
    "source": "wikimedia",
    "wikipedia": "Bal du moulin de la Galette",
    "link": "https://en.wikipedia.org/wiki/Bal_du_moulin_de_la_Galette",
-   "commons": null,
+   "commons": "Renoir,_Pierre-Auguste_-_Dance_at_Le_Moulin_de_la_Galette,_1876.jpg",
    "local": null
   },
   {
@@ -1408,7 +1408,7 @@
    "source": "wikimedia",
    "wikipedia": "Landscape with the Fall of Icarus",
    "link": "https://en.wikipedia.org/wiki/Landscape_with_the_Fall_of_Icarus",
-   "commons": null,
+   "commons": "Pieter_Bruegel_the_Elder_-_Landscape_with_the_Fall_of_Icarus_-_Brussels,_Royal_Museums_of_Fine_Arts_of_Belgium_-_Google_Arts_&_Culture.jpg",
    "local": null
   },
   {
@@ -1417,9 +1417,9 @@
    "artist": "Edvard Munch",
    "date": "1899–1900",
    "source": "wikimedia",
-   "wikipedia": "The Dance of Life",
-   "link": "https://en.wikipedia.org/wiki/The_Dance_of_Life",
-   "commons": null,
+   "wikipedia": "The Dance of Life (Munch)",
+   "link": "https://en.wikipedia.org/wiki/The_Dance_of_Life_(Munch)",
+   "commons": "Edvard_Munch_-_The_dance_of_life_(1899-1900).jpg",
    "local": null
   },
   {
@@ -1430,7 +1430,7 @@
    "source": "wikimedia",
    "wikipedia": "The Flagellation of Christ (Piero della Francesca)",
    "link": "https://en.wikipedia.org/wiki/The_Flagellation_of_Christ_(Piero_della_Francesca)",
-   "commons": null,
+   "commons": "Piero_della_Francesca_-_Flagelación_de_Cristo,_1468-1470_(Galleria_Nazionale_delle_Marche,_Urbino).png",
    "local": null
   },
   {
@@ -1441,7 +1441,7 @@
    "source": "wikimedia",
    "wikipedia": "Vitruvian Man",
    "link": "https://en.wikipedia.org/wiki/Vitruvian_Man",
-   "commons": null,
+   "commons": "Da_Vinci_Vitruve_Luc_Viatour.jpg",
    "local": null
   },
   {
@@ -1452,7 +1452,7 @@
    "source": "wikimedia",
    "wikipedia": "Poplars (Monet series)",
    "link": "https://en.wikipedia.org/wiki/Poplars_(Monet_series)",
-   "commons": null,
+   "commons": "1891_Monet_The_four_trees_anagoria.JPG",
    "local": null
   },
   {
@@ -1463,7 +1463,7 @@
    "source": "wikimedia",
    "wikipedia": "The Coronation of Napoleon",
    "link": "https://en.wikipedia.org/wiki/The_Coronation_of_Napoleon",
-   "commons": null,
+   "commons": "Jacques-Louis_David_-_The_Coronation_of_Napoleon_(1805-1807).jpg",
    "local": null
   },
   {
@@ -1474,7 +1474,7 @@
    "source": "wikimedia",
    "wikipedia": "The Anatomy Lesson of Dr. Nicolaes Tulp",
    "link": "https://en.wikipedia.org/wiki/The_Anatomy_Lesson_of_Dr._Nicolaes_Tulp",
-   "commons": null,
+   "commons": "Rembrandt_-_The_Anatomy_Lesson_of_Dr_Nicolaes_Tulp.jpg",
    "local": null
   },
   {
@@ -1485,18 +1485,18 @@
    "source": "wikimedia",
    "wikipedia": "Fayum mummy portraits",
    "link": "https://en.wikipedia.org/wiki/Fayum_mummy_portraits",
-   "commons": null,
+   "commons": "Fayum-34.jpg",
    "local": null
   },
   {
    "day": 136,
    "title": "Edtaonisl (Ecclesiastic)",
    "artist": "Francis Picabia",
-   "date": null,
+   "date": "1913",
    "source": "aic",
    "aic_id": 80062,
    "link": "https://www.artic.edu/artworks/80062",
-   "image_id": null,
+   "image_id": "bc30321e-1e8b-6ccb-e3da-01b01fe598e1",
    "local": null
   },
   {
@@ -1507,7 +1507,7 @@
    "source": "wikimedia",
    "wikipedia": "The Fall of Phaeton (Rubens)",
    "link": "https://en.wikipedia.org/wiki/The_Fall_of_Phaeton_(Rubens)",
-   "commons": null,
+   "commons": "Peter_Paul_Rubens_-_The_Fall_of_Phaeton_(National_Gallery_of_Art).jpg",
    "local": null
   },
   {
@@ -1518,7 +1518,7 @@
    "source": "wikimedia",
    "wikipedia": "The Angelus (painting)",
    "link": "https://en.wikipedia.org/wiki/The_Angelus_(painting)",
-   "commons": null,
+   "commons": "JEAN-FRANÇOIS_MILLET_-_El_Ángelus_(Museo_de_Orsay,_1857-1859._Óleo_sobre_lienzo,_55.5_x_66_cm).jpg",
    "local": null
   },
   {
@@ -1529,18 +1529,18 @@
    "source": "wikimedia",
    "wikipedia": "The Origin of the Milky Way",
    "link": "https://en.wikipedia.org/wiki/The_Origin_of_the_Milky_Way",
-   "commons": null,
+   "commons": "Jacopo_Tintoretto_-_The_Origin_of_the_Milky_Way_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 140,
    "title": "Self-Portrait",
    "artist": "Vincent van Gogh",
-   "date": null,
+   "date": "1887",
    "source": "aic",
    "aic_id": 80607,
    "link": "https://www.artic.edu/artworks/80607",
-   "image_id": null,
+   "image_id": "47c5bcb8-62ef-e5d7-55e7-f5121f409a30",
    "local": null
   },
   {
@@ -1551,18 +1551,18 @@
    "source": "wikimedia",
    "wikipedia": "A Bar at the Folies-Bergère",
    "link": "https://en.wikipedia.org/wiki/A_Bar_at_the_Folies-Bergère",
-   "commons": null,
+   "commons": "\"Un_Bar_aux_Folies-Bergère\"_by_Édouard_Manet_(1882).jpg",
    "local": null
   },
   {
    "day": 142,
    "title": "Model of a River Boat",
    "artist": "Ancient Egyptian",
-   "date": null,
+   "date": "Middle Kingdom, mid-Dynasty 12, about 1875 BCE",
    "source": "aic",
    "aic_id": 127874,
    "link": "https://www.artic.edu/artworks/127874",
-   "image_id": null,
+   "image_id": "f16a5e00-31c5-1e61-a953-15c5abb42ca3",
    "local": null
   },
   {
@@ -1573,7 +1573,7 @@
    "source": "wikimedia",
    "wikipedia": "Sistine Chapel ceiling",
    "link": "https://en.wikipedia.org/wiki/Sistine_Chapel_ceiling",
-   "commons": null,
+   "commons": "Sistine_Chapel_ceiling_02_(brightened).jpg",
    "local": null
   },
   {
@@ -1584,7 +1584,7 @@
    "source": "wikimedia",
    "wikipedia": "The Raft of the Medusa",
    "link": "https://en.wikipedia.org/wiki/The_Raft_of_the_Medusa",
-   "commons": null,
+   "commons": "JEAN_LOUIS_THÉODORE_GÉRICAULT_-_La_Balsa_de_la_Medusa_(Museo_del_Louvre,_1818-19).jpg",
    "local": null
   },
   {
@@ -1595,18 +1595,18 @@
    "source": "wikimedia",
    "wikipedia": "La maja desnuda",
    "link": "https://en.wikipedia.org/wiki/La_maja_desnuda",
-   "commons": null,
+   "commons": "Goya_Maja_naga2.jpg",
    "local": null
   },
   {
    "day": 146,
    "title": "The Fountains",
    "artist": "Hubert Robert",
-   "date": null,
+   "date": "1787–88",
    "source": "aic",
    "aic_id": 57051,
    "link": "https://www.artic.edu/artworks/57051",
-   "image_id": null,
+   "image_id": "62fd0e14-d7fe-0d01-ab00-1eed84b4f294",
    "local": null
   },
   {
@@ -1615,9 +1615,9 @@
    "artist": "Jacob van Ruisdael",
    "date": "c. 1670",
    "source": "wikimedia",
-   "wikipedia": "The Windmill at Wijk bij Duurstede",
-   "link": "https://en.wikipedia.org/wiki/The_Windmill_at_Wijk_bij_Duurstede",
-   "commons": null,
+   "wikipedia": "Windmill at Wijk bij Duurstede",
+   "link": "https://en.wikipedia.org/wiki/Windmill_at_Wijk_bij_Duurstede",
+   "commons": "The_Mill.jpg",
    "local": null
   },
   {
@@ -1628,7 +1628,7 @@
    "source": "wikimedia",
    "wikipedia": "Young Hare",
    "link": "https://en.wikipedia.org/wiki/Young_Hare",
-   "commons": null,
+   "commons": "Albrecht_Dürer_-_Hare,_1502_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -1639,51 +1639,51 @@
    "source": "wikimedia",
    "wikipedia": "The Kiss (Rodin sculpture)",
    "link": "https://en.wikipedia.org/wiki/The_Kiss_(Rodin_sculpture)",
-   "commons": null,
+   "commons": "Rodin_-_Le_Baiser_06.jpg",
    "local": null
   },
   {
    "day": 150,
    "title": "The Shelton with Sunspots, N.Y.",
    "artist": "Georgia O'Keeffe",
-   "date": null,
+   "date": "1926",
    "source": "aic",
    "aic_id": 104031,
    "link": "https://www.artic.edu/artworks/104031",
-   "image_id": null,
+   "image_id": "adffecec-bc0d-0eee-b62b-a411fb208073",
    "local": null
   },
   {
    "day": 151,
    "title": "Starry Night and the Astronauts",
    "artist": "Alma Thomas",
-   "date": null,
+   "date": "1972",
    "source": "aic",
    "aic_id": 129884,
    "link": "https://www.artic.edu/artworks/129884",
-   "image_id": null,
+   "image_id": "e966799b-97ee-1cc6-bd2f-a94b4b8bb8f9",
    "local": null
   },
   {
    "day": 152,
    "title": "The Herring Net",
    "artist": "Winslow Homer",
-   "date": null,
+   "date": "1885",
    "source": "aic",
    "aic_id": 25865,
    "link": "https://www.artic.edu/artworks/25865",
-   "image_id": null,
+   "image_id": "5dca7347-c6dc-24dd-d073-d705b9cdc575",
    "local": null
   },
   {
    "day": 153,
    "title": "The Dugout Preliminary Work",
    "artist": "Unknown",
-   "date": null,
+   "date": "1948",
    "source": "aic",
    "aic_id": 282198,
    "link": "https://www.artic.edu/artworks/282198",
-   "image_id": null,
+   "image_id": "7b8dce80-75f6-50e0-80a6-a5ce1a8a5a4e",
    "local": null
   },
   {
@@ -1694,29 +1694,29 @@
    "source": "wikimedia",
    "wikipedia": "The Card Players",
    "link": "https://en.wikipedia.org/wiki/The_Card_Players",
-   "commons": null,
+   "commons": "Les_Joueurs_de_cartes,_par_Paul_Cézanne.jpg",
    "local": null
   },
   {
    "day": 155,
    "title": "The Rock",
    "artist": "Peter Blume",
-   "date": null,
+   "date": "1944–48",
    "source": "aic",
    "aic_id": 56682,
    "link": "https://www.artic.edu/artworks/56682",
-   "image_id": null,
+   "image_id": "2843f22e-8ef1-2cd5-b53e-6712cd664e9a",
    "local": null
   },
   {
    "day": 156,
    "title": "The Titanic",
    "artist": "Stanley Tigerman",
-   "date": null,
+   "date": "1978",
    "source": "aic",
    "aic_id": 102963,
    "link": "https://www.artic.edu/artworks/102963",
-   "image_id": null,
+   "image_id": "03cdd6a7-a043-2ac8-3de0-addd99c0ff88",
    "local": null
   },
   {
@@ -1725,9 +1725,9 @@
    "artist": "Giorgione",
    "date": "c. 1510",
    "source": "wikimedia",
-   "wikipedia": "Sleeping Venus",
-   "link": "https://en.wikipedia.org/wiki/Sleeping_Venus",
-   "commons": null,
+   "wikipedia": "Sleeping Venus (Giorgione)",
+   "link": "https://en.wikipedia.org/wiki/Sleeping_Venus_(Giorgione)",
+   "commons": "Giorgione_-_Sleeping_Venus_-_Google_Art_Project_2.jpg",
    "local": null
   },
   {
@@ -1738,7 +1738,7 @@
    "source": "wikimedia",
    "wikipedia": "Bacchus (Caravaggio)",
    "link": "https://en.wikipedia.org/wiki/Bacchus_(Caravaggio)",
-   "commons": null,
+   "commons": "Bacchus_by_Caravaggio_1.jpg",
    "local": null
   },
   {
@@ -1749,18 +1749,18 @@
    "source": "wikimedia",
    "wikipedia": "The Tower of Babel (Bruegel)",
    "link": "https://en.wikipedia.org/wiki/The_Tower_of_Babel_(Bruegel)",
-   "commons": null,
+   "commons": "Pieter_Bruegel_the_Elder_-_The_Tower_of_Babel_(Vienna)_-_Google_Art_Project_-_edited.jpg",
    "local": null
   },
   {
    "day": 160,
    "title": "Reclining Nude",
    "artist": "Max Beckmann",
-   "date": null,
+   "date": "1929",
    "source": "aic",
    "aic_id": 71978,
    "link": "https://www.artic.edu/artworks/71978",
-   "image_id": null,
+   "image_id": "28f20fcd-a5b3-04b3-2dc9-4c5c79ff7b6b",
    "local": null
   },
   {
@@ -1771,7 +1771,7 @@
    "source": "wikimedia",
    "wikipedia": "The Goldfinch (painting)",
    "link": "https://en.wikipedia.org/wiki/The_Goldfinch_(painting)",
-   "commons": null,
+   "commons": "Fabritius-vink.jpg",
    "local": null
   },
   {
@@ -1782,7 +1782,7 @@
    "source": "wikimedia",
    "wikipedia": "The Rape of the Sabine Women (Poussin)",
    "link": "https://en.wikipedia.org/wiki/The_Rape_of_the_Sabine_Women_(Poussin)",
-   "commons": null,
+   "commons": "Nicolas_Poussin_-_L'Enlèvement_des_Sabines_(1634-5).jpg",
    "local": null
   },
   {
@@ -1793,7 +1793,7 @@
    "source": "wikimedia",
    "wikipedia": "The Monk by the Sea",
    "link": "https://en.wikipedia.org/wiki/The_Monk_by_the_Sea",
-   "commons": null,
+   "commons": "Caspar_David_Friedrich_-_Der_Mönch_am_Meer_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -1804,18 +1804,18 @@
    "source": "wikimedia",
    "wikipedia": "The Laughing Cavalier",
    "link": "https://en.wikipedia.org/wiki/The_Laughing_Cavalier",
-   "commons": null,
+   "commons": "Cavalier_soldier_Hals-1624x.jpg",
    "local": null
   },
   {
    "day": 165,
    "title": "The Bewitched Mill",
    "artist": "Franz Marc",
-   "date": null,
+   "date": "1913",
    "source": "aic",
    "aic_id": 9021,
    "link": "https://www.artic.edu/artworks/9021",
-   "image_id": null,
+   "image_id": "6829aab0-8d0e-9438-aebf-a1a379572951",
    "local": null
   },
   {
@@ -1826,18 +1826,18 @@
    "source": "wikimedia",
    "wikipedia": "View of Toledo",
    "link": "https://en.wikipedia.org/wiki/View_of_Toledo",
-   "commons": null,
+   "commons": "El_Greco_View_of_Toledo.jpg",
    "local": null
   },
   {
    "day": 167,
    "title": "The Harrowing of Hell - Christ in Limbo, plate nine from The Large Passion",
    "artist": "Albrecht Dürer",
-   "date": null,
+   "date": "1510",
    "source": "aic",
    "aic_id": 19565,
    "link": "https://www.artic.edu/artworks/19565",
-   "image_id": null,
+   "image_id": "dfb8c120-2408-4f5d-1714-626ca64fe7aa",
    "local": null
   },
   {
@@ -1848,7 +1848,7 @@
    "source": "wikimedia",
    "wikipedia": "Portrait of Innocent X",
    "link": "https://en.wikipedia.org/wiki/Portrait_of_Innocent_X",
-   "commons": null,
+   "commons": "Retrato_del_Papa_Inocencio_X._Roma,_by_Diego_Velázquez.jpg",
    "local": null
   },
   {
@@ -1859,7 +1859,7 @@
    "source": "wikimedia",
    "wikipedia": "Angkor Wat",
    "link": "https://en.wikipedia.org/wiki/Angkor_Wat",
-   "commons": null,
+   "commons": "Angkor_Wat.jpg",
    "local": null
   },
   {
@@ -1870,7 +1870,7 @@
    "source": "wikimedia",
    "wikipedia": "Discobolus",
    "link": "https://en.wikipedia.org/wiki/Discobolus",
-   "commons": null,
+   "commons": "Roman_bronze_copy_of_Myron’s_Discobolos,_2nd_century_CE_(Glyptothek_Munich).jpg",
    "local": null
   },
   {
@@ -1881,40 +1881,40 @@
    "source": "wikimedia",
    "wikipedia": "The Great Red Dragon Paintings",
    "link": "https://en.wikipedia.org/wiki/The_Great_Red_Dragon_Paintings",
-   "commons": null,
+   "commons": "The_Great_Red_Dragon_and_the_Woman_Clothed_with_the_Sun.jpg",
    "local": null
   },
   {
    "day": 172,
    "title": "Paris Street; Rainy Day",
    "artist": "Gustave Caillebotte",
-   "date": null,
+   "date": "1877",
    "source": "aic",
    "aic_id": 20684,
    "link": "https://www.artic.edu/artworks/20684",
-   "image_id": null,
+   "image_id": "f8fd76e9-c396-5678-36ed-6a348c904d27",
    "local": null
   },
   {
    "day": 173,
    "title": "Ice (1)",
    "artist": "Gerhard Richter",
-   "date": null,
+   "date": "1989",
    "source": "aic",
    "aic_id": 146994,
    "link": "https://www.artic.edu/artworks/146994",
-   "image_id": null,
+   "image_id": "b6647a72-7dd9-6ebe-779c-bec46e0901d8",
    "local": null
   },
   {
    "day": 174,
    "title": "Arrival of the Normandy Train, Gare Saint-Lazare",
    "artist": "Claude Monet",
-   "date": null,
+   "date": "1877",
    "source": "aic",
    "aic_id": 16571,
    "link": "https://www.artic.edu/artworks/16571",
-   "image_id": null,
+   "image_id": "0f1cc0e0-e42e-be16-3f71-2022da38cb93",
    "local": null
   },
   {
@@ -1925,7 +1925,7 @@
    "source": "wikimedia",
    "wikipedia": "View from the Window at Le Gras",
    "link": "https://en.wikipedia.org/wiki/View_from_the_Window_at_Le_Gras",
-   "commons": null,
+   "commons": "Untitled_(point_de_vue),_Niépce_1827_—_HRC_2020_(cropped).jpg",
    "local": null
   },
   {
@@ -1934,9 +1934,9 @@
    "artist": "John Everett Millais",
    "date": "1851–1852",
    "source": "wikimedia",
-   "wikipedia": "Ophelia (painting)",
-   "link": "https://en.wikipedia.org/wiki/Ophelia_(painting)",
-   "commons": null,
+   "wikipedia": "Ophelia (Millais)",
+   "link": "https://en.wikipedia.org/wiki/Ophelia_(Millais)",
+   "commons": "John_Everett_Millais_-_Ophelia_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -1947,7 +1947,7 @@
    "source": "wikimedia",
    "wikipedia": "Death and Life",
    "link": "https://en.wikipedia.org/wiki/Death_and_Life",
-   "commons": null,
+   "commons": "Gustav_Klimt_-_Death_and_Life_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -1958,18 +1958,18 @@
    "source": "wikimedia",
    "wikipedia": "Max Schmitt in a Single Scull",
    "link": "https://en.wikipedia.org/wiki/Max_Schmitt_in_a_Single_Scull",
-   "commons": null,
+   "commons": "Max_Schmitt_in_a_Single_Scull.jpg",
    "local": null
   },
   {
    "day": 179,
    "title": "Russian Peddler",
    "artist": "Emil Nolde",
-   "date": null,
+   "date": "1915",
    "source": "aic",
    "aic_id": 27922,
    "link": "https://www.artic.edu/artworks/27922",
-   "image_id": null,
+   "image_id": "309fb96e-aaa0-cf6a-241a-16b97a881a4a",
    "local": null
   },
   {
@@ -1980,7 +1980,7 @@
    "source": "wikimedia",
    "wikipedia": "Girl with a Pearl Earring",
    "link": "https://en.wikipedia.org/wiki/Girl_with_a_Pearl_Earring",
-   "commons": null,
+   "commons": "1665_Girl_with_a_Pearl_Earring.jpg",
    "local": null
   },
   {
@@ -1991,7 +1991,7 @@
    "source": "wikimedia",
    "wikipedia": "Mr and Mrs Andrews",
    "link": "https://en.wikipedia.org/wiki/Mr_and_Mrs_Andrews",
-   "commons": null,
+   "commons": "Thomas_Gainsborough_-_Mr_and_Mrs_Andrews.jpg",
    "local": null
   },
   {
@@ -2002,7 +2002,7 @@
    "source": "wikimedia",
    "wikipedia": "Sunflowers (Van Gogh series)",
    "link": "https://en.wikipedia.org/wiki/Sunflowers_(Van_Gogh_series)",
-   "commons": null,
+   "commons": "Vincent_Willem_van_Gogh_127.jpg",
    "local": null
   },
   {
@@ -2013,7 +2013,7 @@
    "source": "wikimedia",
    "wikipedia": "Migrant Mother",
    "link": "https://en.wikipedia.org/wiki/Migrant_Mother",
-   "commons": null,
+   "commons": "Lange-MigrantMother02.jpg",
    "local": null
   },
   {
@@ -2024,18 +2024,18 @@
    "source": "wikimedia",
    "wikipedia": "Alexander Mosaic",
    "link": "https://en.wikipedia.org/wiki/Alexander_Mosaic",
-   "commons": null,
+   "commons": "Battle_of_Issus_mosaic_-_Museo_Archeologico_Nazionale_-_Naples_2013-05-16_16-25-06_BW.jpg",
    "local": null
   },
   {
    "day": 185,
    "title": "Dancers, New York",
    "artist": "Roy DeCarava",
-   "date": null,
+   "date": "1956, printed 1982",
    "source": "aic",
    "aic_id": 73903,
    "link": "https://www.artic.edu/artworks/73903",
-   "image_id": null,
+   "image_id": "94192ff5-ba31-fdc9-609b-aaf9e17b6bef",
    "local": null
   },
   {
@@ -2046,7 +2046,7 @@
    "source": "wikimedia",
    "wikipedia": "Dürer's Rhinoceros",
    "link": "https://en.wikipedia.org/wiki/Dürer's_Rhinoceros",
-   "commons": null,
+   "commons": "The_Rhinoceros_(NGA_1964.8.697)_enhanced.png",
    "local": null
   },
   {
@@ -2057,18 +2057,18 @@
    "source": "wikimedia",
    "wikipedia": "Le Déjeuner sur l'herbe",
    "link": "https://en.wikipedia.org/wiki/Le_Déjeuner_sur_l'herbe",
-   "commons": null,
+   "commons": "Edouard_Manet_-_Luncheon_on_the_Grass_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 188,
    "title": "Cotton Pickers",
    "artist": "Thomas Hart Benton",
-   "date": null,
+   "date": "1945",
    "source": "aic",
    "aic_id": 217201,
    "link": "https://www.artic.edu/artworks/217201",
-   "image_id": null,
+   "image_id": "76dafabb-b0bc-2e0c-4dfd-05c85aaa1af7",
    "local": null
   },
   {
@@ -2077,9 +2077,9 @@
    "artist": "Edgar Degas",
    "date": "c. 1874",
    "source": "wikimedia",
-   "wikipedia": "The Ballet Class",
-   "link": "https://en.wikipedia.org/wiki/The_Ballet_Class",
-   "commons": null,
+   "wikipedia": "The Ballet Class (Degas, Musée d'Orsay)",
+   "link": "https://en.wikipedia.org/wiki/The_Ballet_Class_(Degas,_Musée_d'Orsay)",
+   "commons": "Edgar_Degas_-_La_Classe_de_danse.jpg",
    "local": null
   },
   {
@@ -2090,18 +2090,18 @@
    "source": "wikimedia",
    "wikipedia": "Portrait of Madame X",
    "link": "https://en.wikipedia.org/wiki/Portrait_of_Madame_X",
-   "commons": null,
+   "commons": "Madame_X_(Madame_Pierre_Gautreau),_John_Singer_Sargent,_1884_(unfree_frame_crop).jpg",
    "local": null
   },
   {
    "day": 191,
    "title": "The Flooded Grave",
    "artist": "Jeff Wall",
-   "date": null,
+   "date": "1998–2000",
    "source": "aic",
    "aic_id": 157160,
    "link": "https://www.artic.edu/artworks/157160",
-   "image_id": null,
+   "image_id": "3df4023e-eb91-249b-9aeb-c754cf708252",
    "local": null
   },
   {
@@ -2112,7 +2112,7 @@
    "source": "wikimedia",
    "wikipedia": "David (Michelangelo)",
    "link": "https://en.wikipedia.org/wiki/David_(Michelangelo)",
-   "commons": null,
+   "commons": "'David'_by_Michelangelo_Fir_JBU004.jpg",
    "local": null
   },
   {
@@ -2123,29 +2123,29 @@
    "source": "wikimedia",
    "wikipedia": "The Return of the Prodigal Son (Rembrandt)",
    "link": "https://en.wikipedia.org/wiki/The_Return_of_the_Prodigal_Son_(Rembrandt)",
-   "commons": null,
+   "commons": "Rembrandt_Harmensz_van_Rijn_-_Return_of_the_Prodigal_Son_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 194,
    "title": "Dancing Girl",
    "artist": "Paul Klee",
-   "date": null,
+   "date": "1940",
    "source": "aic",
    "aic_id": 10018,
    "link": "https://www.artic.edu/artworks/10018",
-   "image_id": null,
+   "image_id": "c96955c7-879a-8ace-12a0-a416c4d264fe",
    "local": null
   },
   {
    "day": 195,
    "title": "View of Cotopaxi",
    "artist": "Frederic Edwin Church",
-   "date": null,
+   "date": "1857",
    "source": "aic",
    "aic_id": 76571,
    "link": "https://www.artic.edu/artworks/76571",
-   "image_id": null,
+   "image_id": "33fc29fc-097b-576b-c9e6-c3352d9d3f15",
    "local": null
   },
   {
@@ -2156,7 +2156,7 @@
    "source": "wikimedia",
    "wikipedia": "The Cradle (Morisot)",
    "link": "https://en.wikipedia.org/wiki/The_Cradle_(Morisot)",
-   "commons": null,
+   "commons": "Berthe_Morisot_008.jpg",
    "local": null
   },
   {
@@ -2167,7 +2167,7 @@
    "source": "wikimedia",
    "wikipedia": "The Battle of San Romano",
    "link": "https://en.wikipedia.org/wiki/The_Battle_of_San_Romano",
-   "commons": null,
+   "commons": "San_Romano_Battle_(Paolo_Uccello,_London)_01.jpg",
    "local": null
   },
   {
@@ -2178,7 +2178,7 @@
    "source": "wikimedia",
    "wikipedia": "The Triumph of Death",
    "link": "https://en.wikipedia.org/wiki/The_Triumph_of_Death",
-   "commons": null,
+   "commons": "Triumph_of_Death_Brueghel.jpg",
    "local": null
   },
   {
@@ -2189,7 +2189,7 @@
    "source": "wikimedia",
    "wikipedia": "The Course of Empire (paintings)",
    "link": "https://en.wikipedia.org/wiki/The_Course_of_Empire_(paintings)",
-   "commons": null,
+   "commons": "Asher_B._Durand_-_Portrait_of_Thomas_Cole_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -2200,7 +2200,7 @@
    "source": "wikimedia",
    "wikipedia": "Code of Hammurabi",
    "link": "https://en.wikipedia.org/wiki/Code_of_Hammurabi",
-   "commons": null,
+   "commons": "P1050763_Louvre_code_Hammurabi_face_rwk.JPG",
    "local": null
   },
   {
@@ -2211,7 +2211,7 @@
    "source": "wikimedia",
    "wikipedia": "The Tribute Money (Masaccio)",
    "link": "https://en.wikipedia.org/wiki/The_Tribute_Money_(Masaccio)",
-   "commons": null,
+   "commons": "The_Tribute_Money_by_Masaccio.jpg",
    "local": null
   },
   {
@@ -2222,18 +2222,18 @@
    "source": "wikimedia",
    "wikipedia": "The Death of Sardanapalus",
    "link": "https://en.wikipedia.org/wiki/The_Death_of_Sardanapalus",
-   "commons": null,
+   "commons": "La_Mort_de_Sardanapale_-_Eugène_Delacroix_-_Musée_du_Louvre_Peintures_RF_2346.jpg",
    "local": null
   },
   {
    "day": 203,
    "title": "Statue of Liberty",
    "artist": "Margaret Bourke-White",
-   "date": null,
+   "date": "1952",
    "source": "aic",
    "aic_id": 5507,
    "link": "https://www.artic.edu/artworks/5507",
-   "image_id": null,
+   "image_id": "a3324eb0-15b7-0791-5d9c-6156f2400b15",
    "local": null
   },
   {
@@ -2244,18 +2244,18 @@
    "source": "wikimedia",
    "wikipedia": "Saturn Devouring His Son",
    "link": "https://en.wikipedia.org/wiki/Saturn_Devouring_His_Son",
-   "commons": null,
+   "commons": "Francisco_de_Goya,_Saturno_devorando_a_su_hijo_(1819-1823).jpg",
    "local": null
   },
   {
    "day": 205,
    "title": "Erasmus of Rotterdam",
    "artist": "Albrecht Dürer",
-   "date": null,
+   "date": "1526",
    "source": "aic",
    "aic_id": 4118,
    "link": "https://www.artic.edu/artworks/4118",
-   "image_id": null,
+   "image_id": "4d06856a-ba89-07fa-68eb-2305246394c2",
    "local": null
   },
   {
@@ -2266,7 +2266,7 @@
    "source": "wikimedia",
    "wikipedia": "Composition with Red Blue and Yellow",
    "link": "https://en.wikipedia.org/wiki/Composition_with_Red_Blue_and_Yellow",
-   "commons": null,
+   "commons": "Piet_Mondriaan,_1930_-_Mondrian_Composition_II_in_Red,_Blue,_and_Yellow.jpg",
    "local": null
   },
   {
@@ -2277,7 +2277,7 @@
    "source": "wikimedia",
    "wikipedia": "Lady with an Ermine",
    "link": "https://en.wikipedia.org/wiki/Lady_with_an_Ermine",
-   "commons": null,
+   "commons": "Lady_with_an_Ermine_-_Leonardo_da_Vinci_(adjusted_levels).jpg",
    "local": null
   },
   {
@@ -2288,18 +2288,18 @@
    "source": "wikimedia",
    "wikipedia": "A Burial at Ornans",
    "link": "https://en.wikipedia.org/wiki/A_Burial_at_Ornans",
-   "commons": null,
+   "commons": "Gustave_Courbet_-_A_Burial_at_Ornans_-_Google_Art_Project_2.jpg",
    "local": null
   },
   {
    "day": 209,
    "title": "The Wedding",
    "artist": "Jacob Lawrence",
-   "date": null,
+   "date": "1948",
    "source": "aic",
    "aic_id": 125660,
    "link": "https://www.artic.edu/artworks/125660",
-   "image_id": null,
+   "image_id": "d58d7e2d-a735-a07d-6625-6aea4f58e27b",
    "local": null
   },
   {
@@ -2310,7 +2310,7 @@
    "source": "wikimedia",
    "wikipedia": "The School of Athens",
    "link": "https://en.wikipedia.org/wiki/The_School_of_Athens",
-   "commons": null,
+   "commons": "\"The_School_of_Athens\"_by_Raffaello_Sanzio_da_Urbino.jpg",
    "local": null
   },
   {
@@ -2321,7 +2321,7 @@
    "source": "wikimedia",
    "wikipedia": "Divan Japonais",
    "link": "https://en.wikipedia.org/wiki/Divan_Japonais",
-   "commons": null,
+   "commons": "Rue_des_Martyrs.JPG",
    "local": null
   },
   {
@@ -2332,7 +2332,7 @@
    "source": "wikimedia",
    "wikipedia": "Dwelling in the Fuchun Mountains",
    "link": "https://en.wikipedia.org/wiki/Dwelling_in_the_Fuchun_Mountains",
-   "commons": null,
+   "commons": "Dwelling_in_the_Fuchun_Mountains_(first_half).JPG",
    "local": null
   },
   {
@@ -2343,18 +2343,18 @@
    "source": "wikimedia",
    "wikipedia": "Woman with a Parasol – Madame Monet and Her Son",
    "link": "https://en.wikipedia.org/wiki/Woman_with_a_Parasol_–_Madame_Monet_and_Her_Son",
-   "commons": null,
+   "commons": "Claude_Monet_-_Woman_with_a_Parasol_-_Madame_Monet_and_Her_Son_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 214,
    "title": "Painterly Realism of a Football Player—Color Masses in the 4th Dimension",
    "artist": "Kasimir Malevich",
-   "date": null,
+   "date": "Summer/fall 1915",
    "source": "aic",
    "aic_id": 207293,
    "link": "https://www.artic.edu/artworks/207293",
-   "image_id": null,
+   "image_id": "ea062a80-5e1c-7dbd-398a-eca86c603b00",
    "local": null
   },
   {
@@ -2365,18 +2365,18 @@
    "source": "wikimedia",
    "wikipedia": "Laocoön and His Sons",
    "link": "https://en.wikipedia.org/wiki/Laocoön_and_His_Sons",
-   "commons": null,
+   "commons": "Laocoön_and_his_sons_group.jpg",
    "local": null
   },
   {
    "day": 216,
    "title": "A Sunday on La Grande Jatte — 1884",
    "artist": "Georges Seurat",
-   "date": null,
+   "date": "1884–86, border added 1888–89",
    "source": "aic",
    "aic_id": 27992,
    "link": "https://www.artic.edu/artworks/27992",
-   "image_id": null,
+   "image_id": "2d484387-2509-5e8e-2c43-22f9981972eb",
    "local": null
   },
   {
@@ -2387,7 +2387,7 @@
    "source": "wikimedia",
    "wikipedia": "Boulevard du Temple (photograph)",
    "link": "https://en.wikipedia.org/wiki/Boulevard_du_Temple_(photograph)",
-   "commons": null,
+   "commons": "Boulevard_du_Temple_by_Daguerre.jpg",
    "local": null
   },
   {
@@ -2398,7 +2398,7 @@
    "source": "wikimedia",
    "wikipedia": "The Calling of St Matthew (Caravaggio)",
    "link": "https://en.wikipedia.org/wiki/The_Calling_of_St_Matthew_(Caravaggio)",
-   "commons": null,
+   "commons": "Caravaggio_—_The_Calling_of_Saint_Matthew.jpg",
    "local": null
   },
   {
@@ -2409,7 +2409,7 @@
    "source": "wikimedia",
    "wikipedia": "The Sleeping Gypsy",
    "link": "https://en.wikipedia.org/wiki/The_Sleeping_Gypsy",
-   "commons": null,
+   "commons": "La_Bohémienne_endormie.jpg",
    "local": null
   },
   {
@@ -2420,7 +2420,7 @@
    "source": "wikimedia",
    "wikipedia": "Flaming June",
    "link": "https://en.wikipedia.org/wiki/Flaming_June",
-   "commons": null,
+   "commons": "Flaming_June,_by_Frederic_Lord_Leighton_(1830-1896).jpg",
    "local": null
   },
   {
@@ -2431,7 +2431,7 @@
    "source": "wikimedia",
    "wikipedia": "Breezing Up (A Fair Wind)",
    "link": "https://en.wikipedia.org/wiki/Breezing_Up_(A_Fair_Wind)",
-   "commons": null,
+   "commons": "Winslow_Homer_-_Breezing_Up_(A_Fair_Wind)_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -2442,18 +2442,18 @@
    "source": "wikimedia",
    "wikipedia": "Café Terrace at Night",
    "link": "https://en.wikipedia.org/wiki/Café_Terrace_at_Night",
-   "commons": null,
+   "commons": "Van_Gogh_-_Terrace_of_a_Café_at_Night_(Place_du_Forum)_1888.jpg",
    "local": null
   },
   {
    "day": 223,
    "title": "The Betrayal of Christ, from The Large Passion",
    "artist": "Albrecht Dürer",
-   "date": null,
+   "date": "1510",
    "source": "aic",
    "aic_id": 19545,
    "link": "https://www.artic.edu/artworks/19545",
-   "image_id": null,
+   "image_id": "6d1813fb-f6c8-4d32-550b-56b10cf7ef8f",
    "local": null
   },
   {
@@ -2464,7 +2464,7 @@
    "source": "wikimedia",
    "wikipedia": "Vision after the Sermon",
    "link": "https://en.wikipedia.org/wiki/Vision_after_the_Sermon",
-   "commons": null,
+   "commons": "La_vision_après_le_sermon_(Paul_Gauguin).jpg",
    "local": null
   },
   {
@@ -2475,7 +2475,7 @@
    "source": "wikimedia",
    "wikipedia": "The Birth of Venus",
    "link": "https://en.wikipedia.org/wiki/The_Birth_of_Venus",
-   "commons": null,
+   "commons": "Sandro_Botticelli_-_La_nascita_di_Venere_-_Google_Art_Project_-_edited.jpg",
    "local": null
   },
   {
@@ -2486,18 +2486,18 @@
    "source": "wikimedia",
    "wikipedia": "Benin Bronzes",
    "link": "https://en.wikipedia.org/wiki/Benin_Bronzes",
-   "commons": null,
+   "commons": "Benin_brass_plaque_03_(cropped).jpg",
    "local": null
   },
   {
    "day": 227,
    "title": "20 Years of Solitude",
    "artist": "Anselm Kiefer",
-   "date": null,
+   "date": "1993",
    "source": "aic",
    "aic_id": 158891,
    "link": "https://www.artic.edu/artworks/158891",
-   "image_id": null,
+   "image_id": "211ad926-a23c-4041-2e5a-375069c5540c",
    "local": null
   },
   {
@@ -2508,7 +2508,7 @@
    "source": "wikimedia",
    "wikipedia": "Peacock Room",
    "link": "https://en.wikipedia.org/wiki/Peacock_Room",
-   "commons": null,
+   "commons": "The_Peacock_Room.jpg",
    "local": null
   },
   {
@@ -2519,18 +2519,18 @@
    "source": "wikimedia",
    "wikipedia": "The Geographer",
    "link": "https://en.wikipedia.org/wiki/The_Geographer",
-   "commons": null,
+   "commons": "Johannes_Vermeer_-_The_Geographer_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 230,
    "title": "The Crucifixion",
    "artist": "Lucas Cranach the Elder",
-   "date": null,
+   "date": "1538",
    "source": "aic",
    "aic_id": 59856,
    "link": "https://www.artic.edu/artworks/59856",
-   "image_id": null,
+   "image_id": "f5eb11a2-945f-f7cb-9994-ab54e8f24804",
    "local": null
   },
   {
@@ -2541,18 +2541,18 @@
    "source": "wikimedia",
    "wikipedia": "Statue of Liberty",
    "link": "https://en.wikipedia.org/wiki/Statue_of_Liberty",
-   "commons": null,
+   "commons": "Front_view_of_Statue_of_Liberty_(cropped).jpg",
    "local": null
   },
   {
    "day": 232,
    "title": "Fish (Still Life)",
    "artist": "Édouard Manet",
-   "date": null,
+   "date": "1864",
    "source": "aic",
    "aic_id": 44892,
    "link": "https://www.artic.edu/artworks/44892",
-   "image_id": null,
+   "image_id": "0cbe27e8-2fec-3445-bc48-ce40a8f2dc25",
    "local": null
   },
   {
@@ -2563,7 +2563,7 @@
    "source": "wikimedia",
    "wikipedia": "Mask of Tutankhamun",
    "link": "https://en.wikipedia.org/wiki/Mask_of_Tutankhamun",
-   "commons": null,
+   "commons": "CairoEgMuseumTaaMaskMostlyPhotographed.jpg",
    "local": null
   },
   {
@@ -2574,7 +2574,7 @@
    "source": "wikimedia",
    "wikipedia": "Christ Carrying the Cross (Bosch, Ghent)",
    "link": "https://en.wikipedia.org/wiki/Christ_Carrying_the_Cross_(Bosch,_Ghent)",
-   "commons": null,
+   "commons": "Jheronimus_Bosch_or_follower_001.jpg",
    "local": null
   },
   {
@@ -2583,20 +2583,20 @@
    "artist": "Paul Cézanne",
    "date": "1898–1905",
    "source": "wikimedia",
-   "wikipedia": "The Large Bathers",
-   "link": "https://en.wikipedia.org/wiki/The_Large_Bathers",
-   "commons": null,
+   "wikipedia": "The Bathers (Cézanne)",
+   "link": "https://en.wikipedia.org/wiki/The_Bathers_(Cézanne)",
+   "commons": "Paul_Cézanne,_French_-_The_Large_Bathers_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 236,
    "title": "The Advance-Guard, or The Military Sacrifice (The Ambush)",
    "artist": "Frederic Remington",
-   "date": null,
+   "date": "1890",
    "source": "aic",
    "aic_id": 97910,
    "link": "https://www.artic.edu/artworks/97910",
-   "image_id": null,
+   "image_id": "f1e03813-f9c7-f4f8-fbe8-a5eeae84fda4",
    "local": null
   },
   {
@@ -2607,7 +2607,7 @@
    "source": "wikimedia",
    "wikipedia": "Lamentation of Christ (Mantegna)",
    "link": "https://en.wikipedia.org/wiki/Lamentation_of_Christ_(Mantegna)",
-   "commons": null,
+   "commons": "The_dead_Christ_and_three_mourners,_by_Andrea_Mantegna.jpg",
    "local": null
   },
   {
@@ -2618,7 +2618,7 @@
    "source": "wikimedia",
    "wikipedia": "Netherlandish Proverbs",
    "link": "https://en.wikipedia.org/wiki/Netherlandish_Proverbs",
-   "commons": null,
+   "commons": "Pieter_Brueghel_the_Elder_-_The_Dutch_Proverbs_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -2629,7 +2629,7 @@
    "source": "wikimedia",
    "wikipedia": "Massacre of the Innocents (Rubens)",
    "link": "https://en.wikipedia.org/wiki/Massacre_of_the_Innocents_(Rubens)",
-   "commons": null,
+   "commons": "Rubens_-_Massacre_of_the_Innocents_-_Art_Gallery_of_Ontario_2.jpg",
    "local": null
   },
   {
@@ -2640,7 +2640,7 @@
    "source": "wikimedia",
    "wikipedia": "Très Riches Heures du Duc de Berry",
    "link": "https://en.wikipedia.org/wiki/Très_Riches_Heures_du_Duc_de_Berry",
-   "commons": null,
+   "commons": "Anatomical_Man.jpg",
    "local": null
   },
   {
@@ -2651,7 +2651,7 @@
    "source": "wikimedia",
    "wikipedia": "Wivenhoe Park",
    "link": "https://en.wikipedia.org/wiki/Wivenhoe_Park",
-   "commons": null,
+   "commons": "John_Constable_-_Wivenhoe_Park,_Essex_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -2662,7 +2662,7 @@
    "source": "wikimedia",
    "wikipedia": "Ecstasy of Saint Teresa",
    "link": "https://en.wikipedia.org/wiki/Ecstasy_of_Saint_Teresa",
-   "commons": null,
+   "commons": "Ecstasy_of_St._Teresa_HDR.jpg",
    "local": null
   },
   {
@@ -2673,29 +2673,29 @@
    "source": "wikimedia",
    "wikipedia": "The Avenue at Middelharnis",
    "link": "https://en.wikipedia.org/wiki/The_Avenue_at_Middelharnis",
-   "commons": null,
+   "commons": "Meindert_Hobbema_001.jpg",
    "local": null
   },
   {
    "day": 244,
    "title": "The Bearing of the Cross, from The Large Passion",
    "artist": "Albrecht Dürer",
-   "date": null,
+   "date": "1498–99, published 1511",
    "source": "aic",
    "aic_id": 19553,
    "link": "https://www.artic.edu/artworks/19553",
-   "image_id": null,
+   "image_id": "0f0eaa2c-e90f-5ae4-5f02-229eef750f72",
    "local": null
   },
   {
    "day": 245,
    "title": "Mountain Brook",
    "artist": "Albert Bierstadt",
-   "date": null,
+   "date": "1863",
    "source": "aic",
    "aic_id": 146701,
    "link": "https://www.artic.edu/artworks/146701",
-   "image_id": null,
+   "image_id": "d55b0cfc-0716-d6cd-3b38-5742903ce046",
    "local": null
   },
   {
@@ -2704,9 +2704,9 @@
    "artist": "Camille Pissarro",
    "date": "1897",
    "source": "wikimedia",
-   "wikipedia": "The Boulevard Montmartre at Night",
-   "link": "https://en.wikipedia.org/wiki/The_Boulevard_Montmartre_at_Night",
-   "commons": null,
+   "wikipedia": "Camille Pissarro",
+   "link": "https://en.wikipedia.org/wiki/Camille_Pissarro",
+   "commons": "Pissarro-portrait.jpg",
    "local": null
   },
   {
@@ -2717,7 +2717,7 @@
    "source": "wikimedia",
    "wikipedia": "Assumption of the Virgin (Titian)",
    "link": "https://en.wikipedia.org/wiki/Assumption_of_the_Virgin_(Titian)",
-   "commons": null,
+   "commons": "Tizian_041.jpg",
    "local": null
   },
   {
@@ -2728,7 +2728,7 @@
    "source": "wikimedia",
    "wikipedia": "Parthenon Marbles",
    "link": "https://en.wikipedia.org/wiki/Parthenon_Marbles",
-   "commons": null,
+   "commons": "The_Parthenon_in_Athens.jpg",
    "local": null
   },
   {
@@ -2739,7 +2739,7 @@
    "source": "wikimedia",
    "wikipedia": "The Last Judgment (Michelangelo)",
    "link": "https://en.wikipedia.org/wiki/The_Last_Judgment_(Michelangelo)",
-   "commons": null,
+   "commons": "Last_Judgement_(Michelangelo).jpg",
    "local": null
   },
   {
@@ -2750,7 +2750,7 @@
    "source": "wikimedia",
    "wikipedia": "Ajanta Caves",
    "link": "https://en.wikipedia.org/wiki/Ajanta_Caves",
-   "commons": null,
+   "commons": "Ajanta_(63).jpg",
    "local": null
   },
   {
@@ -2759,20 +2759,20 @@
    "artist": "Gustav Klimt",
    "date": "1901",
    "source": "wikimedia",
-   "wikipedia": "Judith and the Head of Holofernes",
-   "link": "https://en.wikipedia.org/wiki/Judith_and_the_Head_of_Holofernes",
-   "commons": null,
+   "wikipedia": "Judith beheading Holofernes",
+   "link": "https://en.wikipedia.org/wiki/Judith_beheading_Holofernes",
+   "commons": "Judit_decapitando_a_Holofernes,_por_Artemisia_Gentileschi.jpg",
    "local": null
   },
   {
    "day": 252,
    "title": "Harvest Talk",
    "artist": "Charles White",
-   "date": null,
+   "date": "1953",
    "source": "aic",
    "aic_id": 111810,
    "link": "https://www.artic.edu/artworks/111810",
-   "image_id": null,
+   "image_id": "80fa6e5f-e02a-57b6-c007-8359e750d36d",
    "local": null
   },
   {
@@ -2783,7 +2783,7 @@
    "source": "wikimedia",
    "wikipedia": "Wanderer above the Sea of Fog",
    "link": "https://en.wikipedia.org/wiki/Wanderer_above_the_Sea_of_Fog",
-   "commons": null,
+   "commons": "Caspar_David_Friedrich_-_Wanderer_above_the_Sea_of_Fog.jpeg",
    "local": null
   },
   {
@@ -2794,7 +2794,7 @@
    "source": "wikimedia",
    "wikipedia": "The Steerage",
    "link": "https://en.wikipedia.org/wiki/The_Steerage",
-   "commons": null,
+   "commons": "Alfred_Stieglitz_-_The_Steerage_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -2805,18 +2805,18 @@
    "source": "wikimedia",
    "wikipedia": "The Scream",
    "link": "https://en.wikipedia.org/wiki/The_Scream",
-   "commons": null,
+   "commons": "Edvard_Munch,_1893,_The_Scream,_oil,_tempera_and_pastel_on_cardboard,_91_x_73_cm,_National_Gallery_of_Norway.jpg",
    "local": null
   },
   {
    "day": 256,
    "title": "The Mushroom Cloud",
    "artist": "Roman Vishniac",
-   "date": null,
+   "date": "1941",
    "source": "aic",
    "aic_id": 118166,
    "link": "https://www.artic.edu/artworks/118166",
-   "image_id": null,
+   "image_id": "b12507ea-66db-e9ff-e0b0-a96ea29548ea",
    "local": null
   },
   {
@@ -2825,9 +2825,9 @@
    "artist": "Claude Monet",
    "date": "1899",
    "source": "wikimedia",
-   "wikipedia": "The Japanese Footbridge",
-   "link": "https://en.wikipedia.org/wiki/The_Japanese_Footbridge",
-   "commons": null,
+   "wikipedia": "Water Lilies (Monet series)",
+   "link": "https://en.wikipedia.org/wiki/Water_Lilies_(Monet_series)",
+   "commons": "Reflections_of_Clouds_on_the_Water-Lily_Pond.jpg",
    "local": null
   },
   {
@@ -2838,29 +2838,29 @@
    "source": "wikimedia",
    "wikipedia": "The Storm on the Sea of Galilee",
    "link": "https://en.wikipedia.org/wiki/The_Storm_on_the_Sea_of_Galilee",
-   "commons": null,
+   "commons": "Rembrandt_Christ_in_the_Storm_on_the_Lake_of_Galilee.jpg",
    "local": null
   },
   {
    "day": 259,
    "title": "Multiflash: Baseball Swing with Face",
    "artist": "Harold Eugene Edgerton",
-   "date": null,
+   "date": "1930/65",
    "source": "aic",
    "aic_id": 146005,
    "link": "https://www.artic.edu/artworks/146005",
-   "image_id": null,
+   "image_id": "6e4286a1-d616-d445-927f-403af5157408",
    "local": null
   },
   {
    "day": 260,
    "title": "Couple in Bed",
    "artist": "Philip Guston",
-   "date": null,
+   "date": "1977",
    "source": "aic",
    "aic_id": 90583,
    "link": "https://www.artic.edu/artworks/90583",
-   "image_id": null,
+   "image_id": "6884e725-f7ae-cb1c-853a-201fc4fe5630",
    "local": null
   },
   {
@@ -2871,18 +2871,18 @@
    "source": "wikimedia",
    "wikipedia": "The Embarkation for Cythera",
    "link": "https://en.wikipedia.org/wiki/The_Embarkation_for_Cythera",
-   "commons": null,
+   "commons": "L'Embarquement_pour_Cythère,_by_Antoine_Watteau,_from_C2RMF_retouched.jpg",
    "local": null
   },
   {
    "day": 262,
    "title": "Agony in the Garden, from The Large Passion",
    "artist": "Albrecht Dürer",
-   "date": null,
+   "date": "c. 1496–97",
    "source": "aic",
    "aic_id": 19540,
    "link": "https://www.artic.edu/artworks/19540",
-   "image_id": null,
+   "image_id": "2acf70f4-8d37-5a00-8809-f70369acb286",
    "local": null
   },
   {
@@ -2893,18 +2893,18 @@
    "source": "wikimedia",
    "wikipedia": "Bedroom in Arles",
    "link": "https://en.wikipedia.org/wiki/Bedroom_in_Arles",
-   "commons": null,
+   "commons": "Vincent_van_Gogh_-_De_slaapkamer_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 264,
    "title": "Tomb Wall Fragment Depicting Offering Bearers and Butchers",
    "artist": "Ancient Egyptian",
-   "date": null,
+   "date": "Old Kingdom, mid–Dynasty 5–early Dynasty 6 (about 2445–2287 BCE)",
    "source": "aic",
    "aic_id": 120368,
    "link": "https://www.artic.edu/artworks/120368",
-   "image_id": null,
+   "image_id": "774540b2-88a0-daa9-0e3c-c229c1d98ac6",
    "local": null
   },
   {
@@ -2922,11 +2922,11 @@
    "day": 266,
    "title": "Ice (2)",
    "artist": "Gerhard Richter",
-   "date": null,
+   "date": "1989",
    "source": "aic",
    "aic_id": 146995,
    "link": "https://www.artic.edu/artworks/146995",
-   "image_id": null,
+   "image_id": "07783936-58fb-859d-9350-fb600510177a",
    "local": null
   },
   {
@@ -2937,7 +2937,7 @@
    "source": "wikimedia",
    "wikipedia": "Ghent Altarpiece",
    "link": "https://en.wikipedia.org/wiki/Ghent_Altarpiece",
-   "commons": null,
+   "commons": "Ghent_Altarpiece_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -2948,7 +2948,7 @@
    "source": "wikimedia",
    "wikipedia": "Venus of Willendorf",
    "link": "https://en.wikipedia.org/wiki/Venus_of_Willendorf",
-   "commons": null,
+   "commons": "Venus_von_Willendorf_01.jpg",
    "local": null
   },
   {
@@ -2959,7 +2959,7 @@
    "source": "wikimedia",
    "wikipedia": "The Slave Ship",
    "link": "https://en.wikipedia.org/wiki/The_Slave_Ship",
-   "commons": null,
+   "commons": "Slave-ship.jpg",
    "local": null
   },
   {
@@ -2970,7 +2970,7 @@
    "source": "wikimedia",
    "wikipedia": "Pillars of Creation",
    "link": "https://en.wikipedia.org/wiki/Pillars_of_Creation",
-   "commons": null,
+   "commons": "Eagle_nebula_pillars.jpg",
    "local": null
   },
   {
@@ -2981,29 +2981,29 @@
    "source": "wikimedia",
    "wikipedia": "The Burghers of Calais",
    "link": "https://en.wikipedia.org/wiki/The_Burghers_of_Calais",
-   "commons": null,
+   "commons": "Statue_bourgeois_calais_rodin.jpg",
    "local": null
   },
   {
    "day": 272,
    "title": "Column-Krater (Mixing Bowl)",
    "artist": "Ancient Greek",
-   "date": null,
+   "date": "about 460 BCE",
    "source": "aic",
    "aic_id": 164,
    "link": "https://www.artic.edu/artworks/164",
-   "image_id": null,
+   "image_id": "f7c96efa-2b60-565e-3b03-a3acf7f79ea9",
    "local": null
   },
   {
    "day": 273,
    "title": "Mother and Child",
    "artist": "Pablo Picasso",
-   "date": null,
+   "date": "1921",
    "source": "aic",
    "aic_id": 109275,
    "link": "https://www.artic.edu/artworks/109275",
-   "image_id": null,
+   "image_id": "64734461-887d-80b9-8489-e38cb05ac01d",
    "local": null
   },
   {
@@ -3014,7 +3014,7 @@
    "source": "wikimedia",
    "wikipedia": "The Great Wave off Kanagawa",
    "link": "https://en.wikipedia.org/wiki/The_Great_Wave_off_Kanagawa",
-   "commons": null,
+   "commons": "Tsunami_by_hokusai_19th_century.jpg",
    "local": null
   },
   {
@@ -3025,7 +3025,7 @@
    "source": "wikimedia",
    "wikipedia": "The Last Supper (Leonardo)",
    "link": "https://en.wikipedia.org/wiki/The_Last_Supper_(Leonardo)",
-   "commons": null,
+   "commons": "The_Last_Supper_-_Leonardo_Da_Vinci_-_High_Resolution_32x16.jpg",
    "local": null
   },
   {
@@ -3036,7 +3036,7 @@
    "source": "wikimedia",
    "wikipedia": "Arnolfini Portrait",
    "link": "https://en.wikipedia.org/wiki/Arnolfini_Portrait",
-   "commons": null,
+   "commons": "The_Arnolfini_portrait_(1434).jpg",
    "local": null
   },
   {
@@ -3047,7 +3047,7 @@
    "source": "wikimedia",
    "wikipedia": "Judith Beheading Holofernes (Caravaggio)",
    "link": "https://en.wikipedia.org/wiki/Judith_Beheading_Holofernes_(Caravaggio)",
-   "commons": null,
+   "commons": "Caravaggio_-_Giuditta_e_Oloferne_(ca._1599).jpg",
    "local": null
   },
   {
@@ -3058,7 +3058,7 @@
    "source": "wikimedia",
    "wikipedia": "Annunciation (Fra Angelico, San Marco)",
    "link": "https://en.wikipedia.org/wiki/Annunciation_(Fra_Angelico,_San_Marco)",
-   "commons": null,
+   "commons": "Fra_Angelico_-_Annunciation.jpg",
    "local": null
   },
   {
@@ -3069,7 +3069,7 @@
    "source": "wikimedia",
    "wikipedia": "Olympia (Manet)",
    "link": "https://en.wikipedia.org/wiki/Olympia_(Manet)",
-   "commons": null,
+   "commons": "Edouard_Manet_-_Olympia_-_Google_Art_ProjectFXD.jpg",
    "local": null
   },
   {
@@ -3080,7 +3080,7 @@
    "source": "wikimedia",
    "wikipedia": "Children's Games (Bruegel)",
    "link": "https://en.wikipedia.org/wiki/Children's_Games_(Bruegel)",
-   "commons": null,
+   "commons": "Pieter_Bruegel_the_Elder_-_Children’s_Games_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -3091,7 +3091,7 @@
    "source": "wikimedia",
    "wikipedia": "The Turkish Bath",
    "link": "https://en.wikipedia.org/wiki/The_Turkish_Bath",
-   "commons": null,
+   "commons": "Le_Bain_Turc,_by_Jean_Auguste_Dominique_Ingres,_from_C2RMFFXD.jpg",
    "local": null
   },
   {
@@ -3100,20 +3100,20 @@
    "artist": "Nicolas Poussin",
    "date": "c. 1638",
    "source": "wikimedia",
-   "wikipedia": "Et in Arcadia ego",
-   "link": "https://en.wikipedia.org/wiki/Et_in_Arcadia_ego",
-   "commons": null,
+   "wikipedia": "Et in Arcadia ego (Poussin)",
+   "link": "https://en.wikipedia.org/wiki/Et_in_Arcadia_ego_(Poussin)",
+   "commons": "Nicolas_Poussin_-_Et_in_Arcadia_ego_(deuxième_version).jpg",
    "local": null
   },
   {
    "day": 283,
    "title": "The Four Horsemen of the Apocalypse, from The Apocalypse",
    "artist": "Albrecht Dürer",
-   "date": null,
+   "date": "c. 1496–98",
    "source": "aic",
    "aic_id": 55330,
    "link": "https://www.artic.edu/artworks/55330",
-   "image_id": null,
+   "image_id": "5d017b13-70a8-7b6a-1c2c-ef69d0f7dbb2",
    "local": null
   },
   {
@@ -3124,29 +3124,29 @@
    "source": "wikimedia",
    "wikipedia": "Chartres Cathedral",
    "link": "https://en.wikipedia.org/wiki/Chartres_Cathedral",
-   "commons": null,
+   "commons": "Notre_Dame_de_Chartres.jpg",
    "local": null
   },
   {
    "day": 285,
    "title": "The Pimps of Death",
    "artist": "George Grosz",
-   "date": null,
+   "date": "1919, published 1920",
    "source": "aic",
    "aic_id": 3158,
    "link": "https://www.artic.edu/artworks/3158",
-   "image_id": null,
+   "image_id": "b7ab1a35-06a7-6979-940e-8c627c959851",
    "local": null
   },
   {
    "day": 286,
    "title": "In the Magic Mirror",
    "artist": "Paul Klee",
-   "date": null,
+   "date": "1934",
    "source": "aic",
    "aic_id": 111666,
    "link": "https://www.artic.edu/artworks/111666",
-   "image_id": null,
+   "image_id": "a917685e-e96d-ecb1-2822-d6f50ce8ea5a",
    "local": null
   },
   {
@@ -3157,7 +3157,7 @@
    "source": "wikimedia",
    "wikipedia": "The Child's Bath",
    "link": "https://en.wikipedia.org/wiki/The_Child's_Bath",
-   "commons": null,
+   "commons": "Mary_Cassatt_-_The_Child's_Bath_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -3168,7 +3168,7 @@
    "source": "wikimedia",
    "wikipedia": "Rokeby Venus",
    "link": "https://en.wikipedia.org/wiki/Rokeby_Venus",
-   "commons": null,
+   "commons": "Diego_Velázquez_-_Rokeby_Venus.jpg",
    "local": null
   },
   {
@@ -3179,18 +3179,18 @@
    "source": "wikimedia",
    "wikipedia": "Nude Descending a Staircase, No. 2",
    "link": "https://en.wikipedia.org/wiki/Nude_Descending_a_Staircase,_No._2",
-   "commons": null,
+   "commons": "Duchamp_-_Nude_Descending_a_Staircase.jpg",
    "local": null
   },
   {
    "day": 290,
    "title": "Saint George and the Dragon",
    "artist": "Bernat Martorell",
-   "date": null,
+   "date": "1434–35",
    "source": "aic",
    "aic_id": 15468,
    "link": "https://www.artic.edu/artworks/15468",
-   "image_id": null,
+   "image_id": "8a0e4ac9-43ea-bc3e-884b-ee27f8a10501",
    "local": null
   },
   {
@@ -3201,7 +3201,7 @@
    "source": "wikimedia",
    "wikipedia": "Jupiter and Semele",
    "link": "https://en.wikipedia.org/wiki/Jupiter_and_Semele",
-   "commons": null,
+   "commons": "Jupiter_and_Semele_by_Gustave_Moreau.jpg",
    "local": null
   },
   {
@@ -3212,7 +3212,7 @@
    "source": "wikimedia",
    "wikipedia": "Vertumnus (Arcimboldo)",
    "link": "https://en.wikipedia.org/wiki/Vertumnus_(Arcimboldo)",
-   "commons": null,
+   "commons": "Vertumnus_årstidernas_gud_målad_av_Giuseppe_Arcimboldo_1591_-_Skoklosters_slott_-_91503.jpg",
    "local": null
   },
   {
@@ -3223,7 +3223,7 @@
    "source": "wikimedia",
    "wikipedia": "Newton (Blake)",
    "link": "https://en.wikipedia.org/wiki/Newton_(Blake)",
-   "commons": null,
+   "commons": "Newton-WilliamBlake.jpg",
    "local": null
   },
   {
@@ -3234,7 +3234,7 @@
    "source": "wikimedia",
    "wikipedia": "Impression, Sunrise",
    "link": "https://en.wikipedia.org/wiki/Impression,_Sunrise",
-   "commons": null,
+   "commons": "Monet_-_Impression,_Sunrise.jpg",
    "local": null
   },
   {
@@ -3243,9 +3243,9 @@
    "artist": "Dante Gabriel Rossetti",
    "date": "1874",
    "source": "wikimedia",
-   "wikipedia": "Proserpine (painting)",
-   "link": "https://en.wikipedia.org/wiki/Proserpine_(painting)",
-   "commons": null,
+   "wikipedia": "Proserpine (Rossetti)",
+   "link": "https://en.wikipedia.org/wiki/Proserpine_(Rossetti)",
+   "commons": "Dante_Gabriel_Rossetti_-_Proserpine_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -3256,7 +3256,7 @@
    "source": "wikimedia",
    "wikipedia": "Snap the Whip",
    "link": "https://en.wikipedia.org/wiki/Snap_the_Whip",
-   "commons": null,
+   "commons": "Winslow_Homer_-_Snap_the_Whip_(Butler_Institute_of_American_Art).jpg",
    "local": null
   },
   {
@@ -3267,29 +3267,29 @@
    "source": "wikimedia",
    "wikipedia": "Pietà (Michelangelo)",
    "link": "https://en.wikipedia.org/wiki/Pietà_(Michelangelo)",
-   "commons": null,
+   "commons": "Pieta_de_Michelangelo_-_Vaticano.jpg",
    "local": null
   },
   {
    "day": 298,
    "title": "Painting with Troika",
    "artist": "Vasily Kandinsky",
-   "date": null,
+   "date": "January 18, 1911",
    "source": "aic",
    "aic_id": 8983,
    "link": "https://www.artic.edu/artworks/8983",
-   "image_id": null,
+   "image_id": "a45e5f55-d02b-ce98-8bab-3af549684f58",
    "local": null
   },
   {
    "day": 299,
    "title": "The Beheading of Saint John the Baptist",
    "artist": "Giovanni di Paolo",
-   "date": null,
+   "date": "1455–60",
    "source": "aic",
    "aic_id": 16169,
    "link": "https://www.artic.edu/artworks/16169",
-   "image_id": null,
+   "image_id": "af91bb7d-0af4-ef10-5b4d-052da0b6e21a",
    "local": null
   },
   {
@@ -3300,7 +3300,7 @@
    "source": "wikimedia",
    "wikipedia": "The Swimming Hole",
    "link": "https://en.wikipedia.org/wiki/The_Swimming_Hole",
-   "commons": null,
+   "commons": "Swimming_hole.jpg",
    "local": null
   },
   {
@@ -3311,7 +3311,7 @@
    "source": "wikimedia",
    "wikipedia": "Sistine Madonna",
    "link": "https://en.wikipedia.org/wiki/Sistine_Madonna",
-   "commons": null,
+   "commons": "RAFAEL_-_Madonna_Sixtina_(Gemäldegalerie_Alter_Meister,_Dresden,_1513-14._Óleo_sobre_lienzo,_265_x_196_cm).jpg",
    "local": null
   },
   {
@@ -3322,18 +3322,18 @@
    "source": "wikimedia",
    "wikipedia": "Winged Victory of Samothrace",
    "link": "https://en.wikipedia.org/wiki/Winged_Victory_of_Samothrace",
-   "commons": null,
+   "commons": "Victoire_de_Samothrace_-_Musee_du_Louvre_-_20190812.jpg",
    "local": null
   },
   {
    "day": 303,
    "title": "The Annunciation, from The Life of the Virgin",
    "artist": "Albrecht Dürer",
-   "date": null,
+   "date": "c. 1503, published 1511",
    "source": "aic",
    "aic_id": 4152,
    "link": "https://www.artic.edu/artworks/4152",
-   "image_id": null,
+   "image_id": "32f4b7ec-9595-d66c-76f4-4a97c61720ff",
    "local": null
   },
   {
@@ -3344,29 +3344,29 @@
    "source": "wikimedia",
    "wikipedia": "The Art of Painting",
    "link": "https://en.wikipedia.org/wiki/The_Art_of_Painting",
-   "commons": null,
+   "commons": "Jan_Vermeer_-_The_Art_of_Painting_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 305,
    "title": "Figure with Meat",
    "artist": "Francis Bacon",
-   "date": null,
+   "date": "1954",
    "source": "aic",
    "aic_id": 4884,
    "link": "https://www.artic.edu/artworks/4884",
-   "image_id": null,
+   "image_id": "024d361d-31d1-e53b-cca0-ee14f822347f",
    "local": null
   },
   {
    "day": 306,
    "title": "Alka Seltzer",
    "artist": "Roy Lichtenstein",
-   "date": null,
+   "date": "1966",
    "source": "aic",
    "aic_id": 122054,
    "link": "https://www.artic.edu/artworks/122054",
-   "image_id": null,
+   "image_id": "3968921f-222e-37ae-5c53-fafd26a45c7b",
    "local": null
   },
   {
@@ -3377,7 +3377,7 @@
    "source": "wikimedia",
    "wikipedia": "Irises (painting)",
    "link": "https://en.wikipedia.org/wiki/Irises_(painting)",
-   "commons": null,
+   "commons": "Irises-Vincent_van_Gogh.jpg",
    "local": null
   },
   {
@@ -3388,7 +3388,7 @@
    "source": "wikimedia",
    "wikipedia": "Unique Forms of Continuity in Space",
    "link": "https://en.wikipedia.org/wiki/Unique_Forms_of_Continuity_in_Space",
-   "commons": null,
+   "commons": "'Unique_Forms_of_Continuity_in_Space',_1913_bronze_by_Umberto_Boccioni.jpg",
    "local": null
   },
   {
@@ -3399,7 +3399,7 @@
    "source": "wikimedia",
    "wikipedia": "Washington Crossing the Delaware (1851 painting)",
    "link": "https://en.wikipedia.org/wiki/Washington_Crossing_the_Delaware_(1851_painting)",
-   "commons": null,
+   "commons": "Washington_Crossing_the_Delaware_by_Emanuel_Leutze,_MMA-NYC,_1851.jpg",
    "local": null
   },
   {
@@ -3410,18 +3410,18 @@
    "source": "wikimedia",
    "wikipedia": "L'Absinthe",
    "link": "https://en.wikipedia.org/wiki/L'Absinthe",
-   "commons": null,
+   "commons": "Edgar_Degas_-_In_a_Café_-_Google_Art_Project_2.jpg",
    "local": null
   },
   {
    "day": 311,
    "title": "Earthly Paradise",
    "artist": "Pierre Bonnard",
-   "date": null,
+   "date": "1916–20",
    "source": "aic",
    "aic_id": 144361,
    "link": "https://www.artic.edu/artworks/144361",
-   "image_id": null,
+   "image_id": "8b4abeed-c22b-1477-1e76-b303ac1415d1",
    "local": null
   },
   {
@@ -3432,18 +3432,18 @@
    "source": "wikimedia",
    "wikipedia": "Dance at Bougival",
    "link": "https://en.wikipedia.org/wiki/Dance_at_Bougival",
-   "commons": null,
+   "commons": "Dance-At-Bougival.jpg",
    "local": null
   },
   {
    "day": 313,
    "title": "Untitled (Cincinnati, Ohio)",
    "artist": "Fred Beckman",
-   "date": null,
+   "date": "1960",
    "source": "aic",
    "aic_id": 140957,
    "link": "https://www.artic.edu/artworks/140957",
-   "image_id": null,
+   "image_id": "037d57f3-010a-74dd-33cf-d13648a2dd19",
    "local": null
   },
   {
@@ -3454,7 +3454,7 @@
    "source": "wikimedia",
    "wikipedia": "The Death of Marat",
    "link": "https://en.wikipedia.org/wiki/The_Death_of_Marat",
-   "commons": null,
+   "commons": "Death_of_Marat_by_David.jpg",
    "local": null
   },
   {
@@ -3465,7 +3465,7 @@
    "source": "wikimedia",
    "wikipedia": "The Night Watch",
    "link": "https://en.wikipedia.org/wiki/The_Night_Watch",
-   "commons": null,
+   "commons": "La_ronda_de_noche,_por_Rembrandt_van_Rijn.jpg",
    "local": null
   },
   {
@@ -3476,18 +3476,18 @@
    "source": "wikimedia",
    "wikipedia": "Augustus of Prima Porta",
    "link": "https://en.wikipedia.org/wiki/Augustus_of_Prima_Porta",
-   "commons": null,
+   "commons": "Augustus_of_Prima_Porta.jpg",
    "local": null
   },
   {
    "day": 317,
    "title": "Ready-to-Wear",
    "artist": "Stuart Davis",
-   "date": null,
+   "date": "1955",
    "source": "aic",
    "aic_id": 2189,
    "link": "https://www.artic.edu/artworks/2189",
-   "image_id": null,
+   "image_id": "e7ebc4b0-46e3-c957-76ac-669cadaf1115",
    "local": null
   },
   {
@@ -3496,20 +3496,20 @@
    "artist": "Frederic Edwin Church",
    "date": "1857",
    "source": "wikimedia",
-   "wikipedia": "Niagara (Church)",
-   "link": "https://en.wikipedia.org/wiki/Niagara_(Church)",
-   "commons": null,
+   "wikipedia": "Niagara (Frederic Edwin Church)",
+   "link": "https://en.wikipedia.org/wiki/Niagara_(Frederic_Edwin_Church)",
+   "commons": "Frederic_Edwin_Church_-_Niagara_Falls_-_WGA04867.jpg",
    "local": null
   },
   {
    "day": 319,
    "title": "Grand Central Station, New York City",
    "artist": "Brassaï, (Gyula Halász)",
-   "date": null,
+   "date": "1957",
    "source": "aic",
    "aic_id": 100997,
    "link": "https://www.artic.edu/artworks/100997",
-   "image_id": null,
+   "image_id": "a3e1374e-ea6c-6103-23e3-8c93f3fff597",
    "local": null
   },
   {
@@ -3520,18 +3520,18 @@
    "source": "wikimedia",
    "wikipedia": "The Peasant Wedding",
    "link": "https://en.wikipedia.org/wiki/The_Peasant_Wedding",
-   "commons": null,
+   "commons": "Pieter_Bruegel_the_Elder_-_Peasant_Wedding_-_Google_Art_Project_2.jpg",
    "local": null
   },
   {
    "day": 321,
    "title": "Melencolia I",
    "artist": "Albrecht Dürer",
-   "date": null,
+   "date": "1514",
    "source": "aic",
    "aic_id": 28260,
    "link": "https://www.artic.edu/artworks/28260",
-   "image_id": null,
+   "image_id": "509681b4-1348-6335-f7e5-9a30b62d3b27",
    "local": null
   },
   {
@@ -3542,7 +3542,7 @@
    "source": "wikimedia",
    "wikipedia": "The Elevation of the Cross (Rubens)",
    "link": "https://en.wikipedia.org/wiki/The_Elevation_of_the_Cross_(Rubens)",
-   "commons": null,
+   "commons": "Peter_Paul_Rubens_-_Raising_of_the_Cross_(Antwerp_Cathedral).JPG",
    "local": null
   },
   {
@@ -3553,18 +3553,18 @@
    "source": "wikimedia",
    "wikipedia": "The Gleaners",
    "link": "https://en.wikipedia.org/wiki/The_Gleaners",
-   "commons": null,
+   "commons": "Jean-François_Millet_-_Gleaners_-_Google_Art_Project_2.jpg",
    "local": null
   },
   {
    "day": 324,
    "title": "Reclining Woman",
    "artist": "Fernand Léger",
-   "date": null,
+   "date": "1922",
    "source": "aic",
    "aic_id": 153701,
    "link": "https://www.artic.edu/artworks/153701",
-   "image_id": null,
+   "image_id": "a3c73ab6-76b7-a016-5bff-ab2bc566d26f",
    "local": null
   },
   {
@@ -3575,18 +3575,18 @@
    "source": "wikimedia",
    "wikipedia": "Danaë (Klimt painting)",
    "link": "https://en.wikipedia.org/wiki/Danaë_(Klimt_painting)",
-   "commons": null,
+   "commons": "Gustav_Klimt_010.jpg",
    "local": null
   },
   {
    "day": 326,
    "title": "The Bay of Marseille, Seen from L'Estaque",
    "artist": "Paul Cezanne",
-   "date": null,
+   "date": "c. 1885",
    "source": "aic",
    "aic_id": 16487,
    "link": "https://www.artic.edu/artworks/16487",
-   "image_id": null,
+   "image_id": "d4ca6321-8656-3d3f-a362-2ee297b2b813",
    "local": null
   },
   {
@@ -3597,7 +3597,7 @@
    "source": "wikimedia",
    "wikipedia": "The Absinthe Drinker (Manet)",
    "link": "https://en.wikipedia.org/wiki/The_Absinthe_Drinker_(Manet)",
-   "commons": null,
+   "commons": "Edouard_Manet_-_The_Absinthe_Drinker_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -3608,18 +3608,18 @@
    "source": "wikimedia",
    "wikipedia": "The Third of May 1808",
    "link": "https://en.wikipedia.org/wiki/The_Third_of_May_1808",
-   "commons": null,
+   "commons": "El_Tres_de_Mayo,_by_Francisco_de_Goya,_from_Prado_thin_black_margin.jpg",
    "local": null
   },
   {
    "day": 329,
    "title": "Summer Sleep, New York",
    "artist": "Irving Penn",
-   "date": null,
+   "date": "1949, printed 1984",
    "source": "aic",
    "aic_id": 144827,
    "link": "https://www.artic.edu/artworks/144827",
-   "image_id": null,
+   "image_id": "68d70c7f-96fa-aafb-1419-618ffe8dc319",
    "local": null
   },
   {
@@ -3630,29 +3630,29 @@
    "source": "wikimedia",
    "wikipedia": "The Painter's Studio",
    "link": "https://en.wikipedia.org/wiki/The_Painter's_Studio",
-   "commons": null,
+   "commons": "Courbet_LAtelier_du_peintre.jpg",
    "local": null
   },
   {
    "day": 331,
    "title": "Sky above Clouds IV",
    "artist": "Georgia O'Keeffe",
-   "date": null,
+   "date": "1965",
    "source": "aic",
    "aic_id": 100858,
    "link": "https://www.artic.edu/artworks/100858",
-   "image_id": null,
+   "image_id": "ace9f8d4-eac7-e5f7-50b2-6a77f7029c9b",
    "local": null
   },
   {
    "day": 332,
    "title": "Man with Lance Riding through the Snow",
    "artist": "Adolphe Schreyer",
-   "date": null,
+   "date": "c. 1880",
    "source": "aic",
    "aic_id": 895,
    "link": "https://www.artic.edu/artworks/895",
-   "image_id": null,
+   "image_id": "fa96ef54-c3b1-8f4d-390a-219f7bc64c4a",
    "local": null
   },
   {
@@ -3663,7 +3663,7 @@
    "source": "wikimedia",
    "wikipedia": "Ishtar Gate",
    "link": "https://en.wikipedia.org/wiki/Ishtar_Gate",
-   "commons": null,
+   "commons": "Berlín,_Museo_de_Pérgamo_05.jpg",
    "local": null
   },
   {
@@ -3674,7 +3674,7 @@
    "source": "wikimedia",
    "wikipedia": "The Bathers (Cézanne)",
    "link": "https://en.wikipedia.org/wiki/The_Bathers_(Cézanne)",
-   "commons": null,
+   "commons": "Paul_Cézanne,_French_-_The_Large_Bathers_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -3685,7 +3685,7 @@
    "source": "wikimedia",
    "wikipedia": "Moai",
    "link": "https://en.wikipedia.org/wiki/Moai",
-   "commons": null,
+   "commons": "AhuTongariki.JPG",
    "local": null
   },
   {
@@ -3696,7 +3696,7 @@
    "source": "wikimedia",
    "wikipedia": "Haystacks (Monet series)",
    "link": "https://en.wikipedia.org/wiki/Haystacks_(Monet_series)",
-   "commons": null,
+   "commons": "Claude_Monet_-_Stacks_of_Wheat_(End_of_Summer)_-_1985.1103_-_Art_Institute_of_Chicago.jpg",
    "local": null
   },
   {
@@ -3707,7 +3707,7 @@
    "source": "wikimedia",
    "wikipedia": "The Ambassadors (Holbein)",
    "link": "https://en.wikipedia.org/wiki/The_Ambassadors_(Holbein)",
-   "commons": null,
+   "commons": "Hans_Holbein_the_Younger_-_The_Ambassadors_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -3718,7 +3718,7 @@
    "source": "wikimedia",
    "wikipedia": "The Tempest (Giorgione)",
    "link": "https://en.wikipedia.org/wiki/The_Tempest_(Giorgione)",
-   "commons": null,
+   "commons": "Giorgione_-_Das_Gewitter.jpg",
    "local": null
   },
   {
@@ -3729,7 +3729,7 @@
    "source": "wikimedia",
    "wikipedia": "Bathers at Asnières",
    "link": "https://en.wikipedia.org/wiki/Bathers_at_Asnières",
-   "commons": null,
+   "commons": "Baigneurs_a_Asnieres.jpg",
    "local": null
   },
   {
@@ -3740,40 +3740,40 @@
    "source": "wikimedia",
    "wikipedia": "Medusa (Caravaggio)",
    "link": "https://en.wikipedia.org/wiki/Medusa_(Caravaggio)",
-   "commons": null,
+   "commons": "Caravaggio_-_Medusa_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 341,
    "title": "Crucifixion",
    "artist": "Albrecht Dürer",
-   "date": null,
+   "date": "1508",
    "source": "aic",
    "aic_id": 35970,
    "link": "https://www.artic.edu/artworks/35970",
-   "image_id": null,
+   "image_id": "446813a1-45a3-1970-6b57-f965428d917e",
    "local": null
   },
   {
    "day": 342,
    "title": "Monk (Mönch)",
    "artist": "Katharina Fritsch",
-   "date": null,
+   "date": "1997/99",
    "source": "aic",
    "aic_id": 154232,
    "link": "https://www.artic.edu/artworks/154232",
-   "image_id": null,
+   "image_id": "8f0295ca-670e-aa1f-b30f-801bb8d15885",
    "local": null
   },
   {
    "day": 343,
    "title": "Self-Portrait in Bowler Hat",
    "artist": "Max Beckmann",
-   "date": null,
+   "date": "1921",
    "source": "aic",
    "aic_id": 10210,
    "link": "https://www.artic.edu/artworks/10210",
-   "image_id": null,
+   "image_id": "3ddb1532-54ff-af5f-0c13-e2c62914df51",
    "local": null
   },
   {
@@ -3784,18 +3784,18 @@
    "source": "wikimedia",
    "wikipedia": "The Sea of Ice",
    "link": "https://en.wikipedia.org/wiki/The_Sea_of_Ice",
-   "commons": null,
+   "commons": "Caspar_David_Friedrich_-_Das_Eismeer_-_Hamburger_Kunsthalle_-_02.jpg",
    "local": null
   },
   {
    "day": 345,
    "title": "A City Park",
    "artist": "William Merritt Chase",
-   "date": null,
+   "date": "c. 1887",
    "source": "aic",
    "aic_id": 28849,
    "link": "https://www.artic.edu/artworks/28849",
-   "image_id": null,
+   "image_id": "72a76270-d6f4-e744-d47b-307873a8e8ff",
    "local": null
   },
   {
@@ -3806,7 +3806,7 @@
    "source": "wikimedia",
    "wikipedia": "Hagia Sophia",
    "link": "https://en.wikipedia.org/wiki/Hagia_Sophia",
-   "commons": null,
+   "commons": "Hagia_Sophia_(228968325).jpeg",
    "local": null
   },
   {
@@ -3817,7 +3817,7 @@
    "source": "wikimedia",
    "wikipedia": "Almond Blossoms",
    "link": "https://en.wikipedia.org/wiki/Almond_Blossoms",
-   "commons": null,
+   "commons": "Vincent_van_Gogh_-_Almond_blossom_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -3828,7 +3828,7 @@
    "source": "wikimedia",
    "wikipedia": "Composition VII",
    "link": "https://en.wikipedia.org/wiki/Composition_VII",
-   "commons": null,
+   "commons": "Composition_VII_-_Wassily_Kandinsky,_GAC.jpg",
    "local": null
   },
   {
@@ -3839,7 +3839,7 @@
    "source": "wikimedia",
    "wikipedia": "The Yellow Christ",
    "link": "https://en.wikipedia.org/wiki/The_Yellow_Christ",
-   "commons": null,
+   "commons": "Paul_Gauguin_-_The_Yellow_Christ_(Le_Christ_jaune)_1889.jpg",
    "local": null
   },
   {
@@ -3850,7 +3850,7 @@
    "source": "wikimedia",
    "wikipedia": "The Burial of the Count of Orgaz",
    "link": "https://en.wikipedia.org/wiki/The_Burial_of_the_Count_of_Orgaz",
-   "commons": null,
+   "commons": "El_Greco_-_The_Burial_of_the_Count_of_Orgaz.JPG",
    "local": null
   },
   {
@@ -3861,7 +3861,7 @@
    "source": "wikimedia",
    "wikipedia": "Bayeux Tapestry",
    "link": "https://en.wikipedia.org/wiki/Bayeux_Tapestry",
-   "commons": null,
+   "commons": "Odo_bayeux_tapestry.png",
    "local": null
   },
   {
@@ -3872,18 +3872,18 @@
    "source": "wikimedia",
    "wikipedia": "Madonna of Bruges",
    "link": "https://en.wikipedia.org/wiki/Madonna_of_Bruges",
-   "commons": null,
+   "commons": "Madonna_michelangelo.jpg",
    "local": null
   },
   {
    "day": 353,
    "title": "The Last Words of Jean Jacques Rousseau",
    "artist": "Heinrich Guttenberg",
-   "date": null,
+   "date": "c.1780",
    "source": "aic",
    "aic_id": 12081,
    "link": "https://www.artic.edu/artworks/12081",
-   "image_id": null,
+   "image_id": "a399c8c0-1cf9-d2fc-054d-aa716a9bc8f5",
    "local": null
   },
   {
@@ -3894,29 +3894,29 @@
    "source": "wikimedia",
    "wikipedia": "St. John the Baptist (Leonardo)",
    "link": "https://en.wikipedia.org/wiki/St._John_the_Baptist_(Leonardo)",
-   "commons": null,
+   "commons": "Leonardo_da_Vinci_-_Saint_John_the_Baptist_C2RMF_retouched.jpg",
    "local": null
   },
   {
    "day": 355,
    "title": "Apollo and Marsyas",
    "artist": "Hans Thoma",
-   "date": null,
+   "date": "1888",
    "source": "aic",
    "aic_id": 192691,
    "link": "https://www.artic.edu/artworks/192691",
-   "image_id": null,
+   "image_id": "13d31515-70ec-197f-59f6-b71dc6f60903",
    "local": null
   },
   {
    "day": 356,
    "title": "Christa and Wolfi",
    "artist": "Gerhard Richter",
-   "date": null,
+   "date": "1964",
    "source": "aic",
    "aic_id": 93344,
    "link": "https://www.artic.edu/artworks/93344",
-   "image_id": null,
+   "image_id": "5ac548fe-ae9c-f234-e7e0-e0a4e6dac669",
    "local": null
   },
   {
@@ -3927,7 +3927,7 @@
    "source": "wikimedia",
    "wikipedia": "The Garden of Earthly Delights",
    "link": "https://en.wikipedia.org/wiki/The_Garden_of_Earthly_Delights",
-   "commons": null,
+   "commons": "The_Garden_of_earthly_delights.jpg",
    "local": null
   },
   {
@@ -3938,7 +3938,7 @@
    "source": "wikimedia",
    "wikipedia": "Self-Portrait as the Allegory of Painting",
    "link": "https://en.wikipedia.org/wiki/Self-Portrait_as_the_Allegory_of_Painting",
-   "commons": null,
+   "commons": "Self-portrait_as_the_Allegory_of_Painting_(La_Pittura)_-_Artemisia_Gentileschi.jpg",
    "local": null
   },
   {
@@ -3949,29 +3949,29 @@
    "source": "wikimedia",
    "wikipedia": "Christ in the House of His Parents",
    "link": "https://en.wikipedia.org/wiki/Christ_in_the_House_of_His_Parents",
-   "commons": null,
+   "commons": "John_Everett_Millais_-_Christ_in_the_House_of_His_Parents_(`The_Carpenter's_Shop')_-_Google_Art_Project.jpg",
    "local": null
   },
   {
    "day": 360,
    "title": "Sudarium Displayed by Two Angels",
    "artist": "Albrecht Dürer",
-   "date": null,
+   "date": "1513",
    "source": "aic",
    "aic_id": 4086,
    "link": "https://www.artic.edu/artworks/4086",
-   "image_id": null,
+   "image_id": "bfa8d3f4-6833-f32a-18c4-8a388cd38d42",
    "local": null
   },
   {
    "day": 361,
    "title": "New York",
    "artist": "Hedda Sterne",
-   "date": null,
+   "date": "1956",
    "source": "aic",
    "aic_id": 86286,
    "link": "https://www.artic.edu/artworks/86286",
-   "image_id": null,
+   "image_id": "38237270-d7bc-c89f-3276-f5a7281f9f81",
    "local": null
   },
   {
@@ -3982,7 +3982,7 @@
    "source": "wikimedia",
    "wikipedia": "The Hunters in the Snow",
    "link": "https://en.wikipedia.org/wiki/The_Hunters_in_the_Snow",
-   "commons": null,
+   "commons": "Pieter_Bruegel_the_Elder_-_Hunters_in_the_Snow_(Winter)_-_Google_Art_Project.jpg",
    "local": null
   },
   {
@@ -3993,7 +3993,7 @@
    "source": "wikimedia",
    "wikipedia": "The Astronomer (Vermeer)",
    "link": "https://en.wikipedia.org/wiki/The_Astronomer_(Vermeer)",
-   "commons": null,
+   "commons": "Johannes_Vermeer_-_The_Astronomer_-_1668.jpg",
    "local": null
   },
   {
@@ -4004,7 +4004,7 @@
    "source": "wikimedia",
    "wikipedia": "David (Bernini)",
    "link": "https://en.wikipedia.org/wiki/David_(Bernini)",
-   "commons": null,
+   "commons": "Bernini's_David_02.jpg",
    "local": null
   },
   {
@@ -4015,7 +4015,7 @@
    "source": "wikimedia",
    "wikipedia": "The Blue Boy",
    "link": "https://en.wikipedia.org/wiki/The_Blue_Boy",
-   "commons": null,
+   "commons": "The_Blue_Boy.jpg",
    "local": null
   },
   {
@@ -4026,7 +4026,7 @@
    "source": "wikimedia",
    "wikipedia": "Fur Traders Descending the Missouri",
    "link": "https://en.wikipedia.org/wiki/Fur_Traders_Descending_the_Missouri",
-   "commons": null,
+   "commons": "George_Caleb_Bingham_-_Self-Portrait_of_the_Artist.jpg",
    "local": null
   }
  ]
