@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Art Daily – Jacob Monzel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: "Times New Roman", Times, serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      color: #000;
+      background-color: #fff;
+      line-height: 1.5;
+    }
+
+    nav {
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+    }
+
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #0000EE;
+    }
+
+    nav a:hover { text-decoration: underline; }
+
+    h1 {
+      text-align: center;
+      font-size: 2.2rem;
+      margin-bottom: 0.25rem;
+      font-weight: bold;
+    }
+
+    .today {
+      text-align: center;
+      font-size: 1rem;
+      color: #444;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #000;
+      padding-bottom: 10px;
+    }
+
+    figure {
+      margin: 0 0 1.5rem 0;
+      text-align: center;
+      min-height: 120px;
+    }
+
+    figure img {
+      max-width: 100%;
+      max-height: 70vh;
+      height: auto;
+      border: 1px solid #808080;
+    }
+
+    figcaption {
+      margin-top: 1rem;
+      font-size: 1.15rem;
+    }
+
+    .art-title { font-style: italic; }
+    .art-artist { font-weight: bold; }
+    .art-date { color: #444; }
+
+    .meta {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 0.75rem;
+    }
+
+    .meta a { color: #0000EE; }
+
+    .status {
+      text-align: center;
+      color: #555;
+      font-style: italic;
+      padding: 2rem 0;
+    }
+
+    .notice {
+      border: 1px solid #808080;
+      background: #f8f8f8;
+      padding: 1rem;
+      margin: 1rem 0;
+      text-align: center;
+    }
+
+    .controls {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid #ccc;
+      font-size: 0.9rem;
+    }
+
+    .controls button {
+      font-family: inherit;
+      font-size: 0.9rem;
+      background: none;
+      border: 1px solid #808080;
+      padding: 0.3rem 0.8rem;
+      cursor: pointer;
+      margin: 0 0.25rem;
+    }
+
+    .controls button:hover { background: #f0f0f0; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/">Home</a>
+    <a href="/misc/">Misc</a>
+  </nav>
+
+  <h1>Art Daily</h1>
+  <p class="today" id="today"></p>
+
+  <figure>
+    <div class="status" id="status">Loading today's artwork…</div>
+    <img id="art-image" alt="" hidden>
+    <figcaption id="caption" hidden>
+      <span class="art-title" id="art-title"></span>
+      <span id="art-artist-wrap"> — <span class="art-artist" id="art-artist"></span></span>
+      <span class="art-date" id="art-date"></span>
+    </figcaption>
+  </figure>
+
+  <p class="meta" id="meta" hidden></p>
+
+  <div class="controls">
+    <button id="prev-btn" type="button">Previous day</button>
+    <button id="next-btn" type="button">Next day</button>
+    <button id="today-btn" type="button">Back to today</button>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------------------------------------------------------------
+  // Date -> slot. Slots follow a leap year, so a given calendar date
+  // always maps to the same artwork, and Feb 29 gets its own entry.
+  // ---------------------------------------------------------------
+  var LEAP_CUM = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
+
+  function slotFor(date) {
+    return LEAP_CUM[date.getMonth()] + date.getDate();
+  }
+
+  var CACHE_KEY = "artDaily.resolved.v1";
+  var CACHE_TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+  function readCache() {
+    try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || {}; }
+    catch (e) { return {}; }
+  }
+
+  function writeCache(cache) {
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify(cache)); }
+    catch (e) { /* private mode or quota - resolution still works, just uncached */ }
+  }
+
+  function cacheGet(key) {
+    var hit = readCache()[key];
+    if (hit && Date.now() - hit.t < CACHE_TTL) return hit.u;
+    return null;
+  }
+
+  function cacheSet(key, url) {
+    var cache = readCache();
+    cache[key] = { u: url, t: Date.now() };
+    writeCache(cache);
+  }
+
+  // ---------------------------------------------------------------
+  // URL builders
+  // ---------------------------------------------------------------
+  function aicImage(imageId, width) {
+    return "https://www.artic.edu/iiif/2/" + imageId +
+           "/full/" + width + ",/0/default.jpg";
+  }
+
+  // Special:FilePath is the documented external hotlink endpoint and
+  // follows file renames, so it survives things upload.wikimedia.org won't.
+  function commonsImage(file, width) {
+    return "https://commons.wikimedia.org/wiki/Special:FilePath/" +
+           encodeURIComponent(file) + "?width=" + width;
+  }
+
+  // ---------------------------------------------------------------
+  // Pinned candidates: no network needed, tried first.
+  // ---------------------------------------------------------------
+  function pinnedCandidates(art) {
+    var out = [];
+    if (art.local) out.push(art.local);
+    if (art.source === "aic" && art.image_id) {
+      out.push(aicImage(art.image_id, 843));
+      out.push(aicImage(art.image_id, 600));
+    }
+    if (art.source === "wikimedia" && art.commons) {
+      out.push(commonsImage(art.commons, 1200));
+      out.push(commonsImage(art.commons, 800));
+    }
+    return out;
+  }
+
+  function fetchJSON(url) {
+    return fetch(url, { mode: "cors" }).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    });
+  }
+
+  // ---------------------------------------------------------------
+  // Live resolution: re-derives the image from the stable identifier.
+  // This is what self-heals when a museum re-photographs a work and
+  // the old image id stops resolving.
+  // ---------------------------------------------------------------
+  function resolveAIC(art) {
+    var url = "https://api.artic.edu/api/v1/artworks/" + art.aic_id +
+              "?fields=image_id,title,artist_display,date_display";
+    return fetchJSON(url).then(function (j) {
+      var d = j && j.data;
+      if (!d || !d.image_id) return null;
+      if (d.date_display && !art.date) art.date = d.date_display;
+      return aicImage(d.image_id, 843);
+    });
+  }
+
+  function resolveWikimedia(art) {
+    var url = "https://en.wikipedia.org/w/api.php?action=query&format=json" +
+              "&prop=pageimages&piprop=thumbnail&pithumbsize=1200&redirects=1" +
+              "&origin=*&titles=" + encodeURIComponent(art.wikipedia);
+    return fetchJSON(url).then(function (j) {
+      var pages = j && j.query && j.query.pages;
+      if (!pages) return null;
+      for (var k in pages) {
+        if (pages[k].thumbnail && pages[k].thumbnail.source) {
+          return pages[k].thumbnail.source;
+        }
+      }
+      return null;
+    });
+  }
+
+  function resolveLive(art) {
+    var p = art.source === "aic" ? resolveAIC(art) : resolveWikimedia(art);
+    return p.catch(function () { return null; });
+  }
+
+  // ---------------------------------------------------------------
+  // Try a list of URLs in order; resolve with the first that loads.
+  // ---------------------------------------------------------------
+  function tryLoad(urls) {
+    var i = 0;
+    return new Promise(function (resolve) {
+      function attempt() {
+        if (i >= urls.length) return resolve(null);
+        var url = urls[i++];
+        var probe = new Image();
+        probe.onload = function () { resolve(url); };
+        probe.onerror = attempt;
+        probe.src = url;
+      }
+      attempt();
+    });
+  }
+
+  // ---------------------------------------------------------------
+  // Rendering
+  // ---------------------------------------------------------------
+  var el = {
+    status: document.getElementById("status"),
+    img: document.getElementById("art-image"),
+    caption: document.getElementById("caption"),
+    title: document.getElementById("art-title"),
+    artist: document.getElementById("art-artist"),
+    artistWrap: document.getElementById("art-artist-wrap"),
+    date: document.getElementById("art-date"),
+    meta: document.getElementById("meta"),
+    today: document.getElementById("today")
+  };
+
+  var SOURCE_LABEL = {
+    aic: "Art Institute of Chicago",
+    wikimedia: "Wikimedia Commons"
+  };
+
+  function renderCaption(art) {
+    el.title.textContent = art.title;
+    if (art.artist && art.artist !== "Unknown") {
+      el.artist.textContent = art.artist;
+      el.artistWrap.hidden = false;
+    } else {
+      el.artistWrap.hidden = true;
+    }
+    el.date.textContent = art.date ? " (" + art.date + ")" : "";
+    el.caption.hidden = false;
+
+    el.meta.innerHTML = "";
+    var a = document.createElement("a");
+    a.href = art.link;
+    a.rel = "noopener";
+    a.textContent = SOURCE_LABEL[art.source] || "Source";
+    el.meta.appendChild(document.createTextNode("Via "));
+    el.meta.appendChild(a);
+    el.meta.hidden = false;
+  }
+
+  function renderImage(url, art) {
+    el.img.src = url;
+    el.img.alt = art.title + (art.artist ? " by " + art.artist : "");
+    el.img.hidden = false;
+    el.status.hidden = true;
+  }
+
+  // Final rung: the work still gets its day, just without the picture.
+  function renderTextOnly(art) {
+    el.img.hidden = true;
+    el.status.hidden = true;
+    var box = document.createElement("div");
+    box.className = "notice";
+    box.innerHTML = "The image for today's work could not be loaded. " +
+      "The artwork is still <a href=\"" + art.link + "\" rel=\"noopener\">" +
+      "viewable at the source</a>.";
+    el.status.parentNode.insertBefore(box, el.caption);
+  }
+
+  function clearTransient() {
+    var old = document.querySelectorAll(".notice");
+    for (var i = 0; i < old.length; i++) old[i].remove();
+    el.img.hidden = true;
+    el.caption.hidden = true;
+    el.meta.hidden = true;
+    el.status.hidden = false;
+    el.status.textContent = "Loading…";
+  }
+
+  // ---------------------------------------------------------------
+  // Main
+  // ---------------------------------------------------------------
+  var manifest = null;
+  var viewSlot = slotFor(new Date());
+
+  function artForSlot(slot) {
+    var list = manifest.artworks;
+    // Slot is 1-366; wrap defensively in case the file is short.
+    var idx = ((slot - 1) % list.length + list.length) % list.length;
+    return list[idx];
+  }
+
+  function labelForSlot(slot) {
+    var d = new Date(2024, 0, 1);           // 2024 is a leap year
+    d.setDate(slot);
+    return d.toLocaleDateString(undefined, { month: "long", day: "numeric" });
+  }
+
+  function show(slot) {
+    clearTransient();
+    var art = artForSlot(slot);
+    el.today.textContent = labelForSlot(slot);
+
+    var cacheKey = art.source + ":" + (art.aic_id || art.wikipedia);
+    var cached = cacheGet(cacheKey);
+    var first = cached ? [cached].concat(pinnedCandidates(art)) : pinnedCandidates(art);
+
+    tryLoad(first).then(function (url) {
+      if (url) {
+        renderCaption(art);
+        renderImage(url, art);
+        cacheSet(cacheKey, url);
+        return;
+      }
+      // Nothing pinned worked - go re-derive from the stable identifier.
+      el.status.textContent = "Re-resolving image…";
+      return resolveLive(art).then(function (live) {
+        if (!live) { renderCaption(art); renderTextOnly(art); return; }
+        return tryLoad([live]).then(function (ok) {
+          renderCaption(art);
+          if (ok) {
+            renderImage(ok, art);
+            cacheSet(cacheKey, ok);
+          } else {
+            renderTextOnly(art);
+          }
+        });
+      });
+    });
+  }
+
+  document.getElementById("prev-btn").addEventListener("click", function () {
+    viewSlot = viewSlot - 1 < 1 ? 366 : viewSlot - 1;
+    show(viewSlot);
+  });
+
+  document.getElementById("next-btn").addEventListener("click", function () {
+    viewSlot = viewSlot + 1 > 366 ? 1 : viewSlot + 1;
+    show(viewSlot);
+  });
+
+  document.getElementById("today-btn").addEventListener("click", function () {
+    viewSlot = slotFor(new Date());
+    show(viewSlot);
+  });
+
+  fetch("artworks.json")
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      manifest = j;
+      show(viewSlot);
+    })
+    .catch(function () {
+      el.status.textContent =
+        "Could not load the artwork list. Try reloading the page.";
+    });
+})();
+</script>
+
+</body>
+</html>
