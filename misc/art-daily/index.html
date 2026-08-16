@@ -502,6 +502,8 @@
     label.querySelector(".title").textContent = art.title;
     label.querySelector(".date").textContent = art.date || "";
 
+    piece._art = art;
+    piece._img = img;
     piece.appendChild(frame);
     piece.appendChild(label);
     requestAnimationFrame(function(){ piece.classList.add("in"); });
@@ -576,9 +578,27 @@
   }
 
   function setFocus(col,row) {
+    var prev = tiles.get(focusCol + "," + focusRow);
+    if (prev) prev.classList.remove("focus");
+
     focusCol = col; focusRow = row;
     placeGlow();
-    glideTo(-col*cell.w, -row*cell.h, rebuild);
+
+    function light() {
+      var el = tiles.get(focusCol + "," + focusRow);
+      if (!el) return;
+      el.classList.add("focus");
+      // Upgrade just this one image to the larger cached size. One request,
+      // not a rebuild of the entire wall.
+      if (el._art && el._img && el._art.commons && !el._upgraded) {
+        el._upgraded = true;
+        el._img.src = "https://commons.wikimedia.org/wiki/Special:FilePath/" +
+                      encodeURIComponent(el._art.commons) + "?width=1024";
+      }
+    }
+
+    light();
+    glideTo(-col*cell.w, -row*cell.h, light);
   }
 
   // Find the nearest wall position showing a given artwork, so a jump is a
