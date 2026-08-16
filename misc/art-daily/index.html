@@ -1,428 +1,594 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Art Daily – Jacob Monzel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<title>Art Daily – Jacob Monzel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="description" content="A different artwork every day, hung on an endless gallery wall.">
+<style>
+  :root {
+    --wall:        #1b5e63;
+    --wall-deep:   #0e3538;
+    --wall-lit:    #2a7c80;
+    --mat:         #f4f1e8;
+    --mat-shadow:  #d8d2c2;
+    --label:       #f6f3ea;
+    --label-ink:   #16383a;
+    --gold:        #c9a227;
+    --gold-pale:   #efd98a;
+    --gold-deep:   #8a6d1b;
 
-  <style>
-    body {
-      font-family: "Times New Roman", Times, serif;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 1.5rem;
-      color: #000;
-      background-color: #fff;
-      line-height: 1.5;
+    --cell-w: 340px;
+    --cell-h: 330px;
+    --art-max-w: 240px;
+    --art-max-h: 190px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    background: var(--wall-deep);
+    font-family: Georgia, "Times New Roman", Times, serif;
+    color: var(--label);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* The gallery lighting: a warm pool centred on the focus piece, falling
+     off into the corners the way a spotlit wall actually behaves. */
+  #wall {
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 45%,
+        var(--wall-lit) 0%, var(--wall) 42%, var(--wall-deep) 100%);
+    cursor: grab;
+    touch-action: none;
+    overscroll-behavior: none;
+  }
+  #wall.dragging { cursor: grabbing; }
+
+  #surface {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    will-change: transform;
+  }
+
+  /* ---------------- a hung piece ---------------- */
+
+  .piece {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity .55s ease;
+  }
+  .piece.in { opacity: .82; }
+  .piece.focus { opacity: 1; z-index: 5; }
+
+  .frame {
+    position: relative;
+    display: inline-block;
+    line-height: 0;
+    background: var(--mat);
+    box-shadow:
+      0 1px 2px rgba(0,0,0,.35),
+      0 10px 26px -6px rgba(0,0,0,.55);
+  }
+  .piece.focus .frame {
+    box-shadow:
+      0 2px 4px rgba(0,0,0,.4),
+      0 22px 50px -10px rgba(0,0,0,.7),
+      0 0 60px -10px rgba(239,217,138,.28);
+  }
+
+  .frame img {
+    display: block;
+    max-width: var(--art-max-w);
+    max-height: var(--art-max-h);
+    width: auto;
+    height: auto;
+    background: var(--mat-shadow);
+  }
+  .piece.focus .frame img {
+    max-width: calc(var(--art-max-w) * 1.42);
+    max-height: calc(var(--art-max-h) * 1.42);
+  }
+
+  /* Inner bevel: the lip of the mat catching light */
+  .frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.18),
+                inset 0 2px 5px rgba(0,0,0,.16);
+  }
+
+  /* ---------------- frame styles ---------------- */
+  /* Eight profiles. Assigned deterministically per artwork, so a given
+     piece always hangs in the same frame. */
+
+  .f0 { padding: 14px; border: 11px solid;
+        border-image: linear-gradient(140deg,#f2dc96,#b8912c 35%,#7d6217 60%,#e8cf83) 1; }
+  .f1 { padding: 18px; border: 7px solid;
+        border-image: linear-gradient(160deg,#e6cf85,#9d7c22,#d9be6d) 1; }
+  .f2 { padding: 12px; border: 13px solid;
+        border-image: linear-gradient(150deg,#6b4a2c,#3d2817 45%,#5c3f24) 1; }
+  .f3 { padding: 16px; border: 8px solid #14100c;
+        box-shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 26px -6px rgba(0,0,0,.6),
+                    inset 0 0 0 2px #2c2621; }
+  .f4 { padding: 22px; border: 5px solid #efeae0; }
+  .f5 { padding: 15px; border: 12px solid;
+        border-image: linear-gradient(120deg,#cbb26a,#8d7326 30%,#e3d3a0 55%,#7a6320) 1; }
+  .f6 { padding: 17px; border: 9px solid;
+        border-image: linear-gradient(150deg,#d8d8d2,#9a9a94,#c6c6c0) 1; }
+  .f7 { padding: 13px; border: 14px solid;
+        border-image: linear-gradient(135deg,#8a6236,#54371d 40%,#714c28) 1; }
+
+  /* ---------------- wall label ---------------- */
+
+  .label {
+    margin-top: 11px;
+    max-width: 210px;
+    text-align: center;
+    line-height: 1.35;
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+  .piece.focus .label { opacity: 1; max-width: 300px; }
+  .piece:hover .label { opacity: 1; }
+
+  .label .artist {
+    display: block;
+    font-size: 10px;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--gold-pale);
+  }
+  .label .title {
+    display: block;
+    font-style: italic;
+    font-size: 13px;
+    margin-top: 2px;
+    color: var(--label);
+  }
+  .label .date {
+    display: block;
+    font-size: 11px;
+    margin-top: 1px;
+    color: rgba(246,243,234,.62);
+  }
+  .piece.focus .label .artist { font-size: 11px; }
+  .piece.focus .label .title  { font-size: 16px; }
+
+  .label a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+  .label a:hover { border-bottom-color: var(--gold-pale); }
+  .label a:focus-visible { outline: 2px solid var(--gold-pale); outline-offset: 3px; }
+
+  /* Empty frame when an image cannot be had at all. */
+  .frame.blank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--art-max-w);
+    height: var(--art-max-h);
+  }
+  .frame.blank span {
+    font-size: 11px;
+    font-style: italic;
+    color: #8d8677;
+    line-height: 1.4;
+    padding: 0 14px;
+    text-align: center;
+  }
+
+  /* ---------------- chrome ---------------- */
+
+  #bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    padding: 14px 20px;
+    background: linear-gradient(to bottom, rgba(9,32,34,.9), rgba(9,32,34,0));
+    z-index: 20;
+    pointer-events: none;
+  }
+  #bar a, #bar button {
+    pointer-events: auto;
+    font-family: inherit;
+    color: var(--label);
+    background: none;
+    border: none;
+    font-size: 13px;
+    letter-spacing: .06em;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  #bar a:hover, #bar button:hover { color: var(--gold-pale); }
+  #bar .spacer { flex: 1; }
+  #today-label {
+    font-size: 11px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: rgba(246,243,234,.55);
+    pointer-events: none;
+  }
+
+  #hint {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: rgba(246,243,234,.42);
+    z-index: 20;
+    pointer-events: none;
+    transition: opacity .8s ease;
+  }
+  #hint.gone { opacity: 0; }
+
+  #status {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(246,243,234,.6);
+    z-index: 30;
+    background: var(--wall-deep);
+    transition: opacity .6s ease;
+  }
+  #status.gone { opacity: 0; pointer-events: none; }
+
+  @media (max-width: 700px) {
+    :root {
+      --cell-w: 210px;
+      --cell-h: 215px;
+      --art-max-w: 140px;
+      --art-max-h: 118px;
     }
+    .label { max-width: 132px; }
+    .label .title { font-size: 11px; }
+    .piece.focus .label .title { font-size: 14px; }
+    #bar { gap: 12px; padding: 11px 14px; }
+    #bar a, #bar button { font-size: 12px; }
+  }
 
-    nav {
-      margin-bottom: 2rem;
-      font-size: 1.1rem;
-      text-align: center;
-      background-color: #f0f0f0;
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-    }
-
-    nav a {
-      margin: 0 1rem;
-      text-decoration: none;
-      color: #0000EE;
-    }
-
-    nav a:hover { text-decoration: underline; }
-
-    h1 {
-      text-align: center;
-      font-size: 2.2rem;
-      margin-bottom: 0.25rem;
-      font-weight: bold;
-    }
-
-    .today {
-      text-align: center;
-      font-size: 1rem;
-      color: #444;
-      margin-bottom: 2rem;
-      border-bottom: 2px solid #000;
-      padding-bottom: 10px;
-    }
-
-    figure {
-      margin: 0 0 1.5rem 0;
-      text-align: center;
-      min-height: 120px;
-    }
-
-    figure img {
-      max-width: 100%;
-      max-height: 70vh;
-      height: auto;
-      border: 1px solid #808080;
-    }
-
-    figcaption {
-      margin-top: 1rem;
-      font-size: 1.15rem;
-    }
-
-    .art-title { font-style: italic; }
-    .art-artist { font-weight: bold; }
-    .art-date { color: #444; }
-
-    .meta {
-      text-align: center;
-      font-size: 0.9rem;
-      color: #555;
-      margin-top: 0.75rem;
-    }
-
-    .meta a { color: #0000EE; }
-
-    .status {
-      text-align: center;
-      color: #555;
-      font-style: italic;
-      padding: 2rem 0;
-    }
-
-    .notice {
-      border: 1px solid #808080;
-      background: #f8f8f8;
-      padding: 1rem;
-      margin: 1rem 0;
-      text-align: center;
-    }
-
-    .controls {
-      text-align: center;
-      margin-top: 2rem;
-      padding-top: 1rem;
-      border-top: 1px solid #ccc;
-      font-size: 0.9rem;
-    }
-
-    .controls button {
-      font-family: inherit;
-      font-size: 0.9rem;
-      background: none;
-      border: 1px solid #808080;
-      padding: 0.3rem 0.8rem;
-      cursor: pointer;
-      margin: 0 0.25rem;
-    }
-
-    .controls button:hover { background: #f0f0f0; }
-  </style>
+  @media (prefers-reduced-motion: reduce) {
+    .piece { transition: none; }
+    #status, #hint { transition: none; }
+  }
+</style>
 </head>
 <body>
 
-  <nav>
-    <a href="/">Home</a>
-    <a href="/misc/">Misc</a>
-  </nav>
+<div id="wall">
+  <div id="surface"></div>
+</div>
 
-  <h1>Art Daily</h1>
-  <p class="today" id="today"></p>
+<div id="bar">
+  <a href="/">Home</a>
+  <a href="/misc/">Misc</a>
+  <span class="spacer"></span>
+  <span id="today-label"></span>
+  <button id="recentre" type="button">Today</button>
+</div>
 
-  <figure>
-    <div class="status" id="status">Loading today's artwork…</div>
-    <img id="art-image" alt="" hidden>
-    <figcaption id="caption" hidden>
-      <span class="art-title" id="art-title"></span>
-      <span id="art-artist-wrap"> — <span class="art-artist" id="art-artist"></span></span>
-      <span class="art-date" id="art-date"></span>
-    </figcaption>
-  </figure>
-
-  <p class="meta" id="meta" hidden></p>
-
-  <div class="controls">
-    <button id="prev-btn" type="button">Previous day</button>
-    <button id="next-btn" type="button">Next day</button>
-    <button id="today-btn" type="button">Back to today</button>
-  </div>
+<p id="hint">Drag to walk the wall</p>
+<div id="status">Hanging the wall…</div>
 
 <script>
 (function () {
   "use strict";
 
-  // ---------------------------------------------------------------
-  // Date -> slot. Slots follow a leap year, so a given calendar date
-  // always maps to the same artwork, and Feb 29 gets its own entry.
-  // ---------------------------------------------------------------
+  // Slots follow a leap year so a calendar date always maps to the same
+  // artwork and Feb 29 gets its own. Matches artworks.json.
   var LEAP_CUM = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
+  function slotFor(d) { return LEAP_CUM[d.getMonth()] + d.getDate(); }
 
-  function slotFor(date) {
-    return LEAP_CUM[date.getMonth()] + date.getDate();
+  // Column steps one day; row steps 25. 25 is coprime to 366 and puts the
+  // nearest repeated artwork 24 tiles away, well outside any viewport.
+  var ROW_STRIDE = 25;
+
+  var wall = document.getElementById("wall");
+  var surface = document.getElementById("surface");
+  var statusEl = document.getElementById("status");
+  var hintEl = document.getElementById("hint");
+  var todayLabel = document.getElementById("today-label");
+
+  var manifest = null, N = 0, todayIdx = 0;
+  var panX = 0, panY = 0;
+  var tiles = new Map();
+  var cell = { w: 340, h: 330 };
+
+  function readCell() {
+    var cs = getComputedStyle(document.documentElement);
+    cell.w = parseFloat(cs.getPropertyValue("--cell-w")) || 340;
+    cell.h = parseFloat(cs.getPropertyValue("--cell-h")) || 330;
   }
 
-  var CACHE_KEY = "artDaily.resolved.v1";
-  var CACHE_TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
+  function mod(n, m) { return ((n % m) + m) % m; }
 
-  function readCache() {
-    try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || {}; }
-    catch (e) { return {}; }
+  // Cheap deterministic hash so a given wall position always looks the same.
+  function hash(a, b) {
+    var h = a * 374761393 + b * 668265263;
+    h = (h ^ (h >> 13)) * 1274126177;
+    return mod(h ^ (h >> 16), 100000) / 100000;
   }
 
-  function writeCache(cache) {
-    try { localStorage.setItem(CACHE_KEY, JSON.stringify(cache)); }
-    catch (e) { /* private mode or quota - resolution still works, just uncached */ }
+  function artAt(col, row) {
+    return manifest.artworks[mod(todayIdx + col + row * ROW_STRIDE, N)];
   }
 
-  function cacheGet(key) {
-    var hit = readCache()[key];
-    if (hit && Date.now() - hit.t < CACHE_TTL) return hit.u;
+  // ---- image URLs -------------------------------------------------------
+  // Both sources take a width, so peripheral tiles stay small and only the
+  // focus piece pulls a large file.
+
+  function urlFor(art, width) {
+    if (art.local) return art.local;
+    if (art.image_id) {
+      return "https://www.artic.edu/iiif/2/" + art.image_id +
+             "/full/" + width + ",/0/default.jpg";
+    }
+    if (art.commons) {
+      return "https://commons.wikimedia.org/wiki/Special:FilePath/" +
+             encodeURIComponent(art.commons) + "?width=" + width;
+    }
     return null;
   }
 
-  function cacheSet(key, url) {
-    var cache = readCache();
-    cache[key] = { u: url, t: Date.now() };
-    writeCache(cache);
-  }
-
-  // ---------------------------------------------------------------
-  // URL builders
-  // ---------------------------------------------------------------
-  function aicImage(imageId, width) {
-    return "https://www.artic.edu/iiif/2/" + imageId +
-           "/full/" + width + ",/0/default.jpg";
-  }
-
-  // Special:FilePath is the documented external hotlink endpoint and
-  // follows file renames, so it survives things upload.wikimedia.org won't.
-  function commonsImage(file, width) {
-    return "https://commons.wikimedia.org/wiki/Special:FilePath/" +
-           encodeURIComponent(file) + "?width=" + width;
-  }
-
-  // ---------------------------------------------------------------
-  // Pinned candidates: no network needed, tried first.
-  // ---------------------------------------------------------------
-  function pinnedCandidates(art) {
-    var out = [];
-    if (art.local) out.push(art.local);
-    if (art.source === "aic" && art.image_id) {
-      out.push(aicImage(art.image_id, 843));
-      out.push(aicImage(art.image_id, 600));
-    }
-    if (art.source === "wikimedia" && art.commons) {
-      out.push(commonsImage(art.commons, 1200));
-      out.push(commonsImage(art.commons, 800));
-    }
-    return out;
-  }
-
-  function fetchJSON(url) {
-    return fetch(url, { mode: "cors" }).then(function (r) {
+  function fetchJSON(u) {
+    return fetch(u, { mode: "cors" }).then(function (r) {
       if (!r.ok) throw new Error("HTTP " + r.status);
       return r.json();
     });
   }
 
-  // ---------------------------------------------------------------
-  // Live resolution: re-derives the image from the stable identifier.
-  // This is what self-heals when a museum re-photographs a work and
-  // the old image id stops resolving.
-  // ---------------------------------------------------------------
-  function resolveAIC(art) {
-    var url = "https://api.artic.edu/api/v1/artworks/" + art.aic_id +
-              "?fields=image_id,title,artist_display,date_display";
-    return fetchJSON(url).then(function (j) {
-      var d = j && j.data;
-      if (!d || !d.image_id) return null;
-      if (d.date_display && !art.date) art.date = d.date_display;
-      return aicImage(d.image_id, 843);
-    });
+  // Live re-resolution from the stable identifier. Only the focus piece pays
+  // for this, and only when its pinned URL has actually failed.
+  function reresolve(art) {
+    if (art.image_id !== undefined && art.aic_id) {
+      return fetchJSON("https://api.artic.edu/api/v1/artworks/" + art.aic_id +
+                       "?fields=image_id,date_display")
+        .then(function (j) {
+          var d = j && j.data;
+          return d && d.image_id
+            ? "https://www.artic.edu/iiif/2/" + d.image_id + "/full/843,/0/default.jpg"
+            : null;
+        });
+    }
+    if (art.wikipedia) {
+      return fetchJSON("https://en.wikipedia.org/w/api.php?action=query&format=json" +
+                       "&prop=pageimages&piprop=thumbnail&pithumbsize=1000" +
+                       "&redirects=1&origin=*&titles=" +
+                       encodeURIComponent(art.wikipedia))
+        .then(function (j) {
+          var pages = j && j.query && j.query.pages;
+          for (var k in pages) {
+            if (pages[k].thumbnail) return pages[k].thumbnail.source;
+          }
+          return null;
+        });
+    }
+    return Promise.resolve(null);
   }
 
-  function resolveWikimedia(art) {
-    var url = "https://en.wikipedia.org/w/api.php?action=query&format=json" +
-              "&prop=pageimages&piprop=thumbnail&pithumbsize=1200&redirects=1" +
-              "&origin=*&titles=" + encodeURIComponent(art.wikipedia);
-    return fetchJSON(url).then(function (j) {
-      var pages = j && j.query && j.query.pages;
-      if (!pages) return null;
-      for (var k in pages) {
-        if (pages[k].thumbnail && pages[k].thumbnail.source) {
-          return pages[k].thumbnail.source;
+  // ---- building a piece -------------------------------------------------
+
+  function buildPiece(col, row) {
+    var art = artAt(col, row);
+    var isFocus = (col === 0 && row === 0);
+
+    var piece = document.createElement("div");
+    piece.className = "piece" + (isFocus ? " focus" : "");
+
+    var jx = (hash(col, row) - 0.5) * cell.w * 0.16;
+    var jy = (hash(row, col) - 0.5) * cell.h * 0.16;
+    piece.style.left = (col * cell.w + (isFocus ? 0 : jx)) + "px";
+    piece.style.top = (row * cell.h + (isFocus ? 0 : jy)) + "px";
+
+    var frame = document.createElement("a");
+    frame.className = "frame f" + Math.floor(hash(art.day, 7) * 8);
+    frame.href = art.link;
+    frame.target = "_blank";
+    frame.rel = "noopener";
+    frame.setAttribute("aria-label",
+      art.title + (art.artist ? " by " + art.artist : ""));
+
+    var img = document.createElement("img");
+    img.alt = art.title + (art.artist && art.artist !== "Unknown"
+      ? " by " + art.artist : "");
+    img.loading = "lazy";
+    img.decoding = "async";
+
+    var width = isFocus ? 1000 : 420;
+    var primary = urlFor(art, width);
+
+    img.onerror = function () {
+      // Smaller size first, then re-derive from the identifier, then give
+      // the piece an empty frame rather than a broken square.
+      var smaller = urlFor(art, isFocus ? 600 : 240);
+      if (smaller && img.src !== smaller) { img.src = smaller; return; }
+      img.onerror = null;
+      reresolve(art).then(function (live) {
+        if (live) { img.src = live; return; }
+        blank(frame, art);
+      }).catch(function () { blank(frame, art); });
+    };
+
+    if (primary) { img.src = primary; frame.appendChild(img); }
+    else { blank(frame, art); }
+
+    var label = document.createElement("figcaption");
+    label.className = "label";
+    label.innerHTML =
+      '<span class="artist"></span><span class="title"></span><span class="date"></span>';
+    label.querySelector(".artist").textContent =
+      (art.artist && art.artist !== "Unknown") ? art.artist : "Unknown maker";
+    label.querySelector(".title").textContent = art.title;
+    label.querySelector(".date").textContent = art.date || "";
+
+    piece.appendChild(frame);
+    piece.appendChild(label);
+    requestAnimationFrame(function () { piece.classList.add("in"); });
+    return piece;
+  }
+
+  function blank(frame, art) {
+    frame.classList.add("blank");
+    frame.innerHTML = "";
+    var s = document.createElement("span");
+    s.textContent = art.title;
+    frame.appendChild(s);
+  }
+
+  // ---- virtualised rendering -------------------------------------------
+
+  function render() {
+    var halfW = window.innerWidth / 2, halfH = window.innerHeight / 2;
+    var padX = 0, padY = 0;   // floor/ceil already over-covers the edges
+    var c0 = Math.floor((-panX - halfW) / cell.w) - padX;
+    var c1 = Math.ceil((-panX + halfW) / cell.w) + padX;
+    var r0 = Math.floor((-panY - halfH) / cell.h) - padY;
+    var r1 = Math.ceil((-panY + halfH) / cell.h) + padY;
+
+    var wanted = new Set();
+    for (var c = c0; c <= c1; c++) {
+      for (var r = r0; r <= r1; r++) {
+        var key = c + "," + r;
+        wanted.add(key);
+        if (!tiles.has(key)) {
+          var el = buildPiece(c, r);
+          surface.appendChild(el);
+          tiles.set(key, el);
         }
       }
-      return null;
-    });
-  }
-
-  function resolveLive(art) {
-    var p = art.source === "aic" ? resolveAIC(art) : resolveWikimedia(art);
-    return p.catch(function () { return null; });
-  }
-
-  // ---------------------------------------------------------------
-  // Try a list of URLs in order; resolve with the first that loads.
-  // ---------------------------------------------------------------
-  function tryLoad(urls) {
-    var i = 0;
-    return new Promise(function (resolve) {
-      function attempt() {
-        if (i >= urls.length) return resolve(null);
-        var url = urls[i++];
-        var probe = new Image();
-        probe.onload = function () { resolve(url); };
-        probe.onerror = attempt;
-        probe.src = url;
-      }
-      attempt();
-    });
-  }
-
-  // ---------------------------------------------------------------
-  // Rendering
-  // ---------------------------------------------------------------
-  var el = {
-    status: document.getElementById("status"),
-    img: document.getElementById("art-image"),
-    caption: document.getElementById("caption"),
-    title: document.getElementById("art-title"),
-    artist: document.getElementById("art-artist"),
-    artistWrap: document.getElementById("art-artist-wrap"),
-    date: document.getElementById("art-date"),
-    meta: document.getElementById("meta"),
-    today: document.getElementById("today")
-  };
-
-  var SOURCE_LABEL = {
-    aic: "Art Institute of Chicago",
-    wikimedia: "Wikimedia Commons"
-  };
-
-  function renderCaption(art) {
-    el.title.textContent = art.title;
-    if (art.artist && art.artist !== "Unknown") {
-      el.artist.textContent = art.artist;
-      el.artistWrap.hidden = false;
-    } else {
-      el.artistWrap.hidden = true;
     }
-    el.date.textContent = art.date ? " (" + art.date + ")" : "";
-    el.caption.hidden = false;
-
-    el.meta.innerHTML = "";
-    var a = document.createElement("a");
-    a.href = art.link;
-    a.rel = "noopener";
-    a.textContent = SOURCE_LABEL[art.source] || "Source";
-    el.meta.appendChild(document.createTextNode("Via "));
-    el.meta.appendChild(a);
-    el.meta.hidden = false;
-  }
-
-  function renderImage(url, art) {
-    el.img.src = url;
-    el.img.alt = art.title + (art.artist ? " by " + art.artist : "");
-    el.img.hidden = false;
-    el.status.hidden = true;
-  }
-
-  // Final rung: the work still gets its day, just without the picture.
-  function renderTextOnly(art) {
-    el.img.hidden = true;
-    el.status.hidden = true;
-    var box = document.createElement("div");
-    box.className = "notice";
-    box.innerHTML = "The image for today's work could not be loaded. " +
-      "The artwork is still <a href=\"" + art.link + "\" rel=\"noopener\">" +
-      "viewable at the source</a>.";
-    el.status.parentNode.insertBefore(box, el.caption);
-  }
-
-  function clearTransient() {
-    var old = document.querySelectorAll(".notice");
-    for (var i = 0; i < old.length; i++) old[i].remove();
-    el.img.hidden = true;
-    el.caption.hidden = true;
-    el.meta.hidden = true;
-    el.status.hidden = false;
-    el.status.textContent = "Loading…";
-  }
-
-  // ---------------------------------------------------------------
-  // Main
-  // ---------------------------------------------------------------
-  var manifest = null;
-  var viewSlot = slotFor(new Date());
-
-  function artForSlot(slot) {
-    var list = manifest.artworks;
-    // Slot is 1-366; wrap defensively in case the file is short.
-    var idx = ((slot - 1) % list.length + list.length) % list.length;
-    return list[idx];
-  }
-
-  function labelForSlot(slot) {
-    var d = new Date(2024, 0, 1);           // 2024 is a leap year
-    d.setDate(slot);
-    return d.toLocaleDateString(undefined, { month: "long", day: "numeric" });
-  }
-
-  function show(slot) {
-    clearTransient();
-    var art = artForSlot(slot);
-    el.today.textContent = labelForSlot(slot);
-
-    var cacheKey = art.source + ":" + (art.aic_id || art.wikipedia);
-    var cached = cacheGet(cacheKey);
-    var first = cached ? [cached].concat(pinnedCandidates(art)) : pinnedCandidates(art);
-
-    tryLoad(first).then(function (url) {
-      if (url) {
-        renderCaption(art);
-        renderImage(url, art);
-        cacheSet(cacheKey, url);
-        return;
-      }
-      // Nothing pinned worked - go re-derive from the stable identifier.
-      el.status.textContent = "Re-resolving image…";
-      return resolveLive(art).then(function (live) {
-        if (!live) { renderCaption(art); renderTextOnly(art); return; }
-        return tryLoad([live]).then(function (ok) {
-          renderCaption(art);
-          if (ok) {
-            renderImage(ok, art);
-            cacheSet(cacheKey, ok);
-          } else {
-            renderTextOnly(art);
-          }
-        });
-      });
+    tiles.forEach(function (el, key) {
+      if (!wanted.has(key)) { el.remove(); tiles.delete(key); }
     });
   }
 
-  document.getElementById("prev-btn").addEventListener("click", function () {
-    viewSlot = viewSlot - 1 < 1 ? 366 : viewSlot - 1;
-    show(viewSlot);
+  var frameQueued = false;
+  function apply() {
+    surface.style.transform = "translate3d(" + panX + "px," + panY + "px,0)";
+    if (!frameQueued) {
+      frameQueued = true;
+      requestAnimationFrame(function () { frameQueued = false; render(); });
+    }
+  }
+
+  // ---- panning ----------------------------------------------------------
+
+  var dragging = false, startX = 0, startY = 0, baseX = 0, baseY = 0, moved = 0;
+
+  function down(x, y) {
+    dragging = true; moved = 0;
+    startX = x; startY = y; baseX = panX; baseY = panY;
+    wall.classList.add("dragging");
+    hintEl.classList.add("gone");
+  }
+  function move(x, y) {
+    if (!dragging) return;
+    var dx = x - startX, dy = y - startY;
+    moved = Math.max(moved, Math.abs(dx) + Math.abs(dy));
+    panX = baseX + dx; panY = baseY + dy;
+    apply();
+  }
+  function up() { dragging = false; wall.classList.remove("dragging"); }
+
+  wall.addEventListener("mousedown", function (e) {
+    if (e.button !== 0) return;
+    down(e.clientX, e.clientY); e.preventDefault();
+  });
+  window.addEventListener("mousemove", function (e) { move(e.clientX, e.clientY); });
+  window.addEventListener("mouseup", up);
+
+  wall.addEventListener("touchstart", function (e) {
+    down(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+  wall.addEventListener("touchmove", function (e) {
+    move(e.touches[0].clientX, e.touches[0].clientY);
+    e.preventDefault();
+  }, { passive: false });
+  wall.addEventListener("touchend", up);
+
+  // A drag should not also open the link it finished on.
+  wall.addEventListener("click", function (e) {
+    if (moved > 6) { e.preventDefault(); e.stopPropagation(); }
+  }, true);
+
+  wall.addEventListener("wheel", function (e) {
+    panX -= e.deltaX; panY -= e.deltaY;
+    hintEl.classList.add("gone");
+    apply(); e.preventDefault();
+  }, { passive: false });
+
+  window.addEventListener("keydown", function (e) {
+    var step = e.shiftKey ? cell.w : cell.w / 2;
+    if (e.key === "ArrowLeft")  { panX += step; }
+    else if (e.key === "ArrowRight") { panX -= step; }
+    else if (e.key === "ArrowUp")    { panY += cell.h / 2; }
+    else if (e.key === "ArrowDown")  { panY -= cell.h / 2; }
+    else if (e.key === "Home") { panX = 0; panY = 0; }
+    else return;
+    hintEl.classList.add("gone");
+    apply(); e.preventDefault();
   });
 
-  document.getElementById("next-btn").addEventListener("click", function () {
-    viewSlot = viewSlot + 1 > 366 ? 1 : viewSlot + 1;
-    show(viewSlot);
+  document.getElementById("recentre").addEventListener("click", function () {
+    panX = 0; panY = 0; apply();
   });
 
-  document.getElementById("today-btn").addEventListener("click", function () {
-    viewSlot = slotFor(new Date());
-    show(viewSlot);
+  var resizeTimer;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      readCell();
+      tiles.forEach(function (el) { el.remove(); });
+      tiles.clear();
+      render();
+    }, 180);
   });
+
+  // ---- start ------------------------------------------------------------
 
   fetch("artworks.json")
     .then(function (r) { return r.json(); })
     .then(function (j) {
       manifest = j;
-      show(viewSlot);
+      N = j.artworks.length;
+      var now = new Date();
+      todayIdx = mod(slotFor(now) - 1, N);
+      todayLabel.textContent =
+        now.toLocaleDateString(undefined, { month: "long", day: "numeric" });
+      readCell();
+      apply();
+      statusEl.classList.add("gone");
+      setTimeout(function () { hintEl.classList.add("gone"); }, 7000);
     })
     .catch(function () {
-      el.status.textContent =
-        "Could not load the artwork list. Try reloading the page.";
+      statusEl.textContent = "The wall could not be loaded. Try reloading.";
     });
 })();
 </script>
